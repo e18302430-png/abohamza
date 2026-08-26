@@ -4207,5 +4207,59 @@ fillSettings=function(){
 };
 </script>
 
+
+<script>
+/* ============================================================
+   v14 — رقم إصدار ظاهر + منع السحابة من مسح بيانات الجهاز
+   ============================================================ */
+const APPV='14';
+(function(){
+  const sub=$('#lkSub');
+  if(sub)sub.innerHTML='أدخل كلمة السر للدخول<br><span style="font-size:11px;opacity:.6">الإصدار '+APPV+'</span>';
+})();
+
+/* السحابة ما تستبدلش بيانات الجهاز إلا بموافقتك */
+const _boot14=boot;
+let asked14=false;
+boot=function(){
+  _boot14();
+  const st=$('#stgBody');
+  if(st&&!$('#vTag'))st.insertAdjacentHTML('afterbegin',
+    `<div class="stat"><span>إصدار النظام</span><b id="vTag">${APPV}</b></div>`);
+};
+document.addEventListener('visibilitychange',()=>{},true);
+
+setTimeout(()=>{
+  if(asked14||locked)return;
+  if(!(S.cloud&&S.cloud.auto&&cloudReady()))return;
+  asked14=true;
+  cloudPull(true).then(row=>{
+    if(!row)return;
+    const rt=new Date(row.updated_at||0).getTime(), lt=new Date(S.updatedAt||0).getTime();
+    const nRemote=(row.data&&row.data.products||[]).length, nLocal=S.products.length;
+    if(rt<=lt+2000)return;
+    modal('فيه نسخة أحدث على السحابة',`
+      <div class="stat"><span>على السحابة</span><b>${nRemote} صنف · ${fdate(row.updated_at)} ${ftime(row.updated_at)}</b></div>
+      <div class="stat"><span>على الجهاز ده</span><b>${nLocal} صنف · ${S.updatedAt?fdate(S.updatedAt)+' '+ftime(S.updatedAt):'—'}</b></div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px">
+        اختار إيه اللي يفضل. لو مش متأكد، اضغط «سيبها زي ما هي» وخد نسخة احتياطية الأول.</p>`,
+      [{t:'⬇ نزّل نسخة السحابة',k:'p',f:()=>{closeM();applyCloud(row);toast('اتنزّلت ✓')}},
+       {t:'سيبها زي ما هي',f:closeM}]);
+  });
+},2500);
+
+/* فشل الرفع يبان بوضوح */
+const _cloudPush14=cloudPush;
+cloudPush=async function(silent){
+  const ok=await _cloudPush14(true);
+  if(!ok&&cloudReady()){
+    setCloudChip('الرفع فشل');
+    if(!window._warned14){window._warned14=1;
+      toast('الرفع للسحابة فشل — البيانات محفوظة على الجهاز',1)}
+  }else if(ok){window._warned14=0; if(!silent)toast('اترفعت على السحابة ✓')}
+  return ok;
+};
+</script>
+
 </body>
 </html>
