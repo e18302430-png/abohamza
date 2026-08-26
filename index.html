@@ -4127,5 +4127,85 @@ document.addEventListener('visibilitychange',()=>{
 });
 </script>
 
+
+<script>
+/* ============================================================
+   v13 — إصلاح نهائي للحفظ + تشخيص
+   ============================================================ */
+const lsGetRaw=lsGet;
+let booting13=false;
+lsGet=function(){ return restored12 ? null : lsGetRaw(); };
+
+save=function(){ if(!booting13) S.updatedAt=new Date().toISOString(); rawSave(); };
+
+const _boot13=boot;
+boot=function(){
+  booting13=true;
+  if(!restored12){
+    const t=lsGetRaw();
+    if(t){try{
+      const d=JSON.parse(t);
+      if(d&&(d.products||d.sales||d.settings)){
+        const cl=S.cloud;
+        S=Object.assign({},S,d);
+        if(cl&&cl.url&&!(d.cloud&&d.cloud.url))S.cloud=cl;
+      }
+    }catch(e){console.warn('تعذّر قراءة النسخة المحفوظة',e)}}
+    restored12=true;
+  }
+  _boot13();
+  booting13=false;
+  diagBanner();
+};
+
+/* تشخيص واضح للمستخدم */
+function lsWorks(){
+  try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(e){return false}
+}
+function diagBanner(){
+  const bad=!lsWorks();
+  let b=$('#diagBar');
+  if(!bad){if(b)b.remove();return}
+  if(!b){
+    document.querySelector('.main').insertAdjacentHTML('afterbegin',
+      `<div id="diagBar" style="background:#FBEAE7;color:#8C2A1D;padding:12px 18px;font-size:13.5px;
+       font-weight:700;line-height:1.7;border-bottom:1px solid #E9BDB5">
+       ⚠ المتصفح مانع الحفظ على الجهاز. البيانات هتضيع لما تقفل الصفحة.<br>
+       <span style="font-weight:400">الأسباب: التصفح الخفي (Incognito)، أو منع الكوكيز/بيانات المواقع.
+       اقفل الوضع الخفي وافتح الرابط عادي.</span></div>`);
+  }
+}
+
+/* زر فحص الحفظ في الإعدادات */
+const _fill13=fillSettings;
+fillSettings=function(){
+  _fill13();
+  if($('#diagBtn'))return;
+  const b=$('#stgBody');
+  if(b)b.insertAdjacentHTML('beforeend',
+    '<button class="btn mt" id="diagBtn" style="width:100%">🔍 افحص الحفظ</button>');
+  const btn=$('#diagBtn'); if(!btn)return;
+  btn.onclick=()=>{
+    const ok=lsWorks();
+    const raw=lsGetRaw();
+    let n=0,when='—';
+    if(raw){try{const d=JSON.parse(raw);n=(d.products||[]).length;
+      when=d.updatedAt?fdate(d.updatedAt)+' '+ftime(d.updatedAt):'—'}catch(e){}}
+    modal('نتيجة الفحص',`
+      <div class="stat"><span>الحفظ على الجهاز</span>
+        <b style="color:${ok?'var(--green-d)':'var(--tomato)'};font-size:16px">${ok?'شغال ✓':'مانع ✕'}</b></div>
+      <div class="stat"><span>حجم النسخة المحفوظة</span><b>${raw?Math.round(raw.length/1024):0} ك.ب</b></div>
+      <div class="stat"><span>أصناف في النسخة المحفوظة</span><b>${n}</b></div>
+      <div class="stat"><span>أصناف في الشاشة دلوقتي</span><b>${S.products.length}</b></div>
+      <div class="stat"><span>آخر تعديل محفوظ</span><b style="font-size:14px">${when}</b></div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-top:14px">
+        ${ok?(n===S.products.length?'كل حاجة تمام — البيانات محفوظة وهتفضل بعد الريفرش.'
+            :'فيه اختلاف بين المحفوظ والمعروض. اضغط «احفظ دلوقتي» تحت.')
+          :'المتصفح مانع الحفظ. اقفل التصفح الخفي واسمح ببيانات المواقع، وجرّب تاني.'}</p>`,
+      [{t:'احفظ دلوقتي',k:'p',f:()=>{save();closeM();toast('اتحفظ ✓')}},{t:'إغلاق',f:closeM}]);
+  };
+};
+</script>
+
 </body>
 </html>
