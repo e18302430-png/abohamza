@@ -428,6 +428,7 @@ tbody tr:last-child td{border-bottom:0}
             <input class="inp" id="cl_c" placeholder="abuhamza-7391"></label>
           <div class="r2"><button class="btn p" id="cl_s">حفظ وتوصيل</button>
           <button class="btn" id="cl_up">⬆ ارفع</button></div>
+          <button class="btn a" id="cl_t" style="width:100%;margin-top:9px">🔍 افحص الاتصال</button>
           <button class="btn" id="cl_dn" style="width:100%;margin-top:9px">⬇ نزّل من السحابة</button>
           <div id="cl_st" style="font-size:13px;color:var(--muted);margin-top:12px"></div>
         </div></div>
@@ -1202,10 +1203,33 @@ function push(silent){
     headers:Object.assign(cH(),{Prefer:'resolution=merge-duplicates,return=minimal'}),
     body:JSON.stringify([{id:S.cloud.code,data:S,updated_at:stamp}])})
    .then(function(r){
-     if(!r.ok)throw new Error('HTTP '+r.status);
-     if(!silent)toast('اترفعت على السحابة ✓');
-     cloudUI();return true;})
-   .catch(function(e){if(!silent)toast('الرفع فشل — راجع البيانات والنت',1);return false});
+     if(r.ok){if(!silent)toast('اترفعت على السحابة ✓');cloudUI();return true}
+     return r.text().then(function(t){
+       if(!silent)showErr('الرفع فشل',r.status,t);
+       return false;});
+   })
+   .catch(function(e){
+     if(!silent)showErr('الرفع فشل',0,String(e&&e.message||e));
+     return false;});
+}
+function showErr(title,code,body){
+  var hint='';
+  if(code===401||code===403)hint='المفتاح (anon key) غلط أو ناقص. انسخه تاني من Project Settings ← API.';
+  else if(code===404)hint='الجدول مش موجود أو الرابط غلط. تأكد إنك عملت كود SQL، وإن الرابط بيخلص بـ .supabase.co من غير أي زيادة.';
+  else if(code===0)hint='مفيش اتصال بالنت، أو الرابط مكتوب غلط.';
+  else if(String(body).indexOf('row-level security')>-1||String(body).indexOf('42501')>-1)
+    hint='الصلاحية (policy) مش مظبوطة. شغّل كود SQL تاني في SQL Editor.';
+  else hint='ابعتلي الرسالة اللي تحت زي ما هي.';
+  modal(title,
+    '<div class="stat"><span>كود الخطأ</span><b>'+(code||'مفيش رد')+'</b></div>'+
+    '<p style="font-size:13.5px;line-height:1.9;margin:12px 0;color:var(--ink)"><b>السبب المحتمل:</b><br>'+hint+'</p>'+
+    '<div style="background:#F5F7F4;border:1px solid var(--line);border-radius:10px;padding:11px;'+
+    'font-family:monospace;font-size:11.5px;direction:ltr;text-align:left;word-break:break-all;max-height:150px;overflow:auto">'+
+    esc(String(body).slice(0,600)||'(فاضي)')+'</div>'+
+    '<div style="font-family:monospace;font-size:11px;direction:ltr;text-align:left;margin-top:10px;'+
+    'color:var(--muted);word-break:break-all">URL: '+esc(cURL())+'<br>KEY: '+
+    esc((S.cloud.key||'').slice(0,12))+'… ('+(S.cloud.key||'').length+' حرف)<br>CODE: '+esc(S.cloud.code)+'</div>',
+    [{t:'تمام',f:closeM}]);
 }
 function pull(silent){
   if(!cloudOn())return Promise.resolve(null);
@@ -1258,6 +1282,25 @@ el('cl_s').onclick=function(){
   cloudUI();
 };
 el('cl_up').onclick=function(){push()};
+el('cl_t').onclick=function(){
+  S.cloud={url:el('cl_u').value.trim(),key:el('cl_k').value.trim(),code:el('cl_c').value.trim()};
+  save();
+  if(!cloudOn()){toast('كمّل التلات خانات الأول',1);return}
+  toast('جارٍ الفحص…');
+  fetch(cURL('?select=id&limit=1'),{headers:cH()})
+   .then(function(r){
+     return r.text().then(function(t){
+       if(r.ok){
+         modal('الاتصال شغال ✓',
+           '<p style="line-height:1.9">الرابط والمفتاح والجدول كلهم مظبوطين.</p>'+
+           '<p style="font-size:13px;color:var(--muted);line-height:1.8;margin-top:10px">'+
+           'دوس «⬆ ارفع» عشان ترفع بياناتك، وبعدين افتح من الموبايل بنفس التلاتة واضغط «⬇ نزّل».</p>',
+           [{t:'ارفع دلوقتي',k:'p',f:function(){closeM();push()}},{t:'إغلاق',f:closeM}]);
+       }else showErr('الاتصال فشل',r.status,t);
+     });
+   })
+   .catch(function(e){showErr('الاتصال فشل',0,String(e&&e.message||e))});
+};
 el('cl_dn').onclick=function(){
   pull().then(function(row){
     if(!row)return;
