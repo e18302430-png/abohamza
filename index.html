@@ -671,7 +671,8 @@ body{background:
       <div class="card"><div class="ch"><h3>الفرع الأونلاين</h3>
         <button class="btn s" id="oRef">🔄 تحديث</button>
         <button class="btn a s" id="oPub">📤 انشر المنيو</button>
-        <button class="btn p s" id="oLink">🔗 رابط الزبون</button></div>
+        <button class="btn p s" id="oLink">🔗 رابط الزبون</button>
+        <button class="btn s" id="oQr">📱 كود QR</button></div>
         <div class="cb" id="oInfo"></div></div>
       <div id="oList"></div>
     </section>
@@ -2742,6 +2743,10 @@ function ordDone(id){
 }
 el('oRef').onclick=function(){fetchOrders();toast('بيحدّث…')};
 el('oPub').onclick=function(){publishMenu()};
+el('oQr').onclick=function(){
+  if(!cloudOn()||!S.shopOn){toast('شغّل الفرع الأونلاين الأول',1);return}
+  qrPoster(custLink());
+};
 el('oLink').onclick=function(){
   if(!cloudOn()||!S.shopOn){toast('شغّل الفرع الأونلاين الأول',1);return}
   var L=custLink();
@@ -2750,10 +2755,10 @@ el('oLink').onclick=function(){
    'ابعت الرابط ده لزباينك على واتساب أو حطه على لافتة في المحل. هيفتح المنيو بتاعك على طول.</p>'+
    '<textarea class="inp" id="lk" rows="4" style="font-size:12px;direction:ltr">'+esc(L)+'</textarea>',
    [{t:'نسخ',k:'p',f:function(){el('lk').select();document.execCommand('copy');toast('اتنسخ ✓')}},
-    {t:'واتساب',k:'a',f:function(){
+    {t:'📱 كود QR',k:'a',f:function(){qrPoster(L)}},
+    {t:'واتساب',f:function(){
       window.open('https://wa.me/?text='+encodeURIComponent(
-        'اطلب من '+S.settings.store+' من البيت 🛒\n'+L),'_blank')}},
-    {t:'إغلاق',f:closeM}]);
+        'اطلب من '+S.settings.store+' من البيت 🛒\n'+L),'_blank')}}]);
 };
 el('sh_save').onclick=function(){
   S.shopOn=el('sh_on').value==='1';save();
@@ -2874,6 +2879,31 @@ function shopSend(lines,t){
        '<button class="btn p" style="margin-top:18px" onclick="location.reload()">اطلب تاني</button></div>';
    })
    .catch(function(){toast('مفيش نت — الطلب مبعتش',1)});
+}
+
+
+/* ===================== كود QR ولافتة المحل ===================== */
+function qrImg(txt,size){
+  return 'https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+
+    '&margin=8&ecc=L&data='+encodeURIComponent(txt);
+}
+function qrPoster(L){
+  var st2=S.settings.store, ph=S.settings.phone;
+  var poster='<div style="font-family:Tajawal,sans-serif;text-align:center;padding:26px;max-width:520px;margin:auto;'+
+    'border:4px solid #1F7A4D;border-radius:22px">'+
+    '<div style="font-family:Cairo;font-weight:900;font-size:30px;color:#0F2A20">'+esc(st2)+'</div>'+
+    '<div style="font-size:17px;color:#1F7A4D;font-weight:700;margin:8px 0 4px">اطلب من البيت 🛒</div>'+
+    '<div style="font-size:14px;color:#5F6F66;margin-bottom:16px">صوّر الكود بالكاميرا · اختار اللي عايزه · تعالى استلمه جاهز</div>'+
+    '<img src="'+qrImg(L,420)+'" style="width:300px;height:300px" alt="QR">'+
+    '<div style="font-size:14px;color:#5F6F66;margin-top:14px">من غير زحمة ومن غير انتظار</div>'+
+    (ph?'<div style="font-family:Cairo;font-weight:800;font-size:19px;margin-top:8px;color:#0F2A20">'+esc(ph)+'</div>':'')+
+    '</div>';
+  modal('كود QR للمحل',
+    '<p style="font-size:13.5px;color:var(--muted);line-height:1.8;margin-bottom:12px">'+
+    'اطبع اللافتة دي وعلّقها على باب المحل أو على الكاشير. الزبون بيصوّر الكود بكاميرا الموبايل '+
+    'ويلاقي المنيو بتاعك على طول.</p>'+poster,
+    [{t:'🖨 اطبع اللافتة',k:'p',f:function(){print2(poster)}},
+     {t:'إغلاق',f:closeM}]);
 }
 
 /* ===================== الإقلاع ===================== */
