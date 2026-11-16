@@ -466,7 +466,7 @@ async function detectAll() {
   preloadFonts(); // fonts download in parallel while text is being detected
   const aiOk = await runAI(my, 'quick');
   if (my !== jobId) return;
-  if (aiOk) setEng('engLocal', 'off', '⚙️ المحرك المحلي (احتياطي)');
+  if (aiOk) { if (window.Tesseract) runLocal(my); else setEng('engLocal', 'off', '⚙️ المحرك المحلي غير متاح'); }
   else await runLocal(my);
   if (my !== jobId) return;
   hideStatus();
@@ -544,8 +544,9 @@ async function imageBlob(maxSide, region) {
   return new Promise(res => c.toBlob(res, 'image/png'));
 }
 const FONT_NAMES = FONTS.map(x => x.f).join(', ');
-function aiPrompt() {
-  return `You are a world-class OCR and typography engine. The attached image is ${cv.width}x${cv.height} pixels.
+function aiPrompt(tile, count) {
+  return `You are a world-class OCR and typography engine. The attached image is ${count > 1 ? `one of ${count} overlapping pieces of a larger image (text cut off at the edges: include its visible part)` : 'a complete image'}, ${Math.round(tile.x1 - tile.x0)}x${Math.round(tile.y1 - tile.y0)} pixels.
+Completeness is the top priority: documents, forms, ID cards, invoices and tables can have 100+ text lines — list EVERY one, including labels, values in table cells, names, IDs, codes, dates, phone numbers, amounts, headers, footers and tiny print. Never summarise or skip repeated-looking rows.
 Find EVERY piece of visible text: Arabic, English, and all numbers (Western 0-9 and Arabic-Indic ٠-٩), prices, dates, phone numbers, percentages, currency symbols and units attached to them. Include small, faint, rotated-looking and stylised text.
 Rules:
 - Transcribe EXACTLY as written. Do not translate, correct spelling, or normalise letters (keep ة/ه, ى/ي, أ/إ/ا, diacritics if present). Keep each digit in the same digit system as shown.
@@ -557,47 +558,76 @@ Output format: JSON Lines. One compact JSON object per text line, each on its ow
 {"text":"السعر 250 ريال","box":[520,300,930,380],"font":"Cairo","category":"sans","weight":700,"words":[{"text":"السعر","box":[780,300,930,380]},{"text":"250","box":[650,305,760,378]},{"text":"ريال","box":[520,300,630,380]}]}
 If there is no text at all, output exactly {"none":true}`;
 }
+// split big images into overlapping tiles so small text keeps its resolution (the model sees ~1.2 MP per image)
+function makeTiles() {
+  const W = cv.width, H = cv.height, budget = 1.1e6;
+  let n = Math.min(6, Math.max(1, Math.ceil(W * H / budget)));
+  if (n === 1) return [{ x0: 0, y0: 0, x1: W, y1: H }];
+  let cols = Math.max(1, Math.round(Math.sqrt(n * W / H))), rows = Math.max(1, Math.ceil(n / cols));
+  while (cols * rows > 6) { if (cols >= rows) cols--; else rows--; }
+  const ovx = cols > 1 ? Math.max(60, W / cols * 0.12) : 0, ovy = rows > 1 ? Math.max(60, H / rows * 0.12) : 0;
+  const tiles = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    tiles.push(clampRect({ x0: c * W / cols - ovx, y0: r * H / rows - ovy, x1: (c + 1) * W / cols + ovx, y1: (r + 1) * H / rows + ovy }));
+  }
+  return tiles;
+}
+// the same text read in two overlapping tiles: keep the larger (uncut) one
+function dedupe(list) {
+  const keep = [];
+  [...list].sort((a, b) => (b.x1 - b.x0) * (b.y1 - b.y0) - (a.x1 - a.x0) * (a.y1 - a.y0))
+    .forEach(x => { if (!keep.some(k => overlap(x, k) > 0.6)) keep.push(x); });
+  return keep;
+}
 async function runAI(my, tier) {
   const sample = await getSample();
   if (!sample) { setEng('engAI', 'off', '🧠 الذكاء الاصطناعي متاح داخل Claude فقط'); $('aiBtn').style.display = 'none'; return false; }
   $('aiBtn').style.display = '';
-  setEng('engAI', 'run', tier === 'quick' ? '🧠 الذكاء الاصطناعي يقرأ الصورة…' : '🧠 قراءة أدق جارية…');
-  const toPx = b => Array.isArray(b) && b.length === 4 && b.every(v => isFinite(v)) ? { x0: b[0] / 1000 * cv.width, y0: b[1] / 1000 * cv.height, x1: b[2] / 1000 * cv.width, y1: b[3] / 1000 * cv.height } : null;
+  const tiles = makeTiles();
+  setEng('engAI', 'run', (tier === 'quick' ? '🧠 الذكاء الاصطناعي يقرأ الصورة' : '🧠 قراءة أدق جارية') + (tiles.length > 1 ? ` (${tiles.length} أجزاء)…` : '…'));
   const out = { words: [], lines: [] };
-  let buf = '', rbTimer = null;
-  const eat = raw => {
-    const line = raw.trim().replace(/^```\w*|```$/g, '').replace(/,$/, '').trim();
-    if (!line.startsWith('{')) return;
-    let L; try { L = JSON.parse(line); } catch (e) { return; }
-    const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
-    const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
-    out.lines.push({ ...refineBox(lb), text: String(L.text).trim(), hint, conf: 90 });
-    (Array.isArray(L.words) ? L.words : []).forEach(W => {
-      const wb = toPx(W.box); if (!wb || !hasContent(W.text)) return;
-      out.words.push({ ...refineBox(wb), text: String(W.text).trim(), hint, conf: 90 });
-    });
-    if (my === jobId) { aiRes = out; clearTimeout(rbTimer); rbTimer = setTimeout(() => { if (my === jobId) { rebuild(); setStatus(`تم كشف ${out.words.length} كلمة حتى الآن…`, 0.6); } }, 120); }
+  let rbTimer = null, done = 0, lastErr = null;
+  const publish = () => { aiRes = { words: dedupe(out.words), lines: dedupe(out.lines) }; };
+  const readTile = async tile => {
+    const toPx = b => Array.isArray(b) && b.length === 4 && b.every(v => isFinite(v)) ? { x0: tile.x0 + b[0] / 1000 * (tile.x1 - tile.x0), y0: tile.y0 + b[1] / 1000 * (tile.y1 - tile.y0), x1: tile.x0 + b[2] / 1000 * (tile.x1 - tile.x0), y1: tile.y0 + b[3] / 1000 * (tile.y1 - tile.y0) } : null;
+    let buf = '', got = 0;
+    const eat = raw => {
+      const line = raw.trim().replace(/^```\w*|```$/g, '').replace(/,$/, '').trim();
+      if (!line.startsWith('{')) return;
+      let L; try { L = JSON.parse(line); } catch (e) { return; }
+      const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
+      const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
+      out.lines.push({ ...refineBox(lb), text: String(L.text).trim(), hint, conf: 90 });
+      (Array.isArray(L.words) ? L.words : []).forEach(W => {
+        const wb = toPx(W.box); if (!wb || !hasContent(W.text)) return;
+        out.words.push({ ...refineBox(wb), text: String(W.text).trim(), hint, conf: 90 });
+      });
+      got++;
+      if (my === jobId) { clearTimeout(rbTimer); rbTimer = setTimeout(() => { if (my === jobId) { publish(); rebuild(); setStatus(`تم كشف ${words.length} كلمة حتى الآن…`, 0.2 + 0.7 * done / tiles.length); } }, 150); }
+    };
+    try {
+      const blob = await imageBlob(1568, tile);
+      const opt = { images: blob, modelTier: tier, onText: ({ delta }) => { buf += delta; const parts = buf.split('\n'); buf = parts.pop(); parts.forEach(eat); } };
+      if (tier !== 'quick') opt.cache = false;
+      await sample(aiPrompt(tile, tiles.length), opt);
+      eat(buf);
+      return true;
+    } catch (e) { eat(buf); lastErr = e; return got > 0; }
+    finally { done++; }
   };
-  try {
-    const blob = await imageBlob(1568);
-    const opt = { images: blob, modelTier: tier, onText: ({ delta }) => { buf += delta; const parts = buf.split('\n'); buf = parts.pop(); parts.forEach(eat); } };
-    if (tier !== 'quick') opt.cache = false;
-    await sample(aiPrompt(), opt);
-    eat(buf); clearTimeout(rbTimer);
-    if (my !== jobId) return false;
-    aiRes = out;
-    setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${out.words.length}`);
-    rebuild();
+  const results = await Promise.all(tiles.map(readTile));
+  clearTimeout(rbTimer);
+  if (my !== jobId) return false;
+  if (results.some(Boolean)) {
+    publish(); rebuild();
+    setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${aiRes.words.length}` + (results.every(Boolean) ? '' : ' (بعض الأجزاء تعذّرت)'));
     return true;
-  } catch (e) {
-    clearTimeout(rbTimer);
-    const code = e && e.code;
-    if (out.lines.length && my === jobId) { aiRes = out; rebuild(); setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${out.words.length}`); return true; }
-    const msg = { not_granted: 'لم يُسمح باستخدام Claude', rate_limited: 'الحد مؤقتًا — حاول لاحقًا', sampling_disabled: 'غير متاح لحسابك' }[code] || 'تعذّر الكشف الذكي';
-    setEng('engAI', 'off', '🧠 ' + msg);
-    if (code === 'not_granted' || code === 'sampling_disabled') $('aiBtn').style.display = 'none';
-    return false;
   }
+  const code = lastErr && lastErr.code;
+  const msg = { not_granted: 'لم يُسمح باستخدام Claude', rate_limited: 'الحد مؤقتًا — حاول لاحقًا', sampling_disabled: 'غير متاح لحسابك' }[code] || 'تعذّر الكشف الذكي';
+  setEng('engAI', 'off', '🧠 ' + msg);
+  if (code === 'not_granted' || code === 'sampling_disabled') $('aiBtn').style.display = 'none';
+  return false;
 }
 $('aiBtn').onclick = async () => {
   endPreview();
