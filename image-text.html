@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بدّل النص</title>
+<meta name="description" content="استبدل النصوص والأرقام داخل الصور مباشرة من المتصفح — بدون رفع الصورة لأي خادم">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234F46E5'/%3E%3Ctext y='70' x='50' font-size='56' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'%3EAa%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&family=Noto+Naskh+Arabic:wght@400;700&family=Amiri:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F5FA; --surface:#FFFFFF; --surface-2:#EEEEF6; --ink:#15151F; --muted:#62627A;
+  --line:#E2E2EC; --accent:#4F46E5; --accent-ink:#FFFFFF; --accent-soft:#E9E8FD;
+  --box:rgba(79,70,229,.18); --box-line:rgba(79,70,229,.85); --done:#10B981; --danger:#DC2626;
+  --shadow:0 1px 2px rgba(20,20,40,.06),0 8px 24px rgba(20,20,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E0E15; --surface:#171722; --surface-2:#20202E; --ink:#ECECF4; --muted:#9A9AB2;
+    --line:#2A2A3A; --accent:#8B85FF; --accent-ink:#0E0E15; --accent-soft:#25234A;
+    --box:rgba(139,133,255,.20); --box-line:rgba(139,133,255,.95); --done:#34D399; --danger:#F87171;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E0E15; --surface:#171722; --surface-2:#20202E; --ink:#ECECF4; --muted:#9A9AB2;
+  --line:#2A2A3A; --accent:#8B85FF; --accent-ink:#0E0E15; --accent-soft:#25234A;
+  --box:rgba(139,133,255,.20); --box-line:rgba(139,133,255,.95); --done:#34D399; --danger:#F87171;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:Tajawal,system-ui,sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+h1,h2,h3,.btn,.brand{font-family:Cairo,Tajawal,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:15px;font-family:Inter,sans-serif}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:38px;height:38px;cursor:pointer;display:grid;place-items:center}
+
+/* hero */
+.hero{text-align:center;padding:56px 0 28px}
+.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;padding:5px 14px;border-radius:99px;margin-bottom:18px}
+.hero h1{font-size:clamp(28px,5vw,48px);line-height:1.25;font-weight:800;letter-spacing:-.5px}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);font-size:17px;max-width:620px;margin:14px auto 0}
+
+/* dropzone */
+.drop{margin:28px auto 0;max-width:760px;border:2px dashed var(--line);border-radius:20px;background:var(--surface);padding:44px 20px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .big{font-size:44px;line-height:1}
+.drop h3{font-size:19px;margin-top:12px}
+.drop small{color:var(--muted);display:block;margin-top:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer;background:var(--accent);color:var(--accent-ink);transition:.15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn.ghost.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.drop .btn{margin-top:18px}
+
+/* features */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:48px 0 60px}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.feat b{display:block;font-family:Cairo;font-size:16px;margin:8px 0 4px}
+.feat p{color:var(--muted);font-size:14px}
+.feat .n{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-family:Inter}
+
+/* editor */
+#editor{display:none;padding:18px 0 40px}
+#editor.show{display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.toolbar .sp{flex:1}
+.status{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.status .bar{flex:1;height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.status .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.status.hide{display:none}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:var(--shadow);overflow:auto;
+  background-image:linear-gradient(45deg,var(--surface-2) 25%,transparent 25%),linear-gradient(-45deg,var(--surface-2) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--surface-2) 75%),linear-gradient(-45deg,transparent 75%,var(--surface-2) 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.canvas-box{position:relative;margin:0 auto;width:fit-content;max-width:100%;line-height:0;user-select:none;-webkit-user-select:none;touch-action:none}
+.canvas-box canvas{display:block;max-width:100%;height:auto;border-radius:6px}
+#overlay{position:absolute;inset:0}
+.wbox{position:absolute;border:1.5px solid var(--box-line);background:var(--box);border-radius:3px;cursor:pointer;transition:background .12s}
+.wbox:hover{background:rgba(79,70,229,.35)}
+.wbox.sel{border-color:#F59E0B;background:rgba(245,158,11,.28);box-shadow:0 0 0 2px rgba(245,158,11,.5)}
+.wbox.done{border-color:var(--done);background:transparent;border-style:dashed}
+.hide-boxes .wbox{opacity:0;pointer-events:none}
+.drawing{position:absolute;border:2px dashed #F59E0B;background:rgba(245,158,11,.15);pointer-events:none}
+.manual .canvas-box{cursor:crosshair}
+.manual .wbox{pointer-events:none;opacity:.35}
+
+/* side panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);position:sticky;top:76px}
+.panel h3{font-size:16px;margin-bottom:4px}
+.panel .hint{color:var(--muted);font-size:13.5px}
+.field{margin-top:12px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.field input[type=text],.field textarea,.field select,.field input[type=number]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+.field textarea{resize:vertical;min-height:62px;font-size:16px}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.orig{background:var(--surface-2);border-radius:10px;padding:8px 11px;font-size:15px;min-height:38px;word-break:break-word}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.colorpick{display:flex;gap:8px;align-items:center}
+.colorpick input[type=color]{width:44px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:3px;cursor:pointer}
+.colorpick code{font-family:Inter,monospace;font-size:13px;color:var(--muted)}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:7px;padding:6px 4px;cursor:pointer;font-size:13px}
+.seg button.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:10px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.actions{display:flex;gap:8px;margin-top:16px}
+.actions .btn{flex:1}
+.list{margin-top:14px;max-height:260px;overflow:auto;border-top:1px solid var(--line);padding-top:10px}
+.list .it{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:14px}
+.list .it:hover{background:var(--surface-2)}
+.list .it.done{color:var(--done)}
+.list .it span:last-child{color:var(--muted);font-size:12px;font-family:Inter}
+.empty-panel{text-align:center;padding:14px 0}
+.empty-panel .big{font-size:34px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;transition:.25s;z-index:50;max-width:calc(100% - 32px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0 36px;border-top:1px solid var(--line)}
+kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+@media (max-width:600px){.hero{padding:34px 0 16px}.drop{padding:30px 16px}.toolbar .btn{padding:7px 10px;font-size:12.5px}.panel{position:static}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><div class="logo">Aa</div>بدّل النص</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn ghost sm" id="newBtn" style="display:none">صورة جديدة</button>
+      <button class="icon-btn" id="themeBtn" title="الوضع الليلي">🌓</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="landing">
+    <div class="hero">
+      <div class="pill">ذكاء اصطناعي • يعمل داخل متصفحك</div>
+      <h1>غيّر <span>النصوص والأرقام</span><br>داخل أي صورة بثوانٍ</h1>
+      <p>ارفع الصورة، اضغط على الكلمة أو الرقم اللي تبي تغيّره، واكتب البديل — نمسح القديم ونكتب الجديد بنفس اللون والحجم تقريبًا.</p>
+    </div>
+    <label class="drop" id="drop">
+      <div class="big">🖼️</div>
+      <h3>اسحب الصورة هنا أو اضغط للاختيار</h3>
+      <small>PNG · JPG · WEBP — تقدر كمان تلصقها بـ <kbd>Ctrl</kbd>+<kbd>V</kbd></small>
+      <span class="btn">اختر صورة</span>
+      <input type="file" id="file" accept="image/*" hidden>
+    </label>
+    <div class="features">
+      <div class="feat"><div class="n">1</div><b>كشف تلقائي للنص</b><p>يتعرّف على الكلمات العربية والإنجليزية والأرقام ويحدّد مكانها في الصورة.</p></div>
+      <div class="feat"><div class="n">2</div><b>مسح ذكي للخلفية</b><p>يعيد بناء الخلفية خلف النص القديم بالتدرّج المحيط بدل مربّع لون ثابت.</p></div>
+      <div class="feat"><div class="n">3</div><b>مطابقة اللون والحجم</b><p>يلتقط لون الخط وحجمه تلقائيًا، وتقدر تعدّل الخط والوزن والمحاذاة.</p></div>
+      <div class="feat"><div class="n">4</div><b>خصوصية كاملة</b><p>كل المعالجة على جهازك — الصورة ما تُرفع لأي خادم.</p></div>
+    </div>
+  </section>
+
+  <section id="editor">
+    <div class="toolbar">
+      <button class="btn ghost sm" id="modeBtn" title="ارسم مربعًا حول أي نص لم يُكتشف">✏️ تحديد يدوي</button>
+      <button class="btn ghost sm" id="boxesBtn">👁️ إخفاء المربعات</button>
+      <button class="btn ghost sm" id="compareBtn" title="اضغط مطولًا لرؤية الأصل">⇆ قارن بالأصل</button>
+      <button class="btn ghost sm" id="undoBtn" disabled>↶ تراجع</button>
+      <button class="btn ghost sm" id="redoBtn" disabled>↷ إعادة</button>
+      <span class="sp"></span>
+      <select id="fmt" class="btn ghost sm" style="padding-inline:10px">
+        <option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WEBP</option>
+      </select>
+      <button class="btn sm" id="dlBtn">⬇ تحميل الصورة</button>
+    </div>
+    <div class="status" id="status"><span id="statusText">جاري تجهيز محرّك قراءة النص…</span><div class="bar"><i id="bar"></i></div></div>
+
+    <div class="layout">
+      <div class="stage" id="stage">
+        <div class="canvas-box" id="cbox">
+          <canvas id="cv"></canvas>
+          <div id="overlay"></div>
+        </div>
+      </div>
+
+      <aside class="panel" id="panel">
+        <div id="panelEmpty" class="empty-panel">
+          <div class="big">👆</div>
+          <h3>اختر نصًا من الصورة</h3>
+          <p class="hint">اضغط على أي مربّع ملوّن لتعديله، أو استخدم «تحديد يدوي» وارسم مربعًا حول النص.</p>
+          <div class="field" style="text-align:start">
+            <label>مستوى التحديد</label>
+            <div class="seg" id="levelSeg"><button data-v="word" class="on">كلمة</button><button data-v="line">سطر</button></div>
+          </div>
+        </div>
+        <div id="panelEdit" style="display:none">
+          <h3>تعديل النص</h3>
+          <div class="field"><label>النص الأصلي</label><div class="orig" id="origText"></div></div>
+          <div class="field"><label>النص الجديد</label><textarea id="newText" placeholder="اكتب النص أو الرقم الجديد…"></textarea></div>
+          <div class="field">
+            <label>الخط</label>
+            <select id="font">
+              <option value="Cairo">Cairo</option>
+              <option value="Tajawal">Tajawal</option>
+              <option value="Noto Naskh Arabic">Noto Naskh (نسخ)</option>
+              <option value="Amiri">Amiri (أميري)</option>
+              <option value="Arial">Arial</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Inter">Inter</option>
+              <option value="Times New Roman">Times New Roman</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="field"><label>الحجم (px)</label><input type="number" id="size" min="4" max="1000"></div>
+            <div class="field"><label>الوزن</label><div class="seg" id="weightSeg"><button data-v="400">عادي</button><button data-v="700" class="on">عريض</button></div></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>لون الخط</label><div class="colorpick"><input type="color" id="color"><code id="colorHex"></code></div></div>
+            <div class="field"><label>لون الخلفية</label><div class="colorpick"><input type="color" id="bgColor"><code id="bgHex"></code></div></div>
+          </div>
+          <div class="field"><label>المحاذاة</label><div class="seg" id="alignSeg"><button data-v="right">يمين</button><button data-v="center">وسط</button><button data-v="left">يسار</button></div></div>
+          <div class="field"><label>نوع الأرقام</label><div class="seg" id="digitSeg"><button data-v="keep" class="on">كما كتبتها</button><button data-v="ar">٠١٢٣</button><button data-v="en">0123</button></div></div>
+          <label class="check"><input type="checkbox" id="smartErase" checked> مسح ذكي (إعادة بناء الخلفية)</label>
+          <label class="check"><input type="checkbox" id="fit" checked> تصغير النص ليناسب المساحة</label>
+          <div class="row3" style="margin-top:10px">
+            <button class="btn ghost sm" data-nudge="x,-1" title="يسار">←</button>
+            <button class="btn ghost sm" data-nudge="y,-1" title="أعلى">↑</button>
+            <button class="btn ghost sm" data-nudge="x,1" title="يمين">→</button>
+            <span></span>
+            <button class="btn ghost sm" data-nudge="y,1" title="أسفل">↓</button>
+            <span class="hint" style="align-self:center;font-size:12px" id="offTxt">إزاحة 0,0</span>
+          </div>
+          <div class="actions">
+            <button class="btn" id="applyBtn">تطبيق ✓</button>
+            <button class="btn ghost" id="eraseBtn" title="امسح النص فقط بدون كتابة">مسح فقط</button>
+            <button class="btn ghost" id="cancelBtn">إلغاء</button>
+          </div>
+        </div>
+        <div class="list" id="list"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+<footer class="wrap">كل المعالجة تتم على جهازك — لا يتم رفع صورك. قراءة النص بواسطة Tesseract.js.</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d', { willReadFrequently: true });
+const overlay = $('overlay'), cbox = $('cbox');
+let original = null;        // ImageData of the untouched image
+let history = [], future = [];
+let words = [], lines = [];
+let level = 'word';
+let current = null;         // selected region {x0,y0,x1,y1,text,id}
+let opts = { weight: '700', align: 'right', digits: 'keep', dx: 0, dy: 0 };
+let worker = null, workerReady = null;
+let previewing = false, previewSnapshot = null;
+
+/* ---------------- theme ---------------- */
+try { const t = localStorage.getItem('bt-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$('themeBtn').onclick = () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('bt-theme', root.dataset.theme); } catch (e) {}
+};
+
+const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400); };
+const setStatus = (txt, p) => { $('status').classList.remove('hide'); $('statusText').textContent = txt; $('bar').style.width = (p == null ? 0 : p * 100) + '%'; };
+const hideStatus = () => $('status').classList.add('hide');
+
+/* ---------------- OCR worker ---------------- */
+function getWorker() {
+  if (!workerReady) {
+    workerReady = Tesseract.createWorker('ara+eng', 1, {
+      logger: m => {
+        if (m.status === 'recognizing text') setStatus('جاري قراءة النص من الصورة…', m.progress);
+        else if (/load|initializ/.test(m.status)) setStatus('جاري تحميل محرّك قراءة النص (أول مرة فقط)…', m.progress);
+      }
+    }).then(async w => { worker = w; await w.setParameters({ preserve_interword_spaces: '1' }); return w; });
+  }
+  return workerReady;
+}
+
+/* ---------------- image loading ---------------- */
+const fileIn = $('file'), drop = $('drop');
+fileIn.onchange = e => e.target.files[0] && loadFile(e.target.files[0]);
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+window.addEventListener('paste', e => {
+  const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+  if (item) loadFile(item.getAsFile());
+});
+$('newBtn').onclick = () => { $('editor').classList.remove('show'); $('landing').style.display = ''; $('newBtn').style.display = 'none'; fileIn.value = ''; };
+
+function loadFile(file) {
+  if (!file.type.startsWith('image/')) return toast('الملف ليس صورة');
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => { URL.revokeObjectURL(url); startEditor(img); };
+  img.onerror = () => toast('تعذّر فتح الصورة');
+  img.src = url;
+}
+
+async function startEditor(img) {
+  const maxSide = 4000;
+  const s = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+  cv.width = Math.round(img.naturalWidth * s); cv.height = Math.round(img.naturalHeight * s);
+  ctx.drawImage(img, 0, 0, cv.width, cv.height);
+  original = ctx.getImageData(0, 0, cv.width, cv.height);
+  history = []; future = []; words = []; lines = []; current = null;
+  updateUndo(); renderBoxes(); showPanel(false);
+  $('landing').style.display = 'none'; $('editor').classList.add('show'); $('newBtn').style.display = '';
+  window.scrollTo({ top: 0 });
+  await runOCR();
+}
+
+/* Upscale small images for better OCR accuracy, then map boxes back */
+function ocrSource(region) {
+  const r = region || { x0: 0, y0: 0, x1: cv.width, y1: cv.height };
+  const w = r.x1 - r.x0, h = r.y1 - r.y0;
+  const scale = Math.max(1, Math.min(3, 1600 / Math.max(w, h)));
+  const c = document.createElement('canvas');
+  c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+  const g = c.getContext('2d');
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(cv, r.x0, r.y0, w, h, 0, 0, c.width, c.height);
+  return { canvas: c, scale, ox: r.x0, oy: r.y0 };
+}
+
+function mapBox(b, src) {
+  return { x0: b.x0 / src.scale + src.ox, y0: b.y0 / src.scale + src.oy, x1: b.x1 / src.scale + src.ox, y1: b.y1 / src.scale + src.oy };
+}
+
+async function runOCR() {
+  try {
+    setStatus('جاري تحميل محرّك قراءة النص (أول مرة فقط)…', 0);
+    const w = await getWorker();
+    const src = ocrSource();
+    const { data } = await w.recognize(src.canvas);
+    let id = 0;
+    words = (data.words || []).filter(x => x.text.trim() && x.confidence > 25)
+      .map(x => ({ ...mapBox(x.bbox, src), text: x.text.trim(), id: 'w' + id++, done: false }));
+    lines = (data.lines || []).filter(x => x.text.trim() && x.confidence > 20)
+      .map(x => ({ ...mapBox(x.bbox, src), text: x.text.trim().replace(/\s+/g, ' '), id: 'l' + id++, done: false }));
+    hideStatus();
+    renderBoxes();
+    toast(words.length ? `تم العثور على ${words.length} كلمة — اضغط على أي واحدة لتعديلها` : 'لم يُعثر على نص — استخدم التحديد اليدوي');
+  } catch (err) {
+    console.error(err);
+    setStatus('تعذّر تشغيل قراءة النص تلقائيًا — استخدم «تحديد يدوي» وارسم مربعًا حول النص.', 0);
+  }
+}
+
+/* ---------------- overlay boxes ---------------- */
+const regions = () => level === 'word' ? words : lines;
+function renderBoxes() {
+  overlay.querySelectorAll('.wbox').forEach(n => n.remove());
+  const W = cv.width, H = cv.height;
+  regions().forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'wbox' + (r.done ? ' done' : '') + (current && current.id === r.id ? ' sel' : '');
+    d.style.left = (r.x0 / W * 100) + '%'; d.style.top = (r.y0 / H * 100) + '%';
+    d.style.width = ((r.x1 - r.x0) / W * 100) + '%'; d.style.height = ((r.y1 - r.y0) / H * 100) + '%';
+    d.title = r.text;
+    d.onclick = e => { e.stopPropagation(); select(r); };
+    overlay.appendChild(d);
+  });
+  renderList();
+}
+function renderList() {
+  const list = $('list');
+  const rs = regions();
+  list.innerHTML = rs.length ? '' : '';
+  rs.forEach(r => {
+    const it = document.createElement('div');
+    it.className = 'it' + (r.done ? ' done' : '');
+    it.innerHTML = `<span></span><span>${r.done ? '✓' : ''}</span>`;
+    it.firstChild.textContent = r.text;
+    it.onclick = () => select(r);
+    list.appendChild(it);
+  });
+  list.style.display = rs.length ? '' : 'none';
+}
+$('levelSeg').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  level = b.dataset.v; [...$('levelSeg').children].forEach(x => x.classList.toggle('on', x === b));
+  renderBoxes();
+};
+
+/* ---------------- color analysis ---------------- */
+const isArabic = s => /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/.test(s);
+const hex = (r, g, b) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+const unhex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+
+function clampRect(r, pad = 0) {
+  const x0 = Math.max(0, Math.floor(r.x0 - pad)), y0 = Math.max(0, Math.floor(r.y0 - pad));
+  const x1 = Math.min(cv.width, Math.ceil(r.x1 + pad)), y1 = Math.min(cv.height, Math.ceil(r.y1 + pad));
+  return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
+}
+
+function analyze(r) {
+  const R = clampRect(r, 3);
+  const d = ctx.getImageData(R.x0, R.y0, R.w, R.h).data;
+  const border = [];
+  for (let x = 0; x < R.w; x++) for (const y of [0, 1, R.h - 2, R.h - 1]) if (y >= 0 && y < R.h) border.push((y * R.w + x) * 4);
+  for (let y = 0; y < R.h; y++) for (const x of [0, 1, R.w - 2, R.w - 1]) if (x >= 0 && x < R.w) border.push((y * R.w + x) * 4);
+  const med = ch => { const a = border.map(i => d[i + ch]).sort((p, q) => p - q); return a[a.length >> 1] || 0; };
+  const bg = [med(0), med(1), med(2)];
+  // text color: average of the 15% pixels most distant from background
+  const dist = [];
+  for (let i = 0; i < d.length; i += 4) {
+    const dd = (d[i] - bg[0]) ** 2 + (d[i + 1] - bg[1]) ** 2 + (d[i + 2] - bg[2]) ** 2;
+    dist.push([dd, i]);
+  }
+  dist.sort((a, b) => b[0] - a[0]);
+  const top = dist.slice(0, Math.max(1, Math.floor(dist.length * 0.12)));
+  let s = [0, 0, 0];
+  top.forEach(([, i]) => { s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; });
+  const fg = s.map(v => v / top.length);
+  // estimate ink height (rows that contain text pixels) to better guess font size
+  const thr = top[top.length - 1][0] * 0.5;
+  let minY = R.h, maxY = 0;
+  for (let y = 0; y < R.h; y++) for (let x = 0; x < R.w; x++) {
+    const i = (y * R.w + x) * 4;
+    const dd = (d[i] - bg[0]) ** 2 + (d[i + 1] - bg[1]) ** 2 + (d[i + 2] - bg[2]) ** 2;
+    if (dd > thr) { if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  }
+  const inkH = maxY > minY ? maxY - minY + 1 : r.y1 - r.y0;
+  return { bg: hex(...bg), fg: hex(...fg), inkH };
+}
+
+/* ---------------- erase (background reconstruction) ---------------- */
+function eraseRect(r, smart, bgHex) {
+  const pad = 2;
+  const R = clampRect(r, pad);
+  if (R.w < 1 || R.h < 1) return;
+  if (!smart) { ctx.fillStyle = bgHex; ctx.fillRect(R.x0, R.y0, R.w, R.h); return; }
+  const E = clampRect({ x0: R.x0 - 3, y0: R.y0 - 3, x1: R.x1 + 3, y1: R.y1 + 3 });
+  const img = ctx.getImageData(E.x0, E.y0, E.w, E.h), d = img.data;
+  const ix = R.x0 - E.x0, iy = R.y0 - E.y0, iw = R.w, ih = R.h;
+  const px = (x, y) => { x = Math.max(0, Math.min(E.w - 1, x)); y = Math.max(0, Math.min(E.h - 1, y)); return (y * E.w + x) * 4; };
+  // sample an edge with a small median across 3 pixels outward to ignore anti-aliasing
+  const sample = (x, y, dx, dy) => {
+    const out = [0, 0, 0];
+    for (let c = 0; c < 3; c++) {
+      const v = [1, 2, 3].map(k => d[px(x + dx * k, y + dy * k) + c]).sort((a, b) => a - b);
+      out[c] = v[1];
+    }
+    return out;
+  };
+  const L = [], Rt = [], T = [], B = [];
+  for (let y = 0; y < ih; y++) { L[y] = sample(ix, iy + y, -1, 0); Rt[y] = sample(ix + iw - 1, iy + y, 1, 0); }
+  for (let x = 0; x < iw; x++) { T[x] = sample(ix + x, iy, 0, -1); B[x] = sample(ix + x, iy + ih - 1, 0, 1); }
+  const atLeft = R.x0 === 0, atRight = R.x1 === cv.width, atTop = R.y0 === 0, atBottom = R.y1 === cv.height;
+  for (let y = 0; y < ih; y++) {
+    const ty = (y + 1) / (ih + 1);
+    for (let x = 0; x < iw; x++) {
+      const tx = (x + 1) / (iw + 1);
+      // inverse-distance weights to each edge
+      let wl = atLeft ? 0 : 1 / (x + 1), wr = atRight ? 0 : 1 / (iw - x), wt = atTop ? 0 : 1 / (y + 1), wb = atBottom ? 0 : 1 / (ih - y);
+      let sum = wl + wr + wt + wb; if (!sum) { wl = wr = wt = wb = 1; sum = 4; }
+      const i = ((iy + y) * E.w + (ix + x)) * 4;
+      for (let c = 0; c < 3; c++) {
+        d[i + c] = (L[y][c] * wl + Rt[y][c] * wr + T[x][c] * wt + B[x][c] * wb) / sum;
+      }
+      d[i + 3] = 255;
+    }
+  }
+  // light grain so the patch blends with photographic/noisy backgrounds
+  const noise = estimateNoise(d, E, ix, iy, iw, ih);
+  if (noise > 1.5) for (let y = 0; y < ih; y++) for (let x = 0; x < iw; x++) {
+    const i = ((iy + y) * E.w + (ix + x)) * 4, n = (Math.random() - .5) * noise * 1.6;
+    d[i] += n; d[i + 1] += n; d[i + 2] += n;
+  }
+  ctx.putImageData(img, E.x0, E.y0);
+}
+function estimateNoise(d, E, ix, iy, iw, ih) {
+  let s = 0, n = 0;
+  const row = Math.max(0, iy - 2);
+  for (let x = Math.max(1, ix); x < Math.min(E.w, ix + iw); x++) {
+    const a = (row * E.w + x) * 4, b = a - 4;
+    s += Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]); n += 3;
+  }
+  return n ? s / n : 0;
+}
+
+/* ---------------- draw text ---------------- */
+const AR = '٠١٢٣٤٥٦٧٨٩', EN = '0123456789';
+function convertDigits(s, mode) {
+  if (mode === 'ar') return s.replace(/[0-9]/g, d => AR[d]);
+  if (mode === 'en') return s.replace(/[٠-٩]/g, d => EN[AR.indexOf(d)]);
+  return s;
+}
+async function drawText(r, text, o) {
+  const family = $('font').value;
+  let size = +$('size').value || 16;
+  const fontStr = s => `${o.weight} ${s}px "${family}"`;
+  try { await document.fonts.load(fontStr(size), text); } catch (e) {}
+  const rtl = isArabic(text);
+  const linesTxt = text.split('\n');
+  ctx.save();
+  ctx.font = fontStr(size);
+  const boxW = r.x1 - r.x0;
+  if ($('fit').checked) {
+    const widest = Math.max(...linesTxt.map(t => ctx.measureText(t).width));
+    if (widest > boxW * 1.04 && widest > 0) { size = Math.max(4, size * boxW * 1.04 / widest); ctx.font = fontStr(size); }
+  }
+  ctx.fillStyle = $('color').value;
+  ctx.direction = rtl ? 'rtl' : 'ltr';
+  ctx.textBaseline = 'middle';
+  const lh = size * 1.25;
+  const totalH = lh * (linesTxt.length - 1);
+  const cy = (r.y0 + r.y1) / 2 - totalH / 2 + o.dy;
+  let x, align = o.align;
+  if (align === 'right') x = r.x1; else if (align === 'left') x = r.x0; else x = (r.x0 + r.x1) / 2;
+  ctx.textAlign = align;
+  linesTxt.forEach((t, i) => ctx.fillText(t, x + o.dx, cy + i * lh));
+  ctx.restore();
+}
+
+/* ---------------- selection & panel ---------------- */
+function showPanel(edit) {
+  $('panelEmpty').style.display = edit ? 'none' : '';
+  $('panelEdit').style.display = edit ? '' : 'none';
+}
+function setSeg(id, v) { [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
+['weightSeg', 'alignSeg', 'digitSeg'].forEach(id => $(id).onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const key = { weightSeg: 'weight', alignSeg: 'align', digitSeg: 'digits' }[id];
+  opts[key] = b.dataset.v; setSeg(id, b.dataset.v); schedulePreview();
+});
+
+function select(r) {
+  endPreview();
+  current = r;
+  const a = analyze(r);
+  $('origText').textContent = r.text || '—';
+  $('newText').value = r.done ? r.newText : (r.text || '');
+  $('color').value = a.fg; $('colorHex').textContent = a.fg;
+  $('bgColor').value = a.bg; $('bgHex').textContent = a.bg;
+  const boxH = r.y1 - r.y0;
+  const guess = isArabic(r.text) ? Math.max(boxH * 0.78, a.inkH * 0.8) : a.inkH * 1.32;
+  $('size').value = Math.max(6, Math.round(Math.min(guess, boxH * 1.1)));
+  opts.align = isArabic(r.text) || !r.text ? 'right' : 'left'; setSeg('alignSeg', opts.align);
+  opts.dx = 0; opts.dy = 0; $('offTxt').textContent = 'إزاحة 0,0';
+  showPanel(true); renderBoxes();
+  setTimeout(() => { $('newText').focus(); $('newText').select(); }, 30);
+  schedulePreview();
+}
+function deselect() { endPreview(); current = null; showPanel(false); renderBoxes(); }
+$('cancelBtn').onclick = deselect;
+$('color').oninput = () => { $('colorHex').textContent = $('color').value; schedulePreview(); };
+$('bgColor').oninput = () => { $('bgHex').textContent = $('bgColor').value; schedulePreview(); };
+['newText', 'size', 'font'].forEach(id => $(id).addEventListener('input', schedulePreview));
+['smartErase', 'fit'].forEach(id => $(id).addEventListener('change', schedulePreview));
+document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => {
+  const [axis, v] = b.dataset.nudge.split(','); opts['d' + axis] += +v;
+  $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`; schedulePreview();
+});
+
+/* live preview: draw on canvas, keep snapshot to restore */
+let pvTimer = null;
+function schedulePreview() { clearTimeout(pvTimer); pvTimer = setTimeout(preview, 60); }
+async function preview() {
+  if (!current) return;
+  if (!previewSnapshot) previewSnapshot = ctx.getImageData(0, 0, cv.width, cv.height);
+  else ctx.putImageData(previewSnapshot, 0, 0);
+  await render(current, false);
+}
+function endPreview() { if (previewSnapshot) { ctx.putImageData(previewSnapshot, 0, 0); previewSnapshot = null; } }
+async function render(r, eraseOnly) {
+  eraseRect(r, $('smartErase').checked, $('bgColor').value);
+  const t = convertDigits($('newText').value, opts.digits);
+  if (!eraseOnly && t.trim()) await drawText(r, t, opts);
+}
+
+async function commit(eraseOnly) {
+  if (!current) return;
+  const snap = previewSnapshot || ctx.getImageData(0, 0, cv.width, cv.height);
+  ctx.putImageData(snap, 0, 0); previewSnapshot = null;
+  pushHistory(snap);
+  await render(current, eraseOnly);
+  current.done = true; current.newText = eraseOnly ? '' : $('newText').value;
+  // mark overlapping regions in the other level as done too
+  [...words, ...lines].forEach(o => { if (o !== current && overlap(o, current) > .6) o.done = true; });
+  toast(eraseOnly ? 'تم مسح النص' : 'تم الاستبدال ✓');
+  current = null; showPanel(false); renderBoxes();
+}
+$('applyBtn').onclick = () => commit(false);
+$('eraseBtn').onclick = () => commit(true);
+$('newText').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); commit(false); } if (e.key === 'Escape') deselect(); });
+function overlap(a, b) {
+  const ix = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)), iy = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+  const ar = (a.x1 - a.x0) * (a.y1 - a.y0); return ar ? ix * iy / ar : 0;
+}
+
+/* ---------------- history ---------------- */
+function pushHistory(snap) { history.push(snap); if (history.length > 25) history.shift(); future = []; updateUndo(); }
+function updateUndo() { $('undoBtn').disabled = !history.length; $('redoBtn').disabled = !future.length; }
+function undo() { endPreview(); if (!history.length) return; future.push(ctx.getImageData(0, 0, cv.width, cv.height)); ctx.putImageData(history.pop(), 0, 0); updateUndo(); }
+function redo() { endPreview(); if (!future.length) return; history.push(ctx.getImageData(0, 0, cv.width, cv.height)); ctx.putImageData(future.pop(), 0, 0); updateUndo(); }
+$('undoBtn').onclick = undo; $('redoBtn').onclick = redo;
+window.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea,select')) return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
+});
+
+/* ---------------- compare / toggles ---------------- */
+let cmpSnap = null;
+const cmpOn = () => { if (!original || cmpSnap) return; cmpSnap = ctx.getImageData(0, 0, cv.width, cv.height); ctx.putImageData(original, 0, 0); $('compareBtn').classList.add('on'); };
+const cmpOff = () => { if (!cmpSnap) return; ctx.putImageData(cmpSnap, 0, 0); cmpSnap = null; $('compareBtn').classList.remove('on'); };
+const cb = $('compareBtn');
+cb.addEventListener('pointerdown', cmpOn); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => cb.addEventListener(ev, cmpOff));
+$('boxesBtn').onclick = () => {
+  const h = $('stage').classList.toggle('hide-boxes');
+  $('boxesBtn').textContent = h ? '👁️ إظهار المربعات' : '👁️ إخفاء المربعات';
+};
+
+/* ---------------- manual selection ---------------- */
+let manual = false, start = null, drawEl = null, justDrew = false;
+$('modeBtn').onclick = () => {
+  manual = !manual; $('stage').classList.toggle('manual', manual); $('modeBtn').classList.toggle('on', manual);
+  if (manual) toast('ارسم مربعًا حول النص الذي تريد تغييره');
+};
+const toImg = e => { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) * cv.width / b.width, y: (e.clientY - b.top) * cv.height / b.height, b }; };
+cbox.addEventListener('pointerdown', e => {
+  if (!manual) return;
+  e.preventDefault(); cbox.setPointerCapture(e.pointerId);
+  start = toImg(e);
+  drawEl = document.createElement('div'); drawEl.className = 'drawing'; overlay.appendChild(drawEl);
+});
+cbox.addEventListener('pointermove', e => {
+  if (!start) return;
+  const p = toImg(e);
+  const x0 = Math.min(start.x, p.x), y0 = Math.min(start.y, p.y), x1 = Math.max(start.x, p.x), y1 = Math.max(start.y, p.y);
+  Object.assign(drawEl.style, { left: x0 / cv.width * 100 + '%', top: y0 / cv.height * 100 + '%', width: (x1 - x0) / cv.width * 100 + '%', height: (y1 - y0) / cv.height * 100 + '%' });
+});
+cbox.addEventListener('pointerup', async e => {
+  if (!start) return;
+  const p = toImg(e);
+  const r = clampRect({ x0: Math.min(start.x, p.x), y0: Math.min(start.y, p.y), x1: Math.max(start.x, p.x), y1: Math.max(start.y, p.y) });
+  start = null; drawEl.remove(); drawEl = null; justDrew = true;
+  if (r.w < 4 || r.h < 4) return;
+  const region = { x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1, text: '', id: 'm' + Date.now(), done: false, manual: true };
+  manual = false; $('stage').classList.remove('manual'); $('modeBtn').classList.remove('on');
+  select(region);
+  // try to read the text inside the drawn region to prefill
+  if (worker) {
+    try {
+      const src = ocrSource(region);
+      const { data } = await worker.recognize(src.canvas);
+      const t = data.text.trim().replace(/\s+/g, ' ');
+      if (t && current === region) {
+        region.text = t; $('origText').textContent = t;
+        if (!$('newText').value) $('newText').value = t;
+        if (!isArabic(t)) { opts.align = 'left'; setSeg('alignSeg', 'left'); }
+        schedulePreview();
+      }
+    } catch (err) {}
+  }
+});
+overlay.addEventListener('click', e => { if (justDrew) { justDrew = false; return; } if (e.target === overlay && !manual && current) deselect(); });
+
+/* ---------------- download ---------------- */
+$('dlBtn').onclick = () => {
+  endPreview(); cmpOff();
+  const f = $('fmt').value;
+  let src = cv;
+  if (f === 'jpeg') { // flatten transparency onto white
+    src = document.createElement('canvas'); src.width = cv.width; src.height = cv.height;
+    const g = src.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(cv, 0, 0);
+  }
+  src.toBlob(b => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+    a.download = 'edited-image.' + (f === 'jpeg' ? 'jpg' : f); a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  }, 'image/' + f, 0.95);
+};
+
+// warm up OCR engine in the background so first upload is faster
+if (window.Tesseract) setTimeout(() => getWorker().catch(() => {}), 1200);
+})();
+</script>
+</body>
+</html>
