@@ -682,9 +682,18 @@ $('dlBtn').onclick = () => {
     src = document.createElement('canvas'); src.width = cv.width; src.height = cv.height;
     const g = src.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(cv, 0, 0);
   }
-  src.toBlob(b => {
+  const filename = 'edited-image.' + (f === 'jpeg' ? 'jpg' : f);
+  src.toBlob(async b => {
+    // inside claude.ai the viewer's save goes through the downloads capability
+    let dl = null;
+    try { if (window.claude && window.claude.use) dl = await window.claude.use('downloads'); } catch (e) {}
+    if (dl) {
+      try { await dl.save({ filename, data: b }); toast('تم حفظ الصورة ✓'); }
+      catch (err) { if (err && err.code !== 'declined') toast('تعذّر الحفظ هنا'); }
+      return;
+    }
     const a = document.createElement('a'); a.href = URL.createObjectURL(b);
-    a.download = 'edited-image.' + (f === 'jpeg' ? 'jpg' : f); a.click();
+    a.download = filename; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 3000);
   }, 'image/' + f, 0.95);
 };
