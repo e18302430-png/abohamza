@@ -7,7 +7,9 @@
 <meta name="description" content="استبدل النصوص والأرقام داخل الصور مباشرة من المتصفح — بدون رفع الصورة لأي خادم">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234F46E5'/%3E%3Ctext y='70' x='50' font-size='56' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'%3EAa%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&family=Noto+Naskh+Arabic:wght@400;700&family=Amiri:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&family=Almarai:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;700;900&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700;900&family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;700&family=Lalezar&family=Changa:wght@400;700;800&family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Scheherazade+New:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Readex+Pro:wght@400;700&family=Markazi+Text:wght@400;700&family=Rakkas&family=Mirza:wght@400;700&family=Harmattan:wght@400;700&family=Marhey:wght@400;700&family=Baloo+Bhaijaan+2:wght@400;800&family=Katibeh&family=Kufam:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto:wght@400;700;900&family=Montserrat:wght@400;700;900&family=Poppins:wght@400;700;900&family=Open+Sans:wght@400;700&family=Lato:wght@400;700;900&family=Oswald:wght@400;700&family=Bebas+Neue&family=Anton&family=Playfair+Display:wght@400;700;900&family=Merriweather:wght@400;700;900&family=Roboto+Mono:wght@400;700&family=Raleway:wght@400;700;900&family=Barlow:wght@400;700;900&family=Pacifico&family=Dancing+Script:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5F5FA; --surface:#FFFFFF; --surface-2:#EEEEF6; --ink:#15151F; --muted:#62627A;
@@ -128,6 +130,17 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .empty-panel .big{font-size:34px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;transition:.25s;z-index:50;max-width:calc(100% - 32px)}
 .toast.show{transform:translateX(-50%) translateY(0)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 10px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip b{font-family:Inter,sans-serif;font-size:11.5px;color:var(--muted);font-weight:700}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.chip.on b{color:var(--accent)}
+.match-note{font-size:12.5px;color:var(--muted);margin-top:6px}
+.engines{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.eng{font-size:12.5px;border-radius:99px;padding:3px 10px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.eng.ok{color:var(--done);border-color:color-mix(in srgb,var(--done) 45%,transparent)}
+.eng.run{color:var(--accent);border-color:var(--accent)}
+.eng.off{opacity:.6}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0 36px;border-top:1px solid var(--line)}
 kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:0 5px}
 @media (max-width:600px){.hero{padding:34px 0 16px}.drop{padding:30px 16px}.toolbar .btn{padding:7px 10px;font-size:12.5px}.panel{position:static}}
@@ -159,15 +172,16 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
       <input type="file" id="file" accept="image/*" hidden>
     </label>
     <div class="features">
-      <div class="feat"><div class="n">1</div><b>كشف تلقائي للنص</b><p>يتعرّف على الكلمات العربية والإنجليزية والأرقام ويحدّد مكانها في الصورة.</p></div>
-      <div class="feat"><div class="n">2</div><b>مسح ذكي للخلفية</b><p>يعيد بناء الخلفية خلف النص القديم بالتدرّج المحيط بدل مربّع لون ثابت.</p></div>
-      <div class="feat"><div class="n">3</div><b>مطابقة اللون والحجم</b><p>يلتقط لون الخط وحجمه تلقائيًا، وتقدر تعدّل الخط والوزن والمحاذاة.</p></div>
-      <div class="feat"><div class="n">4</div><b>خصوصية كاملة</b><p>كل المعالجة على جهازك — الصورة ما تُرفع لأي خادم.</p></div>
+      <div class="feat"><div class="n">1</div><b>كشف مزدوج للنص</b><p>محرّكان معًا: الذكاء الاصطناعي (Claude) يقرأ الصورة كاملة، ومحرّك محلي بعدّة تمريرات — للعربي والإنجليزي والأرقام بنوعيها.</p></div>
+      <div class="feat"><div class="n">2</div><b>مطابقة الخط الأصلي</b><p>يقارن شكل الحروف الأصلية مع أكثر من 40 خطًا وأوزانها، ويختار الأقرب تلقائيًا مع نسبة التطابق.</p></div>
+      <div class="feat"><div class="n">3</div><b>نفس الحجم والمكان</b><p>يقيس ارتفاع الحروف وخط الأساس بدقة، فيجلس النص الجديد في مكان القديم بالضبط وبنفس اللون.</p></div>
+      <div class="feat"><div class="n">4</div><b>مسح ذكي للخلفية</b><p>يعيد بناء الخلفية خلف النص القديم بالتدرّج المحيط بدل مربّع لون ثابت.</p></div>
     </div>
   </section>
 
   <section id="editor">
     <div class="toolbar">
+      <button class="btn ghost sm" id="aiBtn" title="أعد الكشف بالذكاء الاصطناعي">🧠 كشف ذكي</button>
       <button class="btn ghost sm" id="modeBtn" title="ارسم مربعًا حول أي نص لم يُكتشف">✏️ تحديد يدوي</button>
       <button class="btn ghost sm" id="boxesBtn">👁️ إخفاء المربعات</button>
       <button class="btn ghost sm" id="compareBtn" title="اضغط مطولًا لرؤية الأصل">⇆ قارن بالأصل</button>
@@ -179,6 +193,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
       </select>
       <button class="btn sm" id="dlBtn">⬇ تحميل الصورة</button>
     </div>
+    <div class="engines"><span class="eng off" id="engAI">🧠 الذكاء الاصطناعي</span><span class="eng off" id="engLocal">⚙️ المحرك المحلي</span><span class="eng off" id="engCount"></span></div>
     <div class="status" id="status"><span id="statusText">جاري تجهيز محرّك قراءة النص…</span><div class="bar"><i id="bar"></i></div></div>
 
     <div class="layout">
@@ -204,21 +219,18 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
           <div class="field"><label>النص الأصلي</label><div class="orig" id="origText"></div></div>
           <div class="field"><label>النص الجديد</label><textarea id="newText" placeholder="اكتب النص أو الرقم الجديد…"></textarea></div>
           <div class="field">
-            <label>الخط</label>
-            <select id="font">
-              <option value="Cairo">Cairo</option>
-              <option value="Tajawal">Tajawal</option>
-              <option value="Noto Naskh Arabic">Noto Naskh (نسخ)</option>
-              <option value="Amiri">Amiri (أميري)</option>
-              <option value="Arial">Arial</option>
-              <option value="Roboto">Roboto</option>
-              <option value="Inter">Inter</option>
-              <option value="Times New Roman">Times New Roman</option>
-            </select>
+            <label>الخط الأقرب للأصلي</label>
+            <div class="chips" id="fontMatches"></div>
+            <div class="match-note" id="matchNote"></div>
           </div>
+          <div class="field">
+            <label>الخط</label>
+            <select id="font"></select>
+          </div>
+          <div class="field"><label>الوزن</label><div class="seg" id="weightSeg"><button data-v="400">عادي</button><button data-v="700" class="on">عريض</button><button data-v="900">أسود</button></div></div>
           <div class="row">
-            <div class="field"><label>الحجم (px)</label><input type="number" id="size" min="4" max="1000"></div>
-            <div class="field"><label>الوزن</label><div class="seg" id="weightSeg"><button data-v="400">عادي</button><button data-v="700" class="on">عريض</button></div></div>
+            <div class="field"><label>الحجم (px)</label><input type="number" id="size" min="4" max="1000" step="0.5"></div>
+            <div class="field"><label>تباعد الأحرف</label><input type="number" id="spacing" value="0" step="0.5" min="-20" max="60"></div>
           </div>
           <div class="row">
             <div class="field"><label>لون الخط</label><div class="colorpick"><input type="color" id="color"><code id="colorHex"></code></div></div>
@@ -247,7 +259,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
     </div>
   </section>
 </main>
-<footer class="wrap">كل المعالجة تتم على جهازك — لا يتم رفع صورك. قراءة النص بواسطة Tesseract.js.</footer>
+<footer class="wrap">الكشف الذكي يرسل نسخة من الصورة إلى Claude عبر حسابك ليقرأ النص؛ المحرك المحلي (Tesseract.js) والمسح والكتابة تتم كلها على جهازك.</footer>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
@@ -256,16 +268,102 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d', { willReadFrequently: true });
 const overlay = $('overlay'), cbox = $('cbox');
-let original = null;        // ImageData of the untouched image
+// untouched copy of the image: all analysis (boxes, colour, font, size) reads from it, so earlier edits never pollute later matches
+const origCanvas = document.createElement('canvas'), octx = origCanvas.getContext('2d', { willReadFrequently: true });
+let original = null;
 let history = [], future = [];
 let words = [], lines = [];
 let level = 'word';
-let current = null;         // selected region {x0,y0,x1,y1,text,id}
+let current = null;
 let opts = { weight: '700', align: 'right', digits: 'keep', dx: 0, dy: 0 };
 let worker = null, workerReady = null;
-let previewing = false, previewSnapshot = null;
+let previewSnapshot = null;
+let tessRes = null, aiRes = null;   // raw results of each engine
+let jobId = 0;
 
-/* ---------------- theme ---------------- */
+/* ---------------- font library ---------------- */
+// ar: has Arabic glyphs, la: has Latin glyphs, cat: style family used by the AI hint
+const FONTS = [
+  { f: 'Cairo', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Tajawal', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Almarai', w: [400, 700, 800], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Noto Kufi Arabic', w: [400, 700, 900], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Noto Sans Arabic', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Noto Naskh Arabic', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'IBM Plex Sans Arabic', w: [400, 700], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Readex Pro', w: [400, 700], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Changa', w: [400, 700, 800], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Kufam', w: [400, 700, 900], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Reem Kufi', w: [400, 700], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'El Messiri', w: [400, 700], ar: 1, la: 1, cat: 'display' },
+  { f: 'Lalezar', w: [400], ar: 1, la: 1, cat: 'display' },
+  { f: 'Baloo Bhaijaan 2', w: [400, 800], ar: 1, la: 1, cat: 'display' },
+  { f: 'Marhey', w: [400, 700], ar: 1, la: 1, cat: 'display' },
+  { f: 'Rakkas', w: [400], ar: 1, la: 1, cat: 'display' },
+  { f: 'Katibeh', w: [400], ar: 1, la: 1, cat: 'display' },
+  { f: 'Amiri', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Scheherazade New', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Lateef', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Markazi Text', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Mirza', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Harmattan', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Aref Ruqaa', w: [400, 700], ar: 1, la: 1, cat: 'ruqaa' },
+  { f: 'Inter', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Roboto', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Roboto Condensed', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Open Sans', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Lato', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Montserrat', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Poppins', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Raleway', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Barlow', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Oswald', w: [400, 700], ar: 0, la: 1, cat: 'display' },
+  { f: 'Bebas Neue', w: [400], ar: 0, la: 1, cat: 'display' },
+  { f: 'Anton', w: [400], ar: 0, la: 1, cat: 'display' },
+  { f: 'Playfair Display', w: [400, 700, 900], ar: 0, la: 1, cat: 'serif' },
+  { f: 'Merriweather', w: [400, 700, 900], ar: 0, la: 1, cat: 'serif' },
+  { f: 'Roboto Mono', w: [400, 700], ar: 0, la: 1, cat: 'mono' },
+  { f: 'Pacifico', w: [400], ar: 0, la: 1, cat: 'handwritten' },
+  { f: 'Dancing Script', w: [400, 700], ar: 0, la: 1, cat: 'handwritten' },
+  { f: 'Arial', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Tahoma', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Segoe UI', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Times New Roman', w: [400, 700], ar: 1, la: 1, cat: 'serif', sys: 1 },
+  { f: 'Courier New', w: [400, 700], ar: 0, la: 1, cat: 'mono', sys: 1 },
+];
+const fontInfo = name => FONTS.find(x => x.f === name);
+(function fillFontSelect() {
+  const sel = $('font');
+  const groups = [['خطوط عربية', FONTS.filter(x => x.ar && !x.sys)], ['خطوط إنجليزية', FONTS.filter(x => !x.ar && !x.sys)], ['خطوط النظام', FONTS.filter(x => x.sys)]];
+  groups.forEach(([label, list]) => {
+    const g = document.createElement('optgroup'); g.label = label;
+    list.forEach(x => { const o = document.createElement('option'); o.value = x.f; o.textContent = x.f; g.appendChild(o); });
+    sel.appendChild(g);
+  });
+})();
+
+const fontLoads = {};
+function ensureFont(f, w) {
+  const key = f + w;
+  if (!fontLoads[key]) fontLoads[key] = (async () => {
+    const info = fontInfo(f);
+    if (!(info && info.sys)) { try { await document.fonts.load(`${w} 48px "${f}"`, 'Abc 123 أبجد ١٢٣'); } catch (e) {} }
+    return fontAvailable(f, w);
+  })();
+  return fontLoads[key];
+}
+// a font is usable only if it renders differently from both generic fallbacks
+const probeCtx = document.createElement('canvas').getContext('2d');
+function fontAvailable(f, w) {
+  const probe = 'Hamburgefonts 0123 محمد السعر ٤٥';
+  return ['monospace', 'serif'].some(fb => {
+    probeCtx.font = `${w} 40px ${fb}`; const a = probeCtx.measureText(probe).width;
+    probeCtx.font = `${w} 40px "${f}", ${fb}`; const b = probeCtx.measureText(probe).width;
+    return Math.abs(a - b) > 0.5;
+  });
+}
+
+/* ---------------- theme & small helpers ---------------- */
 try { const t = localStorage.getItem('bt-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 $('themeBtn').onclick = () => {
   const root = document.documentElement;
@@ -273,18 +371,52 @@ $('themeBtn').onclick = () => {
   root.dataset.theme = dark ? 'light' : 'dark';
   try { localStorage.setItem('bt-theme', root.dataset.theme); } catch (e) {}
 };
-
-const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400); };
+const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); };
 const setStatus = (txt, p) => { $('status').classList.remove('hide'); $('statusText').textContent = txt; $('bar').style.width = (p == null ? 0 : p * 100) + '%'; };
 const hideStatus = () => $('status').classList.add('hide');
+const setEng = (id, state, label) => { const e = $(id); e.className = 'eng ' + state; if (label) e.textContent = label; };
+const isArabic = s => /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/.test(s || '');
+const hasContent = s => /[\p{L}\p{N}]/u.test(s || '');
+const hex = (r, g, b) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
 
-/* ---------------- OCR worker ---------------- */
+function iou(a, b) {
+  const ix = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)), iy = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+  const i = ix * iy, u = (a.x1 - a.x0) * (a.y1 - a.y0) + (b.x1 - b.x0) * (b.y1 - b.y0) - i;
+  return u > 0 ? i / u : 0;
+}
+function overlap(a, b) { // fraction of a covered by b
+  const ix = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)), iy = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+  const ar = (a.x1 - a.x0) * (a.y1 - a.y0); return ar ? ix * iy / ar : 0;
+}
+function clampRect(r, pad = 0) {
+  const x0 = Math.max(0, Math.floor(r.x0 - pad)), y0 = Math.max(0, Math.floor(r.y0 - pad));
+  const x1 = Math.min(cv.width, Math.ceil(r.x1 + pad)), y1 = Math.min(cv.height, Math.ceil(r.y1 + pad));
+  return { x0, y0, x1, y1, w: Math.max(0, x1 - x0), h: Math.max(0, y1 - y0) };
+}
+
+/* ---------------- Claude (AI) access ---------------- */
+let samplePromise = null;
+function getSample() {
+  if (!samplePromise) samplePromise = (async () => {
+    try {
+      if (!(window.claude && window.claude.use)) return null;
+      const s = await window.claude.use('sample');
+      if (!s) return null;
+      const lim = await s.limits().catch(() => null);
+      return lim && lim.images ? s : null;
+    } catch (e) { return null; }
+  })();
+  return samplePromise;
+}
+
+/* ---------------- local OCR worker ---------------- */
 function getWorker() {
   if (!workerReady) {
+    if (!window.Tesseract) return (workerReady = Promise.reject(new Error('no tesseract')));
     workerReady = Tesseract.createWorker('ara+eng', 1, {
       logger: m => {
-        if (m.status === 'recognizing text') setStatus('جاري قراءة النص من الصورة…', m.progress);
-        else if (/load|initializ/.test(m.status)) setStatus('جاري تحميل محرّك قراءة النص (أول مرة فقط)…', m.progress);
+        if (m.status === 'recognizing text') setEng('engLocal', 'run', `⚙️ المحرك المحلي ${Math.round(m.progress * 100)}%`);
+        else if (/load|initializ/.test(m.status)) setEng('engLocal', 'run', '⚙️ تحميل المحرك المحلي…');
       }
     }).then(async w => { worker = w; await w.setParameters({ preserve_interword_spaces: '1' }); return w; });
   }
@@ -301,7 +433,7 @@ window.addEventListener('paste', e => {
   const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
   if (item) loadFile(item.getAsFile());
 });
-$('newBtn').onclick = () => { $('editor').classList.remove('show'); $('landing').style.display = ''; $('newBtn').style.display = 'none'; fileIn.value = ''; };
+$('newBtn').onclick = () => { $('editor').classList.remove('show'); $('landing').style.display = ''; $('newBtn').style.display = 'none'; fileIn.value = ''; jobId++; };
 
 function loadFile(file) {
   if (!file.type.startsWith('image/')) return toast('الملف ليس صورة');
@@ -312,54 +444,211 @@ function loadFile(file) {
   img.src = url;
 }
 
-async function startEditor(img) {
+function startEditor(img) {
   const maxSide = 4000;
   const s = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
   cv.width = Math.round(img.naturalWidth * s); cv.height = Math.round(img.naturalHeight * s);
   ctx.drawImage(img, 0, 0, cv.width, cv.height);
   original = ctx.getImageData(0, 0, cv.width, cv.height);
-  history = []; future = []; words = []; lines = []; current = null;
+  origCanvas.width = cv.width; origCanvas.height = cv.height; octx.putImageData(original, 0, 0);
+  history = []; future = []; words = []; lines = []; current = null; tessRes = null; aiRes = null; previewSnapshot = null;
   updateUndo(); renderBoxes(); showPanel(false);
   $('landing').style.display = 'none'; $('editor').classList.add('show'); $('newBtn').style.display = '';
   window.scrollTo({ top: 0 });
-  await runOCR();
+  detectAll();
 }
 
-/* Upscale small images for better OCR accuracy, then map boxes back */
-function ocrSource(region) {
+/* ---------------- detection orchestration ---------------- */
+async function detectAll() {
+  const my = ++jobId;
+  setStatus('جاري كشف النصوص بالمحرّكين معًا…', 0.05);
+  setEng('engCount', 'off', '');
+  const tess = runLocal(my);
+  const ai = runAI(my, false);
+  await Promise.allSettled([tess, ai]);
+  if (my !== jobId) return;
+  hideStatus();
+  if (!words.length && !lines.length) {
+    setStatus('لم يُكتشف نص تلقائيًا — استخدم «تحديد يدوي» وارسم مربعًا حول النص.', 0);
+  } else toast(`تم العثور على ${words.length} كلمة — اضغط على أي واحدة لتعديلها`);
+  preloadFonts();
+}
+
+/* Local engine: two Tesseract passes (auto layout on color + sparse text on contrast-normalized gray) */
+function ocrSource(region, mode) {
   const r = region || { x0: 0, y0: 0, x1: cv.width, y1: cv.height };
   const w = r.x1 - r.x0, h = r.y1 - r.y0;
-  const scale = Math.max(1, Math.min(3, 1600 / Math.max(w, h)));
+  const scale = Math.max(1, Math.min(3, 1800 / Math.max(w, h)));
   const c = document.createElement('canvas');
   c.width = Math.round(w * scale); c.height = Math.round(h * scale);
-  const g = c.getContext('2d');
+  const g = c.getContext('2d', { willReadFrequently: true });
   g.imageSmoothingQuality = 'high';
   g.drawImage(cv, r.x0, r.y0, w, h, 0, 0, c.width, c.height);
+  if (mode === 'gray') {
+    const im = g.getImageData(0, 0, c.width, c.height), d = im.data;
+    let lo = 255, hi = 0; const L = new Uint8ClampedArray(d.length / 4);
+    for (let i = 0, j = 0; i < d.length; i += 4, j++) { const v = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; L[j] = v; }
+    const hist = new Array(256).fill(0); L.forEach(v => hist[v]++);
+    let acc = 0; const n = L.length;
+    for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc > n * 0.01 && lo === 255) lo = v; if (acc > n * 0.99) { hi = v; break; } }
+    let mean = 0; L.forEach(v => mean += v); mean /= n;
+    const inv = mean < 110; // light text on dark background → invert
+    const k = 255 / Math.max(1, hi - lo);
+    for (let i = 0, j = 0; i < d.length; i += 4, j++) { let v = (L[j] - lo) * k; if (inv) v = 255 - v; d[i] = d[i + 1] = d[i + 2] = v; }
+    g.putImageData(im, 0, 0);
+  }
   return { canvas: c, scale, ox: r.x0, oy: r.y0 };
 }
+const mapBox = (b, src) => ({ x0: b.x0 / src.scale + src.ox, y0: b.y0 / src.scale + src.oy, x1: b.x1 / src.scale + src.ox, y1: b.y1 / src.scale + src.oy });
 
-function mapBox(b, src) {
-  return { x0: b.x0 / src.scale + src.ox, y0: b.y0 / src.scale + src.oy, x1: b.x1 / src.scale + src.ox, y1: b.y1 / src.scale + src.oy };
+async function runLocal(my) {
+  try {
+    setEng('engLocal', 'run', '⚙️ تحميل المحرك المحلي…');
+    const w = await getWorker();
+    const out = { words: [], lines: [] };
+    const passes = [{ mode: 'color', psm: '3' }, { mode: 'gray', psm: '11' }];
+    for (let i = 0; i < passes.length; i++) {
+      if (my !== jobId) return;
+      const src = ocrSource(null, passes[i].mode);
+      await w.setParameters({ tessedit_pageseg_mode: passes[i].psm });
+      const { data } = await w.recognize(src.canvas);
+      (data.words || []).forEach(x => { if (hasContent(x.text) && x.confidence > 30) out.words.push({ ...mapBox(x.bbox, src), text: x.text.trim(), conf: x.confidence }); });
+      (data.lines || []).forEach(x => { if (hasContent(x.text) && x.confidence > 30) out.lines.push({ ...mapBox(x.bbox, src), text: x.text.trim().replace(/\s+/g, ' '), conf: x.confidence }); });
+    }
+    await w.setParameters({ tessedit_pageseg_mode: '3' });
+    if (my !== jobId) return;
+    tessRes = { words: nms(out.words), lines: nms(out.lines) };
+    setEng('engLocal', 'ok', `⚙️ المحرك المحلي ✓ ${tessRes.words.length}`);
+    rebuild();
+  } catch (err) {
+    console.warn('local OCR unavailable', err);
+    setEng('engLocal', 'off', '⚙️ المحرك المحلي غير متاح');
+  }
+}
+// keep the most confident of overlapping detections
+function nms(list) {
+  const keep = [];
+  list.sort((a, b) => b.conf - a.conf).forEach(x => { if (!keep.some(k => iou(k, x) > 0.4 || overlap(x, k) > 0.8)) keep.push(x); });
+  return keep;
 }
 
-async function runOCR() {
+/* AI engine: Claude reads the whole image, returns lines → words with boxes, plus a font guess */
+async function imageBlob(maxSide, region) {
+  const r = region || { x0: 0, y0: 0, x1: cv.width, y1: cv.height };
+  const w = r.x1 - r.x0, h = r.y1 - r.y0;
+  const s = Math.min(1, maxSide / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+  c.getContext('2d').drawImage(cv, r.x0, r.y0, w, h, 0, 0, c.width, c.height);
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
+const FONT_NAMES = FONTS.map(x => x.f).join(', ');
+function aiPrompt() {
+  return `You are a world-class OCR and typography engine. The attached image is ${cv.width}x${cv.height} pixels.
+Find EVERY piece of visible text: Arabic, English, and all numbers (Western 0-9 and Arabic-Indic ٠-٩), prices, dates, phone numbers, percentages, currency symbols and units attached to them. Include small, faint, rotated-looking and stylised text.
+Rules:
+- Transcribe EXACTLY as written. Do not translate, correct spelling, or normalise letters (keep ة/ه, ى/ي, أ/إ/ا, diacritics if present). Keep each digit in the same digit system as shown.
+- Group text into lines: a line is a run of text on the same baseline with the same font, size and colour. Split a row into separate lines if the style or colour changes or there is a large gap.
+- For every line list its words in reading order (Arabic right-to-left). A number with its symbol (e.g. "$25", "٢٥٪") is one word.
+- Coordinates are integers on a 0-1000 scale: x relative to image width, y relative to image height. box = [left, top, right, bottom], tight around the visible glyphs.
+- font: the visually closest family from this list: ${FONT_NAMES}. category: one of naskh, kufi, ruqaa, thuluth, diwani, sans, serif, display, handwritten, mono. weight: 400, 700 or 900.
+Reply with only JSON in this shape:
+{"lines":[{"text":"السعر 250 ريال","box":[520,300,930,380],"font":"Cairo","category":"sans","weight":700,"words":[{"text":"السعر","box":[780,300,930,380]},{"text":"250","box":[650,305,760,378]},{"text":"ريال","box":[520,300,630,380]}]}]}
+If there is no text, reply {"lines":[]}.`;
+}
+async function runAI(my, refresh) {
+  const sample = await getSample();
+  if (!sample) { setEng('engAI', 'off', '🧠 الذكاء الاصطناعي متاح داخل Claude فقط'); $('aiBtn').style.display = 'none'; return; }
+  $('aiBtn').style.display = '';
+  setEng('engAI', 'run', '🧠 الذكاء الاصطناعي يقرأ الصورة…');
   try {
-    setStatus('جاري تحميل محرّك قراءة النص (أول مرة فقط)…', 0);
-    const w = await getWorker();
-    const src = ocrSource();
-    const { data } = await w.recognize(src.canvas);
-    let id = 0;
-    words = (data.words || []).filter(x => x.text.trim() && x.confidence > 25)
-      .map(x => ({ ...mapBox(x.bbox, src), text: x.text.trim(), id: 'w' + id++, done: false }));
-    lines = (data.lines || []).filter(x => x.text.trim() && x.confidence > 20)
-      .map(x => ({ ...mapBox(x.bbox, src), text: x.text.trim().replace(/\s+/g, ' '), id: 'l' + id++, done: false }));
-    hideStatus();
-    renderBoxes();
-    toast(words.length ? `تم العثور على ${words.length} كلمة — اضغط على أي واحدة لتعديلها` : 'لم يُعثر على نص — استخدم التحديد اليدوي');
-  } catch (err) {
-    console.error(err);
-    setStatus('تعذّر تشغيل قراءة النص تلقائيًا — استخدم «تحديد يدوي» وارسم مربعًا حول النص.', 0);
+    const blob = await imageBlob(1568);
+    const opt = { images: blob, modelTier: 'default' };
+    if (refresh) opt.cache = { gcTime: 300000, refresh: true };
+    const data = await sample.json(aiPrompt(), opt);
+    if (my !== jobId) return;
+    const toPx = b => Array.isArray(b) && b.length === 4 ? { x0: b[0] / 1000 * cv.width, y0: b[1] / 1000 * cv.height, x1: b[2] / 1000 * cv.width, y1: b[3] / 1000 * cv.height } : null;
+    const out = { words: [], lines: [] };
+    (data && Array.isArray(data.lines) ? data.lines : []).forEach(L => {
+      const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
+      const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
+      const lr = refineBox(lb);
+      out.lines.push({ ...lr, text: String(L.text).trim(), hint, conf: 90 });
+      (Array.isArray(L.words) ? L.words : []).forEach(W => {
+        const wb = toPx(W.box); if (!wb || !hasContent(W.text)) return;
+        out.words.push({ ...refineBox(wb), text: String(W.text).trim(), hint, conf: 90 });
+      });
+    });
+    aiRes = out;
+    setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${out.words.length}`);
+    rebuild();
+  } catch (e) {
+    const code = e && e.code;
+    const msg = { not_granted: 'لم يُسمح باستخدام Claude', rate_limited: 'الحد مؤقتًا — حاول لاحقًا', sampling_disabled: 'غير متاح لحسابك', invalid_json: 'رد غير مفهوم — جرّب «كشف ذكي»' }[code] || 'تعذّر الكشف الذكي';
+    setEng('engAI', 'off', '🧠 ' + msg);
+    if (code === 'not_granted' || code === 'sampling_disabled') $('aiBtn').style.display = 'none';
   }
+}
+$('aiBtn').onclick = async () => {
+  endPreview();
+  const my = ++jobId;
+  setStatus('الذكاء الاصطناعي يعيد قراءة الصورة…', 0.3);
+  await runAI(my, true);
+  if (my === jobId) hideStatus();
+};
+
+/* Snap a rough box to the actual glyph pixels around it */
+function refineBox(r) {
+  const h = r.y1 - r.y0, w = r.x1 - r.x0;
+  if (h < 2 || w < 2) return r;
+  const padY = h * 0.35, padX = Math.min(w * 0.15, h * 0.6);
+  const R = clampRect({ x0: r.x0 - padX, y0: r.y0 - padY, x1: r.x1 + padX, y1: r.y1 + padY });
+  if (R.w < 3 || R.h < 3) return r;
+  const d = octx.getImageData(R.x0, R.y0, R.w, R.h).data;
+  const { bg, thr, dist } = inkStats(d, R.w, R.h);
+  if (thr <= 0) return r;
+  const ink = (x, y) => dist[y * R.w + x] > thr;
+  const cx0 = Math.max(0, Math.round(r.x0 - R.x0)), cx1 = Math.min(R.w - 1, Math.round(r.x1 - R.x0));
+  const cy0 = Math.max(0, Math.round(r.y0 - R.y0)), cy1 = Math.min(R.h - 1, Math.round(r.y1 - R.y0));
+  const colInk = x => { for (let y = cy0; y <= cy1; y++) if (ink(x, y)) return true; return false; };
+  const rowInk = (y, a, b) => { for (let x = a; x <= b; x++) if (ink(x, y)) return true; return false; };
+  let x0 = cx0, x1 = cx1;
+  if (colInk(x0)) { while (x0 > 0 && colInk(x0 - 1)) x0--; } else { while (x0 < x1 && !colInk(x0)) x0++; }
+  if (colInk(x1)) { while (x1 < R.w - 1 && colInk(x1 + 1)) x1++; } else { while (x1 > x0 && !colInk(x1)) x1--; }
+  let y0 = cy0, y1 = cy1;
+  if (rowInk(y0, x0, x1)) { while (y0 > 0 && rowInk(y0 - 1, x0, x1)) y0--; } else { while (y0 < y1 && !rowInk(y0, x0, x1)) y0++; }
+  if (rowInk(y1, x0, x1)) { while (y1 < R.h - 1 && rowInk(y1 + 1, x0, x1)) y1++; } else { while (y1 > y0 && !rowInk(y1, x0, x1)) y1--; }
+  if (x1 - x0 < 2 || y1 - y0 < 2) return r;
+  return { x0: R.x0 + x0 - 1, y0: R.y0 + y0 - 1, x1: R.x0 + x1 + 2, y1: R.y0 + y1 + 2 };
+}
+
+/* Merge both engines: AI text is trusted for content, the local engine's boxes for precision */
+function merge(aiList, tList) {
+  if (!aiList) return (tList || []).map(x => ({ ...x }));
+  if (!tList) return aiList.map(x => ({ ...x }));
+  const used = new Set();
+  const out = aiList.map(a => {
+    let best = -1, bi = 0;
+    tList.forEach((t, i) => { const v = iou(a, t); if (v > bi) { bi = v; best = i; } });
+    if (best >= 0 && bi > 0.3) { used.add(best); const t = tList[best]; return { ...a, x0: t.x0, y0: t.y0, x1: t.x1, y1: t.y1 }; }
+    return { ...a };
+  });
+  tList.forEach((t, i) => { if (!used.has(i) && t.conf >= 75 && !out.some(o => overlap(t, o) > 0.3)) out.push({ ...t }); });
+  return out;
+}
+function rebuild() {
+  const prevDone = [...words, ...lines].filter(r => r.done);
+  let id = 0;
+  const tag = (list, p) => list.map(r => ({ ...r, id: p + id++, done: prevDone.some(d => overlap(r, d) > 0.6) }));
+  words = tag(merge(aiRes && aiRes.words, tessRes && tessRes.words), 'w');
+  lines = tag(merge(aiRes && aiRes.lines, tessRes && tessRes.lines), 'l');
+  if (current && !current.manual) { current = null; endPreview(); showPanel(false); }
+  setEng('engCount', 'ok', `${words.length} كلمة · ${lines.length} سطر`);
+  renderBoxes();
+}
+let preloaded = false;
+function preloadFonts() {
+  if (preloaded) return; preloaded = true;
+  FONTS.filter(x => !x.sys).forEach(x => x.w.forEach(w => ensureFont(x.f, w)));
 }
 
 /* ---------------- overlay boxes ---------------- */
@@ -379,14 +668,14 @@ function renderBoxes() {
   renderList();
 }
 function renderList() {
-  const list = $('list');
+  const list = $('list'); list.innerHTML = '';
   const rs = regions();
-  list.innerHTML = rs.length ? '' : '';
   rs.forEach(r => {
     const it = document.createElement('div');
     it.className = 'it' + (r.done ? ' done' : '');
-    it.innerHTML = `<span></span><span>${r.done ? '✓' : ''}</span>`;
+    it.innerHTML = '<span></span><span></span>';
     it.firstChild.textContent = r.text;
+    it.lastChild.textContent = r.done ? '✓' : '';
     it.onclick = () => select(r);
     list.appendChild(it);
   });
@@ -398,101 +687,178 @@ $('levelSeg').onclick = e => {
   renderBoxes();
 };
 
-/* ---------------- color analysis ---------------- */
-const isArabic = s => /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/.test(s);
-const hex = (r, g, b) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
-const unhex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
-
-function clampRect(r, pad = 0) {
-  const x0 = Math.max(0, Math.floor(r.x0 - pad)), y0 = Math.max(0, Math.floor(r.y0 - pad));
-  const x1 = Math.min(cv.width, Math.ceil(r.x1 + pad)), y1 = Math.min(cv.height, Math.ceil(r.y1 + pad));
-  return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
+/* ---------------- pixel analysis ---------------- */
+// background = median of the region border; ink = pixels whose distance from bg passes an Otsu threshold
+function inkStats(d, w, h) {
+  const idx = [];
+  for (let x = 0; x < w; x++) { idx.push(x, (h - 1) * w + x); }
+  for (let y = 0; y < h; y++) { idx.push(y * w, y * w + w - 1); }
+  const med = ch => { const a = idx.map(i => d[i * 4 + ch]).sort((p, q) => p - q); return a[a.length >> 1] || 0; };
+  const bg = [med(0), med(1), med(2)];
+  const n = w * h, dist = new Float32Array(n);
+  let max = 0;
+  for (let i = 0; i < n; i++) {
+    const k = i * 4, v = Math.sqrt((d[k] - bg[0]) ** 2 + (d[k + 1] - bg[1]) ** 2 + (d[k + 2] - bg[2]) ** 2);
+    dist[i] = v; if (v > max) max = v;
+  }
+  if (max < 18) return { bg, thr: 0, dist, max };
+  // Otsu on distance histogram
+  const bins = 64, hist = new Array(bins).fill(0);
+  for (let i = 0; i < n; i++) hist[Math.min(bins - 1, Math.floor(dist[i] / max * bins))]++;
+  let sum = 0; for (let i = 0; i < bins; i++) sum += i * hist[i];
+  let sumB = 0, wB = 0, best = 0, thrBin = bins / 2;
+  for (let i = 0; i < bins; i++) {
+    wB += hist[i]; if (!wB) continue; const wF = n - wB; if (!wF) break;
+    sumB += i * hist[i]; const mB = sumB / wB, mF = (sum - sumB) / wF;
+    const between = wB * wF * (mB - mF) ** 2; if (between > best) { best = between; thrBin = i; }
+  }
+  const thr = Math.max((thrBin + 0.5) / bins * max, 22);
+  return { bg, thr, dist, max };
 }
 
 function analyze(r) {
-  const R = clampRect(r, 3);
-  const d = ctx.getImageData(R.x0, R.y0, R.w, R.h).data;
-  const border = [];
-  for (let x = 0; x < R.w; x++) for (const y of [0, 1, R.h - 2, R.h - 1]) if (y >= 0 && y < R.h) border.push((y * R.w + x) * 4);
-  for (let y = 0; y < R.h; y++) for (const x of [0, 1, R.w - 2, R.w - 1]) if (x >= 0 && x < R.w) border.push((y * R.w + x) * 4);
-  const med = ch => { const a = border.map(i => d[i + ch]).sort((p, q) => p - q); return a[a.length >> 1] || 0; };
-  const bg = [med(0), med(1), med(2)];
-  // text color: average of the 15% pixels most distant from background
-  const dist = [];
-  for (let i = 0; i < d.length; i += 4) {
-    const dd = (d[i] - bg[0]) ** 2 + (d[i + 1] - bg[1]) ** 2 + (d[i + 2] - bg[2]) ** 2;
-    dist.push([dd, i]);
+  const R = clampRect(r, 2);
+  const d = octx.getImageData(R.x0, R.y0, R.w, R.h).data;
+  const { bg, thr, dist } = inkStats(d, R.w, R.h);
+  let x0 = R.w, y0 = R.h, x1 = -1, y1 = -1;
+  const inkPix = [];
+  if (thr > 0) for (let y = 0; y < R.h; y++) for (let x = 0; x < R.w; x++) {
+    const i = y * R.w + x;
+    if (dist[i] > thr) { inkPix.push(i); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   }
-  dist.sort((a, b) => b[0] - a[0]);
-  const top = dist.slice(0, Math.max(1, Math.floor(dist.length * 0.12)));
-  let s = [0, 0, 0];
-  top.forEach(([, i]) => { s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; });
-  const fg = s.map(v => v / top.length);
-  // estimate ink height (rows that contain text pixels) to better guess font size
-  const thr = top[top.length - 1][0] * 0.5;
-  let minY = R.h, maxY = 0;
-  for (let y = 0; y < R.h; y++) for (let x = 0; x < R.w; x++) {
-    const i = (y * R.w + x) * 4;
-    const dd = (d[i] - bg[0]) ** 2 + (d[i + 1] - bg[1]) ** 2 + (d[i + 2] - bg[2]) ** 2;
-    if (dd > thr) { if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  // text colour: core of the strokes (most distant 40% of ink pixels), not the anti-aliased edges
+  let fg = [0, 0, 0];
+  if (inkPix.length) {
+    const core = inkPix.sort((a, b) => dist[b] - dist[a]).slice(0, Math.max(1, Math.floor(inkPix.length * 0.4)));
+    core.forEach(i => { fg[0] += d[i * 4]; fg[1] += d[i * 4 + 1]; fg[2] += d[i * 4 + 2]; });
+    fg = fg.map(v => v / core.length);
   }
-  const inkH = maxY > minY ? maxY - minY + 1 : r.y1 - r.y0;
-  return { bg: hex(...bg), fg: hex(...fg), inkH };
+  let mask = null, ink = null;
+  if (x1 > x0 && y1 > y0) {
+    ink = { x0: R.x0 + x0, y0: R.y0 + y0, x1: R.x0 + x1 + 1, y1: R.y0 + y1 + 1 };
+    const mw = x1 - x0 + 1, mh = y1 - y0 + 1, m = new Float32Array(mw * mh);
+    for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
+      const v = dist[(y + y0) * R.w + (x + x0)];
+      m[y * mw + x] = Math.max(0, Math.min(1, (v - thr * 0.5) / (thr)));
+    }
+    mask = { w: mw, h: mh, data: m };
+  }
+  return { bg: hex(...bg), fg: hex(...fg), ink, mask };
+}
+
+/* ---------------- font matching ---------------- */
+const MW = 120, MH = 36;
+function resample(mask) {
+  const out = new Float32Array(MW * MH);
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+    const sx0 = x * mask.w / MW, sx1 = (x + 1) * mask.w / MW, sy0 = y * mask.h / MH, sy1 = (y + 1) * mask.h / MH;
+    let s = 0, c = 0;
+    for (let yy = Math.floor(sy0); yy < Math.max(Math.floor(sy0) + 1, Math.ceil(sy1)); yy++)
+      for (let xx = Math.floor(sx0); xx < Math.max(Math.floor(sx0) + 1, Math.ceil(sx1)); xx++) { s += mask.data[Math.min(mask.h - 1, yy) * mask.w + Math.min(mask.w - 1, xx)]; c++; }
+    out[y * MW + x] = s / c;
+  }
+  return out;
+}
+const rCanvas = document.createElement('canvas'), rCtx = rCanvas.getContext('2d', { willReadFrequently: true });
+function textMetrics(text, font, weight, size, spacing) {
+  rCtx.font = `${weight} ${size}px "${font}"`;
+  try { rCtx.letterSpacing = (spacing || 0) + 'px'; } catch (e) {}
+  rCtx.direction = isArabic(text) ? 'rtl' : 'ltr'; rCtx.textAlign = 'left'; rCtx.textBaseline = 'alphabetic';
+  return rCtx.measureText(text);
+}
+function renderMask(text, font, weight) {
+  const size = 64, m = textMetrics(text, font, weight, size);
+  const W = Math.ceil(m.actualBoundingBoxLeft + m.actualBoundingBoxRight) + 6, H = Math.ceil(m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) + 6;
+  if (W < 4 || H < 4 || W > 6000) return null;
+  rCanvas.width = W; rCanvas.height = H;
+  rCtx.fillStyle = '#fff'; rCtx.fillRect(0, 0, W, H);
+  rCtx.font = `${weight} ${size}px "${font}"`; rCtx.direction = isArabic(text) ? 'rtl' : 'ltr'; rCtx.textAlign = 'left'; rCtx.textBaseline = 'alphabetic';
+  rCtx.fillStyle = '#000'; rCtx.fillText(text, 3 + m.actualBoundingBoxLeft, 3 + m.actualBoundingBoxAscent);
+  const d = rCtx.getImageData(0, 0, W, H).data;
+  let x0 = W, y0 = H, x1 = -1, y1 = -1;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4] < 128) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 <= x0 || y1 <= y0) return null;
+  const mw = x1 - x0 + 1, mh = y1 - y0 + 1, md = new Float32Array(mw * mh);
+  for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) md[y * mw + x] = 1 - d[((y + y0) * W + (x + x0)) * 4] / 255;
+  return { w: mw, h: mh, data: md };
+}
+function score(a, b, aspectA, aspectB) {
+  let mn = 0, mx = 0;
+  for (let i = 0; i < a.length; i++) { mn += Math.min(a[i], b[i]); mx += Math.max(a[i], b[i]); }
+  const soft = mx ? mn / mx : 0;
+  return soft * Math.exp(-Math.abs(Math.log(aspectA / aspectB)) * 1.4);
+}
+async function matchFont(r, a) {
+  if (!a.mask || !r.text || a.mask.w < 4 || a.mask.h < 4) return [];
+  const text = r.text;
+  const target = resample(a.mask), aspT = a.mask.w / a.mask.h;
+  const ar = isArabic(text);
+  const cands = FONTS.filter(x => ar ? x.ar : x.la);
+  const results = [];
+  for (const fnt of cands) for (const w of fnt.w) {
+    if (!(await ensureFont(fnt.f, w))) continue;
+    const m = renderMask(text, fnt.f, w); if (!m) continue;
+    let s = score(target, resample(m), aspT, m.w / m.h);
+    if (r.hint) { if (r.hint.font === fnt.f) s += 0.04; if (r.hint.weight === w) s += 0.01; if (r.hint.cat && r.hint.cat === fnt.cat) s += 0.01; }
+    results.push({ font: fnt.f, weight: w, score: s });
+  }
+  results.sort((p, q) => q.score - p.score);
+  // de-duplicate: best weight per family for the chip list
+  const seen = new Set(), top = [];
+  for (const x of results) { if (seen.has(x.font)) continue; seen.add(x.font); top.push(x); if (top.length === 4) break; }
+  return top;
+}
+
+/* Fit font size + baseline so the ORIGINAL text in this font covers the original ink box */
+function geometry(r, a, font, weight) {
+  if (!a.ink) return null;
+  const inkW = a.ink.x1 - a.ink.x0, inkH = a.ink.y1 - a.ink.y0;
+  if (r.text) {
+    const m = textMetrics(r.text, font, weight, 100);
+    const mh = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent, mw = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+    if (mh > 0 && mw > 0) {
+      const sH = inkH / mh, sW = inkW / mw;
+      const ratio = sW / sH;
+      const s = (ratio > 0.7 && ratio < 1.4 && [...r.text].length >= 3) ? Math.sqrt(sH * sW) : sH;
+      return { size: +(100 * s).toFixed(1), baseline: a.ink.y0 + m.actualBoundingBoxAscent * s, ink: a.ink };
+    }
+  }
+  return { size: Math.round(inkH * (isArabic(r.text) ? 1.05 : 1.35)), baseline: null, ink: a.ink };
 }
 
 /* ---------------- erase (background reconstruction) ---------------- */
 function eraseRect(r, smart, bgHex) {
-  const pad = 2;
-  const R = clampRect(r, pad);
+  const R = clampRect(r, 2);
   if (R.w < 1 || R.h < 1) return;
   if (!smart) { ctx.fillStyle = bgHex; ctx.fillRect(R.x0, R.y0, R.w, R.h); return; }
   const E = clampRect({ x0: R.x0 - 3, y0: R.y0 - 3, x1: R.x1 + 3, y1: R.y1 + 3 });
   const img = ctx.getImageData(E.x0, E.y0, E.w, E.h), d = img.data;
   const ix = R.x0 - E.x0, iy = R.y0 - E.y0, iw = R.w, ih = R.h;
   const px = (x, y) => { x = Math.max(0, Math.min(E.w - 1, x)); y = Math.max(0, Math.min(E.h - 1, y)); return (y * E.w + x) * 4; };
-  // sample an edge with a small median across 3 pixels outward to ignore anti-aliasing
   const sample = (x, y, dx, dy) => {
     const out = [0, 0, 0];
-    for (let c = 0; c < 3; c++) {
-      const v = [1, 2, 3].map(k => d[px(x + dx * k, y + dy * k) + c]).sort((a, b) => a - b);
-      out[c] = v[1];
-    }
+    for (let c = 0; c < 3; c++) { const v = [1, 2, 3].map(k => d[px(x + dx * k, y + dy * k) + c]).sort((a, b) => a - b); out[c] = v[1]; }
     return out;
   };
   const L = [], Rt = [], T = [], B = [];
   for (let y = 0; y < ih; y++) { L[y] = sample(ix, iy + y, -1, 0); Rt[y] = sample(ix + iw - 1, iy + y, 1, 0); }
   for (let x = 0; x < iw; x++) { T[x] = sample(ix + x, iy, 0, -1); B[x] = sample(ix + x, iy + ih - 1, 0, 1); }
   const atLeft = R.x0 === 0, atRight = R.x1 === cv.width, atTop = R.y0 === 0, atBottom = R.y1 === cv.height;
-  for (let y = 0; y < ih; y++) {
-    const ty = (y + 1) / (ih + 1);
-    for (let x = 0; x < iw; x++) {
-      const tx = (x + 1) / (iw + 1);
-      // inverse-distance weights to each edge
-      let wl = atLeft ? 0 : 1 / (x + 1), wr = atRight ? 0 : 1 / (iw - x), wt = atTop ? 0 : 1 / (y + 1), wb = atBottom ? 0 : 1 / (ih - y);
-      let sum = wl + wr + wt + wb; if (!sum) { wl = wr = wt = wb = 1; sum = 4; }
-      const i = ((iy + y) * E.w + (ix + x)) * 4;
-      for (let c = 0; c < 3; c++) {
-        d[i + c] = (L[y][c] * wl + Rt[y][c] * wr + T[x][c] * wt + B[x][c] * wb) / sum;
-      }
-      d[i + 3] = 255;
-    }
+  for (let y = 0; y < ih; y++) for (let x = 0; x < iw; x++) {
+    let wl = atLeft ? 0 : 1 / (x + 1), wr = atRight ? 0 : 1 / (iw - x), wt = atTop ? 0 : 1 / (y + 1), wb = atBottom ? 0 : 1 / (ih - y);
+    let sum = wl + wr + wt + wb; if (!sum) { wl = wr = wt = wb = 1; sum = 4; }
+    const i = ((iy + y) * E.w + (ix + x)) * 4;
+    for (let c = 0; c < 3; c++) d[i + c] = (L[y][c] * wl + Rt[y][c] * wr + T[x][c] * wt + B[x][c] * wb) / sum;
+    d[i + 3] = 255;
   }
-  // light grain so the patch blends with photographic/noisy backgrounds
-  const noise = estimateNoise(d, E, ix, iy, iw, ih);
+  let ns = 0, nn = 0; const row = Math.max(0, iy - 2);
+  for (let x = Math.max(1, ix); x < Math.min(E.w, ix + iw); x++) { const a = (row * E.w + x) * 4, b = a - 4; ns += Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]); nn += 3; }
+  const noise = nn ? ns / nn : 0;
   if (noise > 1.5) for (let y = 0; y < ih; y++) for (let x = 0; x < iw; x++) {
     const i = ((iy + y) * E.w + (ix + x)) * 4, n = (Math.random() - .5) * noise * 1.6;
     d[i] += n; d[i + 1] += n; d[i + 2] += n;
   }
   ctx.putImageData(img, E.x0, E.y0);
-}
-function estimateNoise(d, E, ix, iy, iw, ih) {
-  let s = 0, n = 0;
-  const row = Math.max(0, iy - 2);
-  for (let x = Math.max(1, ix); x < Math.min(E.w, ix + iw); x++) {
-    const a = (row * E.w + x) * 4, b = a - 4;
-    s += Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]); n += 3;
-  }
-  return n ? s / n : 0;
 }
 
 /* ---------------- draw text ---------------- */
@@ -503,73 +869,126 @@ function convertDigits(s, mode) {
   return s;
 }
 async function drawText(r, text, o) {
-  const family = $('font').value;
+  const family = $('font').value, weight = o.weight, spacing = +$('spacing').value || 0;
   let size = +$('size').value || 16;
-  const fontStr = s => `${o.weight} ${s}px "${family}"`;
-  try { await document.fonts.load(fontStr(size), text); } catch (e) {}
-  const rtl = isArabic(text);
+  await ensureFont(family, weight);
   const linesTxt = text.split('\n');
-  ctx.save();
-  ctx.font = fontStr(size);
-  const boxW = r.x1 - r.x0;
+  const box = r.geo && r.geo.ink ? r.geo.ink : r;
+  const boxW = Math.max(r.x1 - r.x0, box.x1 - box.x0);
   if ($('fit').checked) {
-    const widest = Math.max(...linesTxt.map(t => ctx.measureText(t).width));
-    if (widest > boxW * 1.04 && widest > 0) { size = Math.max(4, size * boxW * 1.04 / widest); ctx.font = fontStr(size); }
+    const widest = Math.max(...linesTxt.map(t => { const m = textMetrics(t, family, weight, size, spacing); return m.actualBoundingBoxLeft + m.actualBoundingBoxRight; }));
+    if (widest > boxW * 1.04 && widest > 0) size = Math.max(4, size * boxW * 1.04 / widest);
   }
+  ctx.save();
+  ctx.font = `${weight} ${size}px "${family}"`;
+  try { ctx.letterSpacing = spacing + 'px'; } catch (e) {}
   ctx.fillStyle = $('color').value;
-  ctx.direction = rtl ? 'rtl' : 'ltr';
-  ctx.textBaseline = 'middle';
-  const lh = size * 1.25;
-  const totalH = lh * (linesTxt.length - 1);
-  const cy = (r.y0 + r.y1) / 2 - totalH / 2 + o.dy;
-  let x, align = o.align;
-  if (align === 'right') x = r.x1; else if (align === 'left') x = r.x0; else x = (r.x0 + r.x1) / 2;
-  ctx.textAlign = align;
-  linesTxt.forEach((t, i) => ctx.fillText(t, x + o.dx, cy + i * lh));
+  ctx.textAlign = 'left';
+  const lh = size * 1.3;
+  let baseline0;
+  if (r.geo && r.geo.baseline != null) { ctx.textBaseline = 'alphabetic'; baseline0 = r.geo.baseline - lh * (linesTxt.length - 1) / 2; }
+  else { ctx.textBaseline = 'middle'; baseline0 = (r.y0 + r.y1) / 2 - lh * (linesTxt.length - 1) / 2; }
+  linesTxt.forEach((t, i) => {
+    ctx.direction = isArabic(t) ? 'rtl' : 'ltr';
+    const m = ctx.measureText(t);
+    let x;
+    if (o.align === 'right') x = box.x1 - m.actualBoundingBoxRight;
+    else if (o.align === 'left') x = box.x0 + m.actualBoundingBoxLeft;
+    else x = (box.x0 + box.x1) / 2 - (m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2;
+    ctx.fillText(t, x + o.dx, baseline0 + i * lh + o.dy);
+  });
   ctx.restore();
 }
 
 /* ---------------- selection & panel ---------------- */
-function showPanel(edit) {
-  $('panelEmpty').style.display = edit ? 'none' : '';
-  $('panelEdit').style.display = edit ? '' : 'none';
+function showPanel(edit) { $('panelEmpty').style.display = edit ? 'none' : ''; $('panelEdit').style.display = edit ? '' : 'none'; }
+function setSeg(id, v) { [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === String(v))); }
+function setWeight(w) {
+  const allowed = (fontInfo($('font').value) || { w: [400, 700] }).w;
+  const best = allowed.reduce((p, q) => Math.abs(q - w) < Math.abs(p - w) ? q : p, allowed[0]);
+  opts.weight = String(best);
+  const segVal = best >= 800 ? '900' : best >= 600 ? '700' : '400';
+  setSeg('weightSeg', segVal);
 }
-function setSeg(id, v) { [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
 ['weightSeg', 'alignSeg', 'digitSeg'].forEach(id => $(id).onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
-  const key = { weightSeg: 'weight', alignSeg: 'align', digitSeg: 'digits' }[id];
-  opts[key] = b.dataset.v; setSeg(id, b.dataset.v); schedulePreview();
+  if (id === 'weightSeg') { setWeight(+b.dataset.v); refit(); }
+  else { opts[id === 'alignSeg' ? 'align' : 'digits'] = b.dataset.v; setSeg(id, b.dataset.v); }
+  schedulePreview();
 });
 
-function select(r) {
+let selToken = 0;
+async function select(r) {
   endPreview();
   current = r;
+  const tok = ++selToken;
   const a = analyze(r);
+  r.analysis = a;
   $('origText').textContent = r.text || '—';
   $('newText').value = r.done ? r.newText : (r.text || '');
   $('color').value = a.fg; $('colorHex').textContent = a.fg;
   $('bgColor').value = a.bg; $('bgHex').textContent = a.bg;
-  const boxH = r.y1 - r.y0;
-  const guess = isArabic(r.text) ? Math.max(boxH * 0.78, a.inkH * 0.8) : a.inkH * 1.32;
-  $('size').value = Math.max(6, Math.round(Math.min(guess, boxH * 1.1)));
-  opts.align = isArabic(r.text) || !r.text ? 'right' : 'left'; setSeg('alignSeg', opts.align);
+  $('spacing').value = 0;
+  // Arabic → right, Latin words → left, pure numbers/symbols → centred in their original slot
+  opts.align = isArabic(r.text) || !r.text ? 'right' : /\p{L}/u.test(r.text) ? 'left' : 'center'; setSeg('alignSeg', opts.align);
   opts.dx = 0; opts.dy = 0; $('offTxt').textContent = 'إزاحة 0,0';
+  // provisional font while matching runs
+  const provisional = (r.hint && r.hint.font) || (isArabic(r.text) ? 'Cairo' : 'Inter');
+  $('font').value = provisional; setWeight((r.hint && r.hint.weight) || 700);
+  r.geo = geometry(r, a, provisional, opts.weight);
+  if (r.geo) $('size').value = r.geo.size;
+  $('fontMatches').innerHTML = ''; $('matchNote').textContent = r.text ? 'جاري مقارنة شكل الحروف بالخطوط…' : 'اكتب النص الأصلي غير متاح — اختر الخط يدويًا';
   showPanel(true); renderBoxes();
   setTimeout(() => { $('newText').focus(); $('newText').select(); }, 30);
   schedulePreview();
+  const matches = await matchFont(r, a);
+  if (tok !== selToken || current !== r) return;
+  r.matches = matches;
+  renderMatches(r);
+  if (matches.length) applyFont(r, matches[0].font, matches[0].weight);
+  else if (r.text) $('matchNote').textContent = 'تعذّرت المطابقة التلقائية — اختر الخط يدويًا';
 }
-function deselect() { endPreview(); current = null; showPanel(false); renderBoxes(); }
+function renderMatches(r) {
+  const box = $('fontMatches'); box.innerHTML = '';
+  (r.matches || []).forEach((m, i) => {
+    const c = document.createElement('button');
+    c.className = 'chip' + ($('font').value === m.font ? ' on' : '');
+    c.innerHTML = '<span></span><b></b>';
+    c.firstChild.textContent = m.font; c.firstChild.style.fontFamily = `"${m.font}"`; c.firstChild.style.fontWeight = m.weight;
+    c.lastChild.textContent = Math.round(Math.min(1, m.score) * 100) + '%';
+    c.onclick = () => applyFont(r, m.font, m.weight);
+    box.appendChild(c);
+  });
+  if (r.matches && r.matches.length) {
+    const b = r.matches[0];
+    $('matchNote').textContent = `أقرب تطابق: ${b.font} بوزن ${b.weight}` + (r.hint && r.hint.font ? ` · اقتراح الذكاء الاصطناعي: ${r.hint.font}` : '');
+  }
+}
+function applyFont(r, font, weight) {
+  $('font').value = font; setWeight(weight);
+  r.geo = geometry(r, r.analysis, font, opts.weight);
+  if (r.geo) $('size').value = r.geo.size;
+  [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === font));
+  schedulePreview();
+}
+function refit() { if (current && current.analysis) { current.geo = geometry(current, current.analysis, $('font').value, opts.weight); if (current.geo) $('size').value = current.geo.size; } }
+$('font').addEventListener('change', async () => {
+  const f = $('font').value; setWeight(+opts.weight); await ensureFont(f, opts.weight); refit();
+  [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === f));
+  schedulePreview();
+});
+
+function deselect() { endPreview(); current = null; selToken++; showPanel(false); renderBoxes(); }
 $('cancelBtn').onclick = deselect;
 $('color').oninput = () => { $('colorHex').textContent = $('color').value; schedulePreview(); };
 $('bgColor').oninput = () => { $('bgHex').textContent = $('bgColor').value; schedulePreview(); };
-['newText', 'size', 'font'].forEach(id => $(id).addEventListener('input', schedulePreview));
+['newText', 'size', 'spacing'].forEach(id => $(id).addEventListener('input', schedulePreview));
 ['smartErase', 'fit'].forEach(id => $(id).addEventListener('change', schedulePreview));
 document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => {
   const [axis, v] = b.dataset.nudge.split(','); opts['d' + axis] += +v;
   $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`; schedulePreview();
 });
 
-/* live preview: draw on canvas, keep snapshot to restore */
 let pvTimer = null;
 function schedulePreview() { clearTimeout(pvTimer); pvTimer = setTimeout(preview, 60); }
 async function preview() {
@@ -579,31 +998,32 @@ async function preview() {
   await render(current, false);
 }
 function endPreview() { if (previewSnapshot) { ctx.putImageData(previewSnapshot, 0, 0); previewSnapshot = null; } }
+function eraseArea(r) {
+  if (!r.geo || !r.geo.ink) return r;
+  const k = r.geo.ink;
+  return { x0: Math.min(r.x0, k.x0 - 1), y0: Math.min(r.y0, k.y0 - 1), x1: Math.max(r.x1, k.x1 + 1), y1: Math.max(r.y1, k.y1 + 1) };
+}
 async function render(r, eraseOnly) {
-  eraseRect(r, $('smartErase').checked, $('bgColor').value);
+  eraseRect(eraseArea(r), $('smartErase').checked, $('bgColor').value);
   const t = convertDigits($('newText').value, opts.digits);
   if (!eraseOnly && t.trim()) await drawText(r, t, opts);
 }
 
 async function commit(eraseOnly) {
   if (!current) return;
+  clearTimeout(pvTimer);
   const snap = previewSnapshot || ctx.getImageData(0, 0, cv.width, cv.height);
   ctx.putImageData(snap, 0, 0); previewSnapshot = null;
   pushHistory(snap);
   await render(current, eraseOnly);
   current.done = true; current.newText = eraseOnly ? '' : $('newText').value;
-  // mark overlapping regions in the other level as done too
   [...words, ...lines].forEach(o => { if (o !== current && overlap(o, current) > .6) o.done = true; });
   toast(eraseOnly ? 'تم مسح النص' : 'تم الاستبدال ✓');
-  current = null; showPanel(false); renderBoxes();
+  current = null; selToken++; showPanel(false); renderBoxes();
 }
 $('applyBtn').onclick = () => commit(false);
 $('eraseBtn').onclick = () => commit(true);
 $('newText').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); commit(false); } if (e.key === 'Escape') deselect(); });
-function overlap(a, b) {
-  const ix = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)), iy = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
-  const ar = (a.x1 - a.x0) * (a.y1 - a.y0); return ar ? ix * iy / ar : 0;
-}
 
 /* ---------------- history ---------------- */
 function pushHistory(snap) { history.push(snap); if (history.length > 25) history.shift(); future = []; updateUndo(); }
@@ -634,7 +1054,7 @@ $('modeBtn').onclick = () => {
   manual = !manual; $('stage').classList.toggle('manual', manual); $('modeBtn').classList.toggle('on', manual);
   if (manual) toast('ارسم مربعًا حول النص الذي تريد تغييره');
 };
-const toImg = e => { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) * cv.width / b.width, y: (e.clientY - b.top) * cv.height / b.height, b }; };
+const toImg = e => { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) * cv.width / b.width, y: (e.clientY - b.top) * cv.height / b.height }; };
 cbox.addEventListener('pointerdown', e => {
   if (!manual) return;
   e.preventDefault(); cbox.setPointerCapture(e.pointerId);
@@ -656,21 +1076,37 @@ cbox.addEventListener('pointerup', async e => {
   const region = { x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1, text: '', id: 'm' + Date.now(), done: false, manual: true };
   manual = false; $('stage').classList.remove('manual'); $('modeBtn').classList.remove('on');
   select(region);
-  // try to read the text inside the drawn region to prefill
+  const t = await readRegion(region);
+  if (t && current === region) {
+    region.text = t.text; if (t.hint) region.hint = t.hint;
+    $('origText').textContent = region.text;
+    if (!$('newText').value) $('newText').value = region.text;
+    select(region); // re-run analysis + font matching now that the text is known
+    $('newText').value = region.text;
+  }
+});
+// read the text inside a hand-drawn box: AI first (better on Arabic), then local engine
+async function readRegion(region) {
+  const sample = await getSample();
+  if (sample) {
+    try {
+      const blob = await imageBlob(1000, clampRect(region, 4));
+      const res = await sample.json(`The image is a crop that contains a piece of text (Arabic, English and/or numbers). Transcribe it EXACTLY as written (no translation, no spelling fixes, keep the digit system). Also give the visually closest font from this list: ${FONT_NAMES}, and its weight (400, 700 or 900). Reply with only JSON: {"text":"...","font":"...","weight":700}`, { images: blob, modelTier: 'default' });
+      if (res && hasContent(res.text)) return { text: String(res.text).trim(), hint: { font: fontInfo(res.font) ? res.font : null, weight: [400, 700, 900].includes(+res.weight) ? +res.weight : null } };
+    } catch (e) {}
+  }
   if (worker) {
     try {
       const src = ocrSource(region);
+      await worker.setParameters({ tessedit_pageseg_mode: '7' });
       const { data } = await worker.recognize(src.canvas);
+      await worker.setParameters({ tessedit_pageseg_mode: '3' });
       const t = data.text.trim().replace(/\s+/g, ' ');
-      if (t && current === region) {
-        region.text = t; $('origText').textContent = t;
-        if (!$('newText').value) $('newText').value = t;
-        if (!isArabic(t)) { opts.align = 'left'; setSeg('alignSeg', 'left'); }
-        schedulePreview();
-      }
-    } catch (err) {}
+      if (hasContent(t)) return { text: t };
+    } catch (e) {}
   }
-});
+  return null;
+}
 overlay.addEventListener('click', e => { if (justDrew) { justDrew = false; return; } if (e.target === overlay && !manual && current) deselect(); });
 
 /* ---------------- download ---------------- */
@@ -678,13 +1114,12 @@ $('dlBtn').onclick = () => {
   endPreview(); cmpOff();
   const f = $('fmt').value;
   let src = cv;
-  if (f === 'jpeg') { // flatten transparency onto white
+  if (f === 'jpeg') {
     src = document.createElement('canvas'); src.width = cv.width; src.height = cv.height;
     const g = src.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(cv, 0, 0);
   }
   const filename = 'edited-image.' + (f === 'jpeg' ? 'jpg' : f);
   src.toBlob(async b => {
-    // inside claude.ai the viewer's save goes through the downloads capability
     let dl = null;
     try { if (window.claude && window.claude.use) dl = await window.claude.use('downloads'); } catch (e) {}
     if (dl) {
@@ -698,8 +1133,9 @@ $('dlBtn').onclick = () => {
   }, 'image/' + f, 0.95);
 };
 
-// warm up OCR engine in the background so first upload is faster
+// warm up engines in the background so the first upload is faster
 if (window.Tesseract) setTimeout(() => getWorker().catch(() => {}), 1200);
+getSample().then(s => { if (!s) { $('aiBtn').style.display = 'none'; } });
 })();
 </script>
 </body>
