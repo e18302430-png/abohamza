@@ -181,7 +181,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
 
   <section id="editor">
     <div class="toolbar">
-      <button class="btn ghost sm" id="aiBtn" title="أعد الكشف بالذكاء الاصطناعي">🧠 كشف ذكي</button>
+      <button class="btn ghost sm" id="aiBtn" title="قراءة أبطأ لكن أدق — للصور الصعبة">🧠 كشف أدق</button>
       <button class="btn ghost sm" id="modeBtn" title="ارسم مربعًا حول أي نص لم يُكتشف">✏️ تحديد يدوي</button>
       <button class="btn ghost sm" id="boxesBtn">👁️ إخفاء المربعات</button>
       <button class="btn ghost sm" id="compareBtn" title="اضغط مطولًا لرؤية الأصل">⇆ قارن بالأصل</button>
@@ -461,24 +461,25 @@ function startEditor(img) {
 /* ---------------- detection orchestration ---------------- */
 async function detectAll() {
   const my = ++jobId;
-  setStatus('جاري كشف النصوص بالمحرّكين معًا…', 0.05);
+  setStatus('جاري كشف النصوص…', 0.05);
   setEng('engCount', 'off', '');
-  const tess = runLocal(my);
-  const ai = runAI(my, false);
-  await Promise.allSettled([tess, ai]);
+  preloadFonts(); // fonts download in parallel while text is being detected
+  const aiOk = await runAI(my, 'quick');
+  if (my !== jobId) return;
+  if (aiOk) setEng('engLocal', 'off', '⚙️ المحرك المحلي (احتياطي)');
+  else await runLocal(my);
   if (my !== jobId) return;
   hideStatus();
   if (!words.length && !lines.length) {
     setStatus('لم يُكتشف نص تلقائيًا — استخدم «تحديد يدوي» وارسم مربعًا حول النص.', 0);
   } else toast(`تم العثور على ${words.length} كلمة — اضغط على أي واحدة لتعديلها`);
-  preloadFonts();
 }
 
 /* Local engine: two Tesseract passes (auto layout on color + sparse text on contrast-normalized gray) */
 function ocrSource(region, mode) {
   const r = region || { x0: 0, y0: 0, x1: cv.width, y1: cv.height };
   const w = r.x1 - r.x0, h = r.y1 - r.y0;
-  const scale = Math.max(1, Math.min(3, 1800 / Math.max(w, h)));
+  const scale = Math.max(1, Math.min(2.5, 1400 / Math.max(w, h)));
   const c = document.createElement('canvas');
   c.width = Math.round(w * scale); c.height = Math.round(h * scale);
   const g = c.getContext('2d', { willReadFrequently: true });
@@ -509,6 +510,7 @@ async function runLocal(my) {
     const passes = [{ mode: 'color', psm: '3' }, { mode: 'gray', psm: '11' }];
     for (let i = 0; i < passes.length; i++) {
       if (my !== jobId) return;
+      if (i > 0 && out.words.length >= 3) break; // second pass only for sparse / hard images
       const src = ocrSource(null, passes[i].mode);
       await w.setParameters({ tessedit_pageseg_mode: passes[i].psm });
       const { data } = await w.recognize(src.canvas);
@@ -551,48 +553,57 @@ Rules:
 - For every line list its words in reading order (Arabic right-to-left). A number with its symbol (e.g. "$25", "٢٥٪") is one word.
 - Coordinates are integers on a 0-1000 scale: x relative to image width, y relative to image height. box = [left, top, right, bottom], tight around the visible glyphs.
 - font: the visually closest family from this list: ${FONT_NAMES}. category: one of naskh, kufi, ruqaa, thuluth, diwani, sans, serif, display, handwritten, mono. weight: 400, 700 or 900.
-Reply with only JSON in this shape:
-{"lines":[{"text":"السعر 250 ريال","box":[520,300,930,380],"font":"Cairo","category":"sans","weight":700,"words":[{"text":"السعر","box":[780,300,930,380]},{"text":"250","box":[650,305,760,378]},{"text":"ريال","box":[520,300,630,380]}]}]}
-If there is no text, reply {"lines":[]}.`;
+Output format: JSON Lines. One compact JSON object per text line, each on its own single line, in top-to-bottom order. No array, no code fence, no commentary. Example line:
+{"text":"السعر 250 ريال","box":[520,300,930,380],"font":"Cairo","category":"sans","weight":700,"words":[{"text":"السعر","box":[780,300,930,380]},{"text":"250","box":[650,305,760,378]},{"text":"ريال","box":[520,300,630,380]}]}
+If there is no text at all, output exactly {"none":true}`;
 }
-async function runAI(my, refresh) {
+async function runAI(my, tier) {
   const sample = await getSample();
-  if (!sample) { setEng('engAI', 'off', '🧠 الذكاء الاصطناعي متاح داخل Claude فقط'); $('aiBtn').style.display = 'none'; return; }
+  if (!sample) { setEng('engAI', 'off', '🧠 الذكاء الاصطناعي متاح داخل Claude فقط'); $('aiBtn').style.display = 'none'; return false; }
   $('aiBtn').style.display = '';
-  setEng('engAI', 'run', '🧠 الذكاء الاصطناعي يقرأ الصورة…');
+  setEng('engAI', 'run', tier === 'quick' ? '🧠 الذكاء الاصطناعي يقرأ الصورة…' : '🧠 قراءة أدق جارية…');
+  const toPx = b => Array.isArray(b) && b.length === 4 && b.every(v => isFinite(v)) ? { x0: b[0] / 1000 * cv.width, y0: b[1] / 1000 * cv.height, x1: b[2] / 1000 * cv.width, y1: b[3] / 1000 * cv.height } : null;
+  const out = { words: [], lines: [] };
+  let buf = '', rbTimer = null;
+  const eat = raw => {
+    const line = raw.trim().replace(/^```\w*|```$/g, '').replace(/,$/, '').trim();
+    if (!line.startsWith('{')) return;
+    let L; try { L = JSON.parse(line); } catch (e) { return; }
+    const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
+    const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
+    out.lines.push({ ...refineBox(lb), text: String(L.text).trim(), hint, conf: 90 });
+    (Array.isArray(L.words) ? L.words : []).forEach(W => {
+      const wb = toPx(W.box); if (!wb || !hasContent(W.text)) return;
+      out.words.push({ ...refineBox(wb), text: String(W.text).trim(), hint, conf: 90 });
+    });
+    if (my === jobId) { aiRes = out; clearTimeout(rbTimer); rbTimer = setTimeout(() => { if (my === jobId) { rebuild(); setStatus(`تم كشف ${out.words.length} كلمة حتى الآن…`, 0.6); } }, 120); }
+  };
   try {
     const blob = await imageBlob(1568);
-    const opt = { images: blob, modelTier: 'default' };
-    if (refresh) opt.cache = { gcTime: 300000, refresh: true };
-    const data = await sample.json(aiPrompt(), opt);
-    if (my !== jobId) return;
-    const toPx = b => Array.isArray(b) && b.length === 4 ? { x0: b[0] / 1000 * cv.width, y0: b[1] / 1000 * cv.height, x1: b[2] / 1000 * cv.width, y1: b[3] / 1000 * cv.height } : null;
-    const out = { words: [], lines: [] };
-    (data && Array.isArray(data.lines) ? data.lines : []).forEach(L => {
-      const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
-      const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
-      const lr = refineBox(lb);
-      out.lines.push({ ...lr, text: String(L.text).trim(), hint, conf: 90 });
-      (Array.isArray(L.words) ? L.words : []).forEach(W => {
-        const wb = toPx(W.box); if (!wb || !hasContent(W.text)) return;
-        out.words.push({ ...refineBox(wb), text: String(W.text).trim(), hint, conf: 90 });
-      });
-    });
+    const opt = { images: blob, modelTier: tier, onText: ({ delta }) => { buf += delta; const parts = buf.split('\n'); buf = parts.pop(); parts.forEach(eat); } };
+    if (tier !== 'quick') opt.cache = false;
+    await sample(aiPrompt(), opt);
+    eat(buf); clearTimeout(rbTimer);
+    if (my !== jobId) return false;
     aiRes = out;
     setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${out.words.length}`);
     rebuild();
+    return true;
   } catch (e) {
+    clearTimeout(rbTimer);
     const code = e && e.code;
-    const msg = { not_granted: 'لم يُسمح باستخدام Claude', rate_limited: 'الحد مؤقتًا — حاول لاحقًا', sampling_disabled: 'غير متاح لحسابك', invalid_json: 'رد غير مفهوم — جرّب «كشف ذكي»' }[code] || 'تعذّر الكشف الذكي';
+    if (out.lines.length && my === jobId) { aiRes = out; rebuild(); setEng('engAI', 'ok', `🧠 الذكاء الاصطناعي ✓ ${out.words.length}`); return true; }
+    const msg = { not_granted: 'لم يُسمح باستخدام Claude', rate_limited: 'الحد مؤقتًا — حاول لاحقًا', sampling_disabled: 'غير متاح لحسابك' }[code] || 'تعذّر الكشف الذكي';
     setEng('engAI', 'off', '🧠 ' + msg);
     if (code === 'not_granted' || code === 'sampling_disabled') $('aiBtn').style.display = 'none';
+    return false;
   }
 }
 $('aiBtn').onclick = async () => {
   endPreview();
   const my = ++jobId;
-  setStatus('الذكاء الاصطناعي يعيد قراءة الصورة…', 0.3);
-  await runAI(my, true);
+  setStatus('قراءة أدق بالذكاء الاصطناعي (تأخذ وقتًا أطول)…', 0.3);
+  await runAI(my, 'default');
   if (my === jobId) hideStatus();
 };
 
@@ -641,7 +652,6 @@ function rebuild() {
   const tag = (list, p) => list.map(r => ({ ...r, id: p + id++, done: prevDone.some(d => overlap(r, d) > 0.6) }));
   words = tag(merge(aiRes && aiRes.words, tessRes && tessRes.words), 'w');
   lines = tag(merge(aiRes && aiRes.lines, tessRes && tessRes.lines), 'l');
-  if (current && !current.manual) { current = null; endPreview(); showPanel(false); }
   setEng('engCount', 'ok', `${words.length} كلمة · ${lines.length} سطر`);
   renderBoxes();
 }
@@ -794,9 +804,12 @@ async function matchFont(r, a) {
   const target = resample(a.mask), aspT = a.mask.w / a.mask.h;
   const ar = isArabic(text);
   const cands = FONTS.filter(x => ar ? x.ar : x.la);
+  const pairs = cands.flatMap(fnt => fnt.w.map(w => ({ fnt, w })));
+  const ok = await Promise.all(pairs.map(p => ensureFont(p.fnt.f, p.w)));
   const results = [];
-  for (const fnt of cands) for (const w of fnt.w) {
-    if (!(await ensureFont(fnt.f, w))) continue;
+  for (let k = 0; k < pairs.length; k++) {
+    if (!ok[k]) continue;
+    const { fnt, w } = pairs[k];
     const m = renderMask(text, fnt.f, w); if (!m) continue;
     let s = score(target, resample(m), aspT, m.w / m.h);
     if (r.hint) { if (r.hint.font === fnt.f) s += 0.04; if (r.hint.weight === w) s += 0.01; if (r.hint.cat && r.hint.cat === fnt.cat) s += 0.01; }
@@ -1091,7 +1104,7 @@ async function readRegion(region) {
   if (sample) {
     try {
       const blob = await imageBlob(1000, clampRect(region, 4));
-      const res = await sample.json(`The image is a crop that contains a piece of text (Arabic, English and/or numbers). Transcribe it EXACTLY as written (no translation, no spelling fixes, keep the digit system). Also give the visually closest font from this list: ${FONT_NAMES}, and its weight (400, 700 or 900). Reply with only JSON: {"text":"...","font":"...","weight":700}`, { images: blob, modelTier: 'default' });
+      const res = await sample.json(`The image is a crop that contains a piece of text (Arabic, English and/or numbers). Transcribe it EXACTLY as written (no translation, no spelling fixes, keep the digit system). Also give the visually closest font from this list: ${FONT_NAMES}, and its weight (400, 700 or 900). Reply with only JSON: {"text":"...","font":"...","weight":700}`, { images: blob, modelTier: 'quick' });
       if (res && hasContent(res.text)) return { text: String(res.text).trim(), hint: { font: fontInfo(res.font) ? res.font : null, weight: [400, 700, 900].includes(+res.weight) ? +res.weight : null } };
     } catch (e) {}
   }
@@ -1134,8 +1147,7 @@ $('dlBtn').onclick = () => {
 };
 
 // warm up engines in the background so the first upload is faster
-if (window.Tesseract) setTimeout(() => getWorker().catch(() => {}), 1200);
-getSample().then(s => { if (!s) { $('aiBtn').style.display = 'none'; } });
+getSample().then(s => { if (!s) { $('aiBtn').style.display = 'none'; if (window.Tesseract) getWorker().catch(() => {}); } });
 })();
 </script>
 </body>
