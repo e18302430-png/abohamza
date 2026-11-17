@@ -1,0 +1,11 @@
+{"title":"الافتتاح","music":{"style":"action"},
+"scenes":[
+ {"type":"breaking","dur":3,"head":"زحمة مو طبيعية<br>في شارع كامل!","sub":"السبب؟ <span class='emo'>👀</span>","ticker":"شهود عيان: ناس واقفين من الفجر · السيارات صف على طول الشارع"},
+ {"type":"countdown","dur":2.4,"bg":"l","color":"k","label":"الأبواب تنفتح خلال"},
+ {"type":"action","dur":2.4,"emoji":"🛒","text":"افتتاح فرع<br>كيو الجديد","size":150,"sub":"عروض الافتتاح لأول ٣ أيام بس"},
+ {"type":"price","dur":3,"title":"عروض الافتتاح","item":"على أقسام كاملة","emoji":"🎉","old":"السعر المعتاد","new":"٥٠٪","unit":"خصم!"},
+ {"type":"versus","dur":2.6,"top":"قعدة البيت","topEmoji":"🛋️","bot":"افتتاح كيو","botEmoji":"🎊"},
+ {"type":"reaction","dur":2.4,"bg":"c","emoji":"🤯","text":"وفيه هدايا<br>للي يجي بدري","sub":"لا تقول ما قلنا لك"},
+ {"type":"slam","dur":2.6,"bg":"r","rays":true,"lines":[{"text":"لا تفوّت","y":700,"size":220,"at":0.1,"color":"c"},{"text":"الحدث اللي الكل بيتكلم عنه","y":1000,"cap":true,"at":0.8,"color":"k"}]},
+ {"type":"end","dur":3,"cta":"نشوفك في الافتتاح","ctaSize":110,"tag":"#افتتاح_كيو"}
+]}

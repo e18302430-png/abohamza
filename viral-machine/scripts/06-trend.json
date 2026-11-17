@@ -1,0 +1,11 @@
+{"title":"الترند وصل","music":{"style":"trailer","drop":2.4},
+"scenes":[
+ {"type":"slam","dur":2.4,"cinema":true,"lines":[{"text":"الكل شافه في تيك توك…","y":760,"cap":true,"at":0.2},{"text":"ومحد لقاه.","y":870,"cap":true,"at":1.2,"color":"r"}]},
+ {"type":"cctv","dur":2.8,"tag":"شحنة سرية · ٢:٤٠ فجرًا","clock":"02:40:","lines":[{"text":"وصل.","at":0.4,"y":880,"size":280,"color":"l"}]},
+ {"type":"breaking","dur":3,"head":"الترند الأمريكي<br>وصل السعودية!","sub":"والكمية محدودة جدًا","ticker":"عاجل: طوابير متوقعة · الكمية تخلص بسرعة"},
+ {"type":"countdown","dur":2.4,"bg":"k","color":"l","label":"ينكشف خلال"},
+ {"type":"reaction","dur":2.6,"bg":"l","emoji":"📦","text":"حصريًا في كيو","color":"k","sub":"قبل أي مكان ثاني"},
+ {"type":"versus","dur":2.6,"top":"تشوفه في الفيديوهات","topEmoji":"📱","bot":"تذوقه بنفسك","botEmoji":"😋"},
+ {"type":"slam","dur":2.6,"rays":true,"lines":[{"text":"الحق عليه","y":680,"size":230,"at":0.1},{"text":"قبل ما يخلص","y":990,"cap":true,"at":0.8,"color":"l"}]},
+ {"type":"end","dur":3,"cta":"الترند الجاي… وين؟","ctaSize":100,"tag":"#وصل_كيو"}
+]}

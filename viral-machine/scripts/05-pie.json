@@ -1,0 +1,12 @@
+{"title":"الفطيرة عادية؟","music":{"style":"comedy"},
+"scenes":[
+ {"type":"slam","dur":2.4,"lines":[{"text":"تحدي!","y":560,"size":280,"pop":true,"at":0.1,"color":"l"},{"text":"١٠ آلاف ريال","y":930,"size":170,"at":0.9,"color":"r"}]},
+ {"type":"reaction","dur":2.6,"bg":"c","emoji":"🥧","text":"للي يقول إن<br>فطيرة كيو عادية","sub":"بس قولها بصدق 😏"},
+ {"type":"chat","dur":7.4,"title":"شلة الحارة 🍕","avatar":"👬","msgs":[
+   {"text":"يا شباب سهلة! نروح نقول «عادية» وناخذ الفلوس 😂","at":0.3},{"text":"يلا 💰💰","me":true,"at":1.8},
+   {"text":"أنا أخذت أول قضمة…","at":3.4},{"text":"ما قدرت أكذب 😭","at":4.8},{"text":"لا تقول إنك قلت…","me":true,"at":6.0}]},
+ {"type":"reaction","dur":2.4,"bg":"r","emoji":"😋","text":"قال: «أسطورية».","color":"c"},
+ {"type":"action","dur":2.4,"emoji":"💸","text":"١٠ آلاف ريال","size":190,"sub":"…ولا أحد قدر ياخذها"},
+ {"type":"slam","dur":2.4,"bg":"l","lines":[{"text":"جرّبها بنفسك","y":720,"size":190,"pop":true,"at":0.1},{"text":"في كل فروع كيو","y":1000,"cap":true,"at":0.8}]},
+ {"type":"end","dur":3,"cta":"تقدر تقول «عادية»؟","ctaSize":100,"tag":"#الفطيرة_عادية"}
+]}
