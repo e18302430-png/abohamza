@@ -1,0 +1,5 @@
+frames/
+*.wav
+out/*_noaudio.mp4
+out/*.cues.json
+out/render.log

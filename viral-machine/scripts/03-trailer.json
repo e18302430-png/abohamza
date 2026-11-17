@@ -1,0 +1,13 @@
+{"title":"محبوس في كيو · التريلر","music":{"style":"trailer","drop":8.4},
+"scenes":[
+ {"type":"slam","dur":2.6,"cinema":true,"lines":[{"text":"في عالم…","y":760,"cap":true,"at":0.2},{"text":"الأسعار فيه نار","y":870,"cap":true,"at":1.1,"color":"r"}]},
+ {"type":"photo","dur":3.2,"bw":true,"cinema":true,"lines":[{"text":"رجل واحد…","y":1380,"cap":true,"at":0.3},{"text":"قرر يتحدى","y":1470,"size":140,"at":1.5}]},
+ {"type":"slam","dur":2.6,"cinema":true,"lines":[{"text":"بدون مفتاح.","y":700,"size":170,"at":0.3},{"text":"بدون مخرج.","y":930,"size":170,"at":1.3,"color":"r"}]},
+ {"type":"cctv","dur":3,"tag":"اليوم ١ · فرع التحلية","lines":[{"text":"محبوس.","at":0.3,"y":900,"size":260,"color":"r"}]},
+ {"type":"action","dur":2.6,"text":"مليون تحميل","size":200,"sub":"أو… ما يطلع"},
+ {"type":"versus","dur":2.6,"top":"محمد عمر","topEmoji":"🔒","bot":"مليون تحميل","botEmoji":"📲"},
+ {"type":"reaction","dur":2.4,"bg":"r","emoji":"🔑","text":"والمفتاح…<br>معاكم.","color":"c"},
+ {"type":"slam","dur":2.8,"rays":true,"lines":[{"text":"محبوس","y":620,"size":260,"at":0.1},{"text":"في كيو","y":930,"size":230,"at":0.6,"color":"l"}]},
+ {"type":"slam","dur":1.8,"bg":"l","lines":[{"text":"قريبًا… في جوالك","y":820,"size":140,"at":0.1}]},
+ {"type":"end","dur":3,"cta":"نزّل… وطلّعه","tag":"#طلّعوا_محمد"}
+]}
