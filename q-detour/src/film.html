@@ -36,14 +36,20 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--k)}
 <body><div id="stage">
 
 <section class="scene" id="s1">
-  <div class="a" id="por" style="top:300px"><div class="portrait"></div></div>
-  <div class="a" id="s1n" style="top:790px;font-weight:700;font-size:58px">محمد عمر</div>
-  <div class="a" id="s1r" style="top:875px;font-size:40px;color:#9a9a9a">مؤسس كيو</div>
-  <div class="a cap" id="s1c1" style="top:1080px">قرّر يقفل على نفسه</div>
-  <div class="a h" id="s1t" style="top:1220px;font-size:200px;color:var(--l)">جوه كيو.</div>
+  <div id="cctv" style="position:absolute;inset:-40px;background:url(assets/omar.jpg) 50% 18%/cover no-repeat;filter:grayscale(1) contrast(1.3) brightness(.75)"></div>
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(rgba(0,0,0,.25) 0 3px,transparent 3px 7px)"></div>
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 35%,rgba(0,0,0,.85) 100%)"></div>
+  <div id="rec" style="position:absolute;top:70px;left:60px;font-family:monospace;font-size:40px;color:#fff;direction:ltr;font-weight:700"><span style="color:#ff4b2b">●</span> REC · CAM 03</div>
+  <div id="clock" style="position:absolute;top:70px;right:60px;font-family:monospace;font-size:40px;color:#fff;direction:ltr">03:17:42</div>
+  <div id="brk" style="position:absolute;top:170px;right:0;background:var(--r);color:#fff;font-weight:700;font-size:46px;padding:14px 60px 14px 40px">عاجل · فرع التحلية · اليوم ٤</div>
+  <div class="a h" id="h1" style="top:820px;font-size:130px;color:#fff;text-shadow:0 8px 40px #000">صاحب كيو…</div>
+  <div class="a h" id="h2" style="top:970px;font-size:290px;color:var(--r);text-shadow:0 10px 60px #000">محبوس.</div>
+  <div class="a cap" id="h3" style="top:1400px;color:#fff;text-shadow:0 4px 20px #000">من ٤ أيام… وما يقدر يطلع</div>
+  <div class="a h" id="h4" style="top:1530px;font-size:150px;color:var(--l);text-shadow:0 8px 40px #000">إلا بإيدك.</div>
 </section>
 
 <section class="scene" id="s2">
+  <div class="a" id="flashb" style="top:150px;font-family:monospace;font-size:44px;color:var(--r);font-weight:700">◀◀ قبل ٤ أيام…</div>
   <div class="shutter">
     <div class="store">
       <div class="shelf" style="top:200px"></div><div class="shelf" style="top:430px"></div><div class="shelf" style="top:660px"></div>
@@ -125,6 +131,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--k)}
   <div class="a" id="s8c" style="top:1680px;font-size:30px;color:#8d8d8d;padding:0 60px;line-height:1.6">مقترح إبداعي مستقل · غير رسمي · الاتجاه والإخراج: إبراهيم غانم · التطوير والتنفيذ بمساعدة Claude</div>
 </section>
 
+<div id="flash" style="position:absolute;inset:0;background:#fff;visibility:hidden;pointer-events:none"></div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -151,15 +158,20 @@ const scenes=[['s1',0,5.4],['s2',5.4,11.4],['s3',11.4,17.4],['s4',17.4,21],['s5'
 function render(t){
   for(const [id,a,b] of scenes)$(id).style.display=(t>=a&&t<b)?'block':'none';
   const st=$('stage');st.style.transform='none';
-  for(const h of [3.3,10.2,13.9,15.9,18.4,18.85,37.7,40.25,41.3,43.7]){const d=t-h;if(d>0&&d<.25){const k=(1-d/.25)*14;st.style.transform=`translate(${Math.sin(d*90)*k}px,${Math.cos(d*70)*k}px)`}}
+  const HITS=[.15,.9,3.3,10.2,13.9,14.6,15.9,18.4,18.85,37.7,40.25,41.3,43.7];let fl=0;
+  for(const h of HITS){const d=t-h;if(d>=0&&d<.14)fl=Math.max(fl,.55*(1-d/.14));}
+  set('flash',fl);
+  for(const h of HITS){const d=t-h;if(d>0&&d<.25){const k=(1-d/.25)*14;st.style.transform=`translate(${Math.sin(d*90)*k}px,${Math.cos(d*70)*k}px) scale(${1+k/350})`}}
   if(t<5.4){
-    const pi=eo(p(t,.2,.7));set('por',pi,pi<1?`scale(${.7+.3*pi})`:'');rise('s1n',t,.7);rise('s1r',t,1);
-    rise('s1c1',t,1.9);slam('s1t',t,3.3);
+    const z=1.05+t*.03;set('cctv',1,`scale(${z}) translate(${Math.sin(t*1.7)*6}px,${Math.cos(t*1.3)*5}px)`);
+    set('rec',(Math.floor(t*2)%2==0)?1:.35);$('clock').textContent='03:17:'+String(42+Math.floor(t)).padStart(2,'0');
+    const bi=eo(p(t,.05,.35));set('brk',bi,bi<1?`translateX(${(1-bi)*700}px)`:'');
+    slam('h1',t,.15);slam('h2',t,.9);rise('h3',t,2.0);slam('h4',t,3.3);
   } else if(t<11.4){
     const sd=eio(p(t,5.8,3.8));$('slats').style.height=(sd*720)+'px';
     const kx=eo(p(t,9.6,.6));
     set('key',1,`translateY(${kx*230}px) rotate(${kx*540}deg) scale(${1-kx*.25})`);
-    rise('s2c1',t,6);rise('s2c2',t,7.6);
+    rise('flashb',t,5.45);rise('s2c1',t,6);rise('s2c2',t,7.6);
   } else if(t<17.4){
     rise('s3c1',t,11.7);rise('s3c2',t,12.6);slam('s3t1',t,13.9);
     const kp=p(t,14.6,.4);set('s3k',kp?1:0,kp<1?`scale(${2-back(kp)}) rotate(${(1-eo(kp))*-30}deg)`:'');
