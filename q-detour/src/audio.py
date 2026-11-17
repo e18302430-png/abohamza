@@ -73,23 +73,34 @@ def whoosh(d=.6):
     return s * np.sin(np.pi * t / d) ** 2 * 2.5
 add(whoosh(), 17.8, .35); add(whoosh(.5), 43.2, .3); add(whoosh(.4), 21.0, .25)
 
-# 5) notification chime at 30.2
+# 5) notification chime at 23.7
 def chime():
     n = int(.9 * SR); t = np.arange(n) / SR
     a = np.sin(2 * np.pi * 1318.5 * t) * env(n, .003, .25)
     b = np.sin(2 * np.pi * 1760 * t) * env(n, .003, .3)
     return a + np.concatenate([np.zeros(int(.12 * SR)), b[: n - int(.12 * SR)]])
-add(chime(), 30.2, .35)
+add(chime(), 23.7, .35)
 
-# 6) small beeps: scanner, each bar, profit counter
+# shutter rolling down 5.8-9.6 (rattling noise) + key clank 10.2
+n = int(3.8 * SR); tt_ = np.arange(n) / SR
+rat = rng.standard_normal(n) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 9 * tt_)))
+rat = np.convolve(rat, np.ones(20) / 20, 'same') * np.minimum(1, tt_ / .3) * np.minimum(1, (3.8 - tt_) / .2)
+add(rat * 1.2, 5.8, .35)
+def clank():
+    n = int(.6 * SR); t = np.arange(n) / SR
+    return sum(np.sin(2 * np.pi * f * t) * env(n, .001, d) for f, d in [(2100, .12), (3150, .08), (4700, .05)])
+add(clank(), 9.6, .25); add(clank(), 10.2, .35)
+add(impact(), 9.75, .45)  # shutter hits the floor
+
 def beep(f=1950, d=.08):
     n = int(d * SR); t = np.arange(n) / SR
     return np.sin(2 * np.pi * f * t) * env(n, .002, d / 2.5)
-add(beep(1500, .18), 23.2, .3)
-for i, b in enumerate([24.8, 25.9, 27.0]): add(beep(1200 + i * 150), b, .25)
-add(beep(2200, .14), 28.2, .35); add(beep(2640, .14), 28.36, .3)
-for i in range(6): add(beep(1800 + i * 60, .06), 31.0 + i * .25, .2)
-# check-mark pops scene 6
+# 6) small beeps: download counter + milestone unlocks
+for i in range(int((32.5 - 21.6) / .3)):
+    add(beep(2000, .03), 21.6 + i * .3, .07)
+for v in [1e5, 2.5e5, 5e5]:
+    k = 1 - (1 - v / 612487) ** (1 / 1.6); tm = 21.5 + 11 * k
+    add(beep(1760, .12), tm, .3); add(beep(2640, .16), tm + .12, .3)
 for c in [34.6, 35.6, 36.6]: add(beep(1650, .07), c, .22)
 
 mix = np.stack([L, R], 1)

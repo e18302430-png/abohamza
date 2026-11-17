@@ -5,213 +5,180 @@
 html,body{width:1080px;height:1920px;overflow:hidden;background:var(--k)}
 #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--k);font-family:Plex,sans-serif;color:var(--c)}
 .scene{position:absolute;inset:0;display:none}
-.a{position:absolute;left:0;right:0;text-align:center;will-change:transform,opacity}
+.a{position:absolute;left:0;right:0;text-align:center}
 .h{font-family:Lalezar,sans-serif;line-height:1.05}
 .cap{font-family:Plex;font-weight:700;font-size:64px;line-height:1.35;padding:0 70px}
 .emo{font-family:'Noto Color Emoji',sans-serif}
-.bub{position:absolute;background:#1d1d1d;border:2px solid #333;border-radius:44px;padding:22px 38px;font-weight:700;font-size:46px;white-space:nowrap;color:var(--c)}
-.bub small{display:block;font-size:26px;font-weight:400;color:#8a8a8a;margin-bottom:4px}
-/* receipt */
-.rcpt{position:absolute;left:250px;width:580px;background:var(--c);color:var(--k);padding:40px 44px;font-size:36px;font-weight:500;overflow:hidden;
- -webkit-mask:linear-gradient(#000 0 0);}
-.rcpt .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:2px dashed #c9c4b6}
-.rcpt .tt{font-family:Lalezar;font-size:52px;text-align:center;border:none}
-.printer{position:absolute;left:210px;width:660px;height:70px;background:#262626;border-radius:20px;border-bottom:8px solid #111}
-/* phone */
-.phone{position:absolute;left:220px;top:110px;width:640px;height:1240px;border-radius:84px;background:#151515;border:14px solid #2a2a2a;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6)}
+.portrait{width:440px;height:440px;border-radius:50%;margin:0 auto;background:url(assets/omar.jpg) 50% 12%/120% auto no-repeat;border:10px solid var(--l)}
+.shutter{position:absolute;left:140px;width:800px;top:330px;height:760px;overflow:hidden;border:14px solid #2a2a2a;border-top-width:40px;background:#111}
+.store{position:absolute;inset:0;background:linear-gradient(#1a1a1a,#222)}
+.shelf{position:absolute;left:30px;right:30px;height:16px;background:#3a3a3a}
+.item{position:absolute;width:60px;border-radius:8px 8px 2px 2px}
+.slats{position:absolute;left:0;right:0;top:0;background:repeating-linear-gradient(#8f8f8f 0 34px,#6a6a6a 34px 40px)}
+.box{position:absolute;left:390px;top:1150px;width:300px;height:250px;border:8px solid rgba(244,241,234,.8);border-radius:20px;background:rgba(244,241,234,.06)}
+.phone{position:absolute;left:200px;top:90px;width:680px;height:1260px;border-radius:84px;background:#151515;border:14px solid #2a2a2a;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6)}
 .notch{position:absolute;top:16px;left:50%;margin-left:-90px;width:180px;height:44px;border-radius:24px;background:#000;z-index:9}
-.scr{position:absolute;inset:0}
-.brk{position:absolute;width:90px;height:90px;border:10px solid var(--l)}
-.bar{position:absolute;right:46px;height:56px;border-radius:14px}
-.lbl{position:absolute;right:46px;left:46px;display:flex;justify-content:space-between;font-weight:700;font-size:34px}
+.cam{position:absolute;left:0;right:0;top:0;height:760px;background:url(assets/omar.jpg) 50% 20%/cover no-repeat;filter:grayscale(.85) contrast(1.15) brightness(.9)}
+.cam:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(rgba(0,0,0,.18) 0 2px,transparent 2px 5px)}
+.live{position:absolute;top:84px;right:30px;background:var(--r);color:#fff;font-weight:700;font-size:30px;padding:6px 20px;border-radius:12px;z-index:3}
+.camtag{position:absolute;top:84px;left:30px;font-family:monospace;font-size:26px;color:#fff;background:rgba(0,0,0,.5);padding:6px 14px;border-radius:8px;z-index:3;direction:ltr}
+.panel{position:absolute;left:0;right:0;bottom:0;height:500px;background:var(--k);padding:34px 40px}
+.prog{position:relative;height:30px;border-radius:15px;background:#2b2b2b;margin-top:22px}
+.fill{position:absolute;right:0;top:0;bottom:0;border-radius:15px;background:var(--l)}
+.ms{position:absolute;top:-8px;width:6px;height:46px;background:#666}
+.msl{position:absolute;top:56px;font-size:22px;font-weight:700;color:#888;transform:translateX(50%);white-space:nowrap;text-align:center;line-height:1.3}
 .notif{position:absolute;left:24px;right:24px;top:70px;background:rgba(244,241,234,.97);color:var(--k);border-radius:40px;padding:26px 30px;display:flex;gap:22px;align-items:flex-start;z-index:8}
 .ico{width:84px;height:84px;flex:none;border-radius:22px;background:var(--k);color:var(--l);font-family:Lalezar;font-size:46px;display:flex;align-items:center;justify-content:center}
-.sheet{position:absolute;left:0;right:0;bottom:0;height:430px;background:var(--k);border-top:4px solid var(--l);border-radius:50px 50px 0 0;padding:40px 46px;z-index:7}
-.chk{font-weight:700;font-size:66px;line-height:1.3;padding:0 80px;text-align:right}
-.chk b{color:var(--l)}
+.btn{margin-top:96px;background:var(--l);color:var(--k);border-radius:24px;text-align:center;font-family:Lalezar;font-size:54px;padding:16px}
+.chk{font-weight:700;font-size:56px;line-height:1.3;padding:0 70px;text-align:right}
+.chk b,.chk span{color:var(--l)}
 </style></head>
 <body><div id="stage">
 
-<!-- S1 -->
 <section class="scene" id="s1">
-  <div class="bub" id="b1" style="top:190px;right:90px"><small>@abu_fahad</small>كيف يربحون؟ 🤔</div>
-  <div class="bub" id="b2" style="top:390px;left:80px"><small>@noura.jed</small>مستحيل بهالسعر <span class="emo">🤯</span></div>
-  <div class="bub" id="b3" style="top:590px;right:150px"><small>@3omar_99</small>أكيد فيه سر</div>
-  <div class="bub" id="b4" style="top:790px;left:130px"><small>@saad.k</small>وش السالفة يا جماعة؟</div>
-  <div class="bub" id="b5" style="top:990px;right:110px"><small>@hala_q</small>طيب كيف تربحون؟!</div>
-  <div class="a h" id="s1t" style="top:640px;font-size:250px;color:var(--l)">كيف تربحون؟</div>
-  <div class="a cap" id="s1c1" style="top:1450px">كل يوم… نفس السؤال.</div>
-  <div class="a cap" id="s1c2" style="top:1560px;color:#9a9a9a;font-size:52px">في كل تعليق، وفي كل فيديو.</div>
+  <div class="a" id="por" style="top:300px"><div class="portrait"></div></div>
+  <div class="a" id="s1n" style="top:790px;font-weight:700;font-size:58px">محمد عمر</div>
+  <div class="a" id="s1r" style="top:875px;font-size:40px;color:#9a9a9a">مؤسس كيو</div>
+  <div class="a cap" id="s1c1" style="top:1080px">قرّر يقفل على نفسه</div>
+  <div class="a h" id="s1t" style="top:1220px;font-size:200px;color:var(--l)">جوه كيو.</div>
 </section>
 
-<!-- S2 -->
 <section class="scene" id="s2">
-  <div class="a h" id="cnt" style="top:150px;font-size:190px;color:var(--r)">٠</div>
-  <div class="a" id="cntl" style="top:370px;font-size:50px;font-weight:700;color:#bdbdbd">فاتورة… في يوم عادي</div>
-  <div class="printer" style="top:500px"></div>
-  <div class="rcpt" id="rc" style="top:550px">
-    <div class="row tt">كيو</div>
-    <div class="row"><span>زيت دوار الشمس ١٫٥ل</span><span>١٢٫٥٠</span></div>
-    <div class="row"><span>أرز بسمتي ٥ كجم</span><span>٢٤٫٩٥</span></div>
-    <div class="row"><span>حليب طازج ٢ل</span><span>١٠٫٧٥</span></div>
-    <div class="row"><span>خبز تميس ×٢</span><span>٢٫٠٠</span></div>
-    <div class="row"><span>شاي ١٠٠ كيس</span><span>٩٫٥٠</span></div>
-    <div class="row"><span>دجاج مجمد ١٠٠٠ج</span><span>١٤٫٢٥</span></div>
-    <div class="row" style="color:var(--r);font-weight:700;border:none"><span>ربح المتجر</span><span>؟؟؟</span></div>
-  </div>
-  <div class="a cap" id="s2c1" style="top:1500px">أكثر من ٣٠ ألف فاتورة في اليوم.</div>
-  <div class="a cap" id="s2c2" style="top:1620px;color:var(--r)">وكلها ساكتة عن رقم واحد.</div>
-</section>
-
-<!-- S3 -->
-<section class="scene" id="s3" style="background:var(--c);color:var(--k)">
-  <div class="a cap" id="s3c1" style="top:330px;font-size:76px">كل الشركات<br>تخبّي أرباحها.</div>
-  <div class="a h" id="s3t1" style="top:650px;font-size:230px">وإحنا؟</div>
-  <div class="a" id="lock" style="top:960px;height:260px">
-    <svg width="220" height="260" viewBox="0 0 220 260"><path id="shk" d="M55 120 V75 a55 55 0 0 1 110 0 V120" fill="none" stroke="#0b0b0b" stroke-width="26" stroke-linecap="round"/><rect x="20" y="115" width="180" height="140" rx="30" fill="#0b0b0b"/><circle cx="110" cy="175" r="18" fill="#e4ff3a"/><rect x="102" y="180" width="16" height="40" rx="6" fill="#e4ff3a"/></svg>
-  </div>
-  <div class="a h" id="s3t2" style="top:1300px;font-size:170px;color:var(--r)">قررنا نكشفها.</div>
-</section>
-
-<!-- S4 -->
-<section class="scene" id="s4">
-  <svg class="a" id="s4svg" style="top:260px;left:190px;right:auto" width="700" height="1300" viewBox="0 0 700 1300">
-    <path id="rpath" d="M40 40 H660 V1220 l-52 40 -52 -40 -52 40 -52 -40 -52 40 -52 -40 -52 40 -52 -40 -52 40 -52 -40 -52 40 -52 -40 Z" fill="none" stroke="#e4ff3a" stroke-width="14" stroke-linejoin="round"/>
-  </svg>
-  <div class="a h" id="s4t1" style="top:450px;font-size:200px;color:var(--c)">الفاتورة</div>
-  <div class="a h" id="s4t2" style="top:700px;font-size:200px;color:var(--l)">المكشوفة</div>
-  <div class="a" id="s4row" style="top:1110px">
-    <div style="display:inline-block;position:relative;font-weight:700;font-size:62px;padding:18px 40px;border:4px solid var(--l);border-radius:24px;color:var(--c)">ربح كيو: <span style="color:var(--l)">٠٫٣٥ ريال</span>
-      <div id="censor" style="position:absolute;inset:-6px;background:var(--r);border-radius:24px;display:flex;align-items:center;justify-content:center;font-family:Lalezar;font-size:56px;color:var(--k)">سرّي</div>
+  <div class="shutter">
+    <div class="store">
+      <div class="shelf" style="top:200px"></div><div class="shelf" style="top:430px"></div><div class="shelf" style="top:660px"></div>
+      <div id="items"></div>
     </div>
+    <div class="slats" id="slats"></div>
   </div>
+  <div class="box"></div>
+  <div class="a" id="key" style="top:1000px;height:120px">
+    <svg width="200" height="90" viewBox="0 0 200 90"><circle cx="45" cy="45" r="34" fill="none" stroke="#e4ff3a" stroke-width="16"/><rect x="76" y="37" width="118" height="16" rx="6" fill="#e4ff3a"/><rect x="150" y="45" width="14" height="34" rx="4" fill="#e4ff3a"/><rect x="176" y="45" width="14" height="26" rx="4" fill="#e4ff3a"/></svg>
+  </div>
+  <div class="a cap" id="s2c1" style="top:1460px">ما يطلع من الفرع…</div>
+  <div class="a cap" id="s2c2" style="top:1570px;color:var(--l)">إلا لما تطبيق كيو يوصل<br>مليون تحميل.</div>
 </section>
 
-<!-- S5 -->
+<section class="scene" id="s3" style="background:var(--c);color:var(--k)">
+  <div class="a cap" id="s3c1" style="top:260px;font-size:70px">بدأ وهو صغير في بقالة،</div>
+  <div class="a cap" id="s3c2" style="top:370px;font-size:70px">١٦ ساعة في اليوم…</div>
+  <div class="a h" id="s3t1" style="top:560px;font-size:180px">ومعاه المفتاح.</div>
+  <div class="a" id="s3k" style="top:850px">
+    <svg width="360" height="160" viewBox="0 0 200 90"><circle cx="45" cy="45" r="34" fill="none" stroke="#0b0b0b" stroke-width="16"/><rect x="76" y="37" width="118" height="16" rx="6" fill="#0b0b0b"/><rect x="150" y="45" width="14" height="34" rx="4" fill="#0b0b0b"/><rect x="176" y="45" width="14" height="26" rx="4" fill="#0b0b0b"/></svg>
+  </div>
+  <div class="a h" id="s3t2" style="top:1130px;font-size:150px;color:var(--r)">اليوم رجع للبقالة…<br>والمفتاح معاكم.</div>
+</section>
+
+<section class="scene" id="s4">
+  <div class="a" id="s4lock" style="top:200px">
+    <svg width="400" height="400" viewBox="0 0 220 220"><circle id="lc" cx="110" cy="110" r="96" fill="none" stroke="#e4ff3a" stroke-width="12" stroke-linecap="round"/><path d="M78 104 V82 a32 32 0 0 1 64 0 V104" fill="none" stroke="#e4ff3a" stroke-width="14" stroke-linecap="round"/><rect x="64" y="100" width="92" height="72" rx="16" fill="#e4ff3a"/></svg>
+  </div>
+  <div class="a h" id="s4t1" style="top:690px;font-size:300px;color:var(--c)">محبوس</div>
+  <div class="a h" id="s4t2" style="top:1030px;font-size:250px;color:var(--l)">في كيو</div>
+</section>
+
 <section class="scene" id="s5">
   <div class="phone"><div class="notch"></div>
-    <div class="scr" id="scan" style="background:#202020">
-      <div style="position:absolute;top:90px;left:0;right:0;text-align:center;font-weight:700;font-size:32px;color:#bbb">وضع المكشوف · صوّر المنتج</div>
-      <!-- bottle -->
-      <div style="position:absolute;left:220px;top:300px;width:180px;height:440px">
-        <div style="position:absolute;left:62px;top:0;width:56px;height:46px;background:var(--r);border-radius:10px"></div>
-        <div style="position:absolute;left:52px;top:40px;width:76px;height:50px;background:#d9c46a;border-radius:8px 8px 0 0"></div>
-        <div style="position:absolute;left:0;top:84px;width:180px;height:356px;background:linear-gradient(90deg,#c9a83a,#f0d870,#c9a83a);border-radius:60px 60px 28px 28px"></div>
-        <div style="position:absolute;left:14px;top:200px;width:152px;height:140px;background:var(--c);border-radius:14px;color:var(--k);text-align:center;font-family:Lalezar;font-size:46px;padding-top:22px;line-height:1">زيت<br><span style="font-family:Plex;font-weight:700;font-size:26px">١٫٥ لتر</span></div>
+    <div class="cam"></div>
+    <div class="live">● مباشر · ٢٤ ساعة</div>
+    <div class="camtag" id="ctag">CAM 03 · 23:41:07</div>
+    <div style="position:absolute;top:690px;right:30px;color:#fff;font-weight:700;font-size:28px;z-index:3;text-shadow:0 2px 8px #000">اليوم ٤ · فرع التحلية · <span id="vw">٢١٤</span> ألف يتفرجون</div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-weight:700;font-size:32px;color:#aaa">التحميلات</span>
+        <span style="font-weight:700;font-size:30px;color:#777">الهدف ١٬٠٠٠٬٠٠٠</span></div>
+      <div class="h" id="dl" style="font-size:110px;color:var(--l);line-height:1.1">٠</div>
+      <div class="prog"><div class="fill" id="fill"></div>
+        <div class="ms" style="right:10%"></div><div class="ms" style="right:25%"></div><div class="ms" style="right:50%"></div>
+        <div class="msl" id="m1" style="right:10%">١٠٠ ألف<br>سرير</div>
+        <div class="msl" id="m2" style="right:25%">٢٥٠ ألف<br>خصم ١٠٪</div>
+        <div class="msl" id="m3" style="right:50%">٥٠٠ ألف<br>كاشير</div>
+        <div class="msl" style="right:92%">مليون<br>الباب</div>
       </div>
-      <div class="brk" style="left:140px;top:250px;border-width:10px 0 0 10px;border-radius:22px 0 0 0"></div>
-      <div class="brk" style="left:390px;top:250px;border-width:10px 10px 0 0;border-radius:0 22px 0 0"></div>
-      <div class="brk" style="left:140px;top:710px;border-width:0 0 10px 10px;border-radius:0 0 0 22px"></div>
-      <div class="brk" style="left:390px;top:710px;border-width:0 10px 10px 0;border-radius:0 0 22px 0"></div>
-      <div id="sline" style="position:absolute;left:150px;width:320px;height:8px;background:var(--r);box-shadow:0 0 30px var(--r);top:300px"></div>
-    </div>
-    <div class="scr" id="res" style="background:#151515">
-      <div style="position:absolute;top:100px;right:46px;left:46px;font-weight:700;font-size:34px;color:#aaa">زيت دوار الشمس ١٫٥ لتر</div>
-      <div class="h" style="position:absolute;top:150px;right:46px;font-size:150px;color:var(--c)">١٢٫٥٠ <span style="font-size:60px">ريال</span></div>
-      <div style="position:absolute;top:350px;right:46px;font-weight:700;font-size:32px;color:var(--l)">وين تروح فلوسك؟</div>
-      <div class="lbl" id="l1" style="top:420px"><span>المورّد</span><span>٩٫٤٠</span></div>
-      <div class="bar" id="br1" style="top:475px;background:#5a5a5a"></div>
-      <div class="lbl" id="l2" style="top:570px"><span>النقل والتخزين</span><span>٠٫٩٠</span></div>
-      <div class="bar" id="br2" style="top:625px;background:#8a8a8a"></div>
-      <div class="lbl" id="l3" style="top:720px"><span>الرواتب والتشغيل</span><span>١٫٨٥</span></div>
-      <div class="bar" id="br3" style="top:775px;background:#b5b0a4"></div>
-      <div class="lbl" id="l4" style="top:870px;color:var(--l)"><span>ربح كيو</span><span id="v4">٠٫٣٥</span></div>
-      <div class="bar" id="br4" style="top:925px;background:var(--l)"></div>
-      <div id="ring" style="position:absolute;top:900px;width:110px;height:110px;border:6px solid var(--l);border-radius:50%"></div>
+      <div class="btn" id="btn">طلّعه أسرع · شارك كودك</div>
     </div>
     <div class="notif" id="notif"><div class="ico">كيو</div>
       <div><div style="font-size:26px;color:#666;font-weight:500">كيو · الآن</div>
-      <div style="font-size:34px;font-weight:700;line-height:1.35">فاتورتك المكشوفة جاهزة <span class="emo">🧾</span><br>ربحنا منك اليوم: ٣٫٢٠ ريال بس.</div></div></div>
-    <div class="sheet" id="sheet">
-      <div style="font-weight:700;font-size:34px;color:#aaa">فاتورتك المكشوفة</div>
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:40px;margin-top:22px"><span>الإجمالي</span><span>٢١٤٫٦٠</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:22px;color:var(--l)"><span style="font-weight:700;font-size:40px">ربح كيو منك</span><span class="h" id="prof" style="font-size:120px">٠٫٠٠</span></div>
-    </div>
+      <div style="font-size:34px;font-weight:700;line-height:1.35">محمد لسه محبوس <span class="emo">🔒</span><br>باقي <span id="left">٧٤٨٬٠٠٠</span> تحميل. طلّعه!</div></div></div>
   </div>
-  <div class="a cap" id="s5c1" style="top:1420px">صوّر أي منتج بتطبيق كيو</div>
-  <div class="a cap" id="s5c2" style="top:1530px;color:var(--l)">ويطلع لك كم ربحنا منه… بالهللة.</div>
-  <div class="a cap" id="s5c3" style="top:1420px">وكل فاتورة تقول لك بصراحة</div>
-  <div class="a cap" id="s5c4" style="top:1530px;color:var(--l)">كم ربحنا منك.</div>
+  <div class="a cap" id="s5c1" style="top:1420px">كل تحميلة… تقرّبه من الباب.</div>
+  <div class="a cap" id="s5c2" style="top:1530px;color:var(--l)">والبث؟ جوه التطبيق بس.</div>
 </section>
 
-<!-- S6 -->
 <section class="scene" id="s6">
-  <div class="a h" id="s6t" style="top:250px;font-size:150px;color:var(--c)">وكل أسبوع:</div>
-  <div class="a chk" id="k1" style="top:560px">أنتم تصوّتون على منتج <b>✓</b></div>
-  <div class="a chk" id="k2" style="top:720px">نبيعه بصفر ربح <b>✓</b></div>
-  <div class="a chk" id="k3" style="top:880px">لمدة ٤٨ ساعة <b>✓</b></div>
-  <div class="a chk" id="k4" style="top:1040px;color:var(--l)">وأول فاتورة لك بالتطبيق؟<br>ربحنا منها يرجع لك كامل ✓</div>
+  <div class="a h" id="s6t" style="top:240px;font-size:130px;color:var(--c)">كل ما زدتوا… فتحتوا:</div>
+  <div class="a chk" id="k1" style="top:560px"><span>١٠٠ ألف:</span> سرير بدل شوالات الرز <b>✓</b></div>
+  <div class="a chk" id="k2" style="top:720px"><span>٢٥٠ ألف:</span> خصم ١٠٪ للكل <b>✓</b></div>
+  <div class="a chk" id="k3" style="top:880px"><span>٥٠٠ ألف:</span> محمد كاشير بنفسه <b>✓</b></div>
+  <div class="a chk" id="k4" style="top:1060px;color:var(--l);font-family:Lalezar;font-size:96px;font-weight:400">مليون: الباب ينفتح ✓</div>
 </section>
 
-<!-- S7 -->
 <section class="scene" id="s7" style="background:var(--l);color:var(--k)">
-  <div class="a h" id="s7t1" style="top:560px;font-size:170px">اسألونا كيف نربح.</div>
-  <div class="a h" id="s7t2" style="top:860px;font-size:170px">الجواب في<br>فاتورتك.</div>
+  <div class="a h" id="s7t1" style="top:560px;font-size:280px">نزّل.</div>
+  <div class="a h" id="s7t2" style="top:900px;font-size:250px">وطلّعه.</div>
 </section>
 
-<!-- S8 -->
 <section class="scene" id="s8">
   <div class="a h" id="s8t" style="top:430px;font-size:420px;color:var(--l)">كيو</div>
-  <div class="a h" id="s8s" style="top:960px;font-size:130px;color:var(--c)">ربحنا مكشوف.</div>
-  <div class="a" id="s8h" style="top:1170px;font-weight:700;font-size:62px;color:var(--l)">#كم_ربحت_كيو</div>
-  <div class="a" id="s8c" style="top:1680px;font-size:32px;color:#8d8d8d;padding:0 60px;line-height:1.6">مقترح إبداعي مستقل · غير رسمي · الفكرة والإخراج: إبراهيم غانم · التنفيذ بمساعدة Claude</div>
+  <div class="a h" id="s8s" style="top:960px;font-size:130px;color:var(--c)">نزّل… وطلّعه.</div>
+  <div class="a" id="s8h" style="top:1170px;font-weight:700;font-size:64px;color:var(--l)">#طلّعوا_محمد</div>
+  <div class="a" id="s8c" style="top:1680px;font-size:30px;color:#8d8d8d;padding:0 60px;line-height:1.6">مقترح إبداعي مستقل · غير رسمي · الاتجاه والإخراج: إبراهيم غانم · التطوير والتنفيذ بمساعدة Claude</div>
 </section>
 
 </div>
 <script>
 const $=id=>document.getElementById(id);
-const AR='٠١٢٣٤٥٦٧٨٩';const ar=s=>String(s).replace(/\d/g,d=>AR[d]).replace(/\./g,'٫');
+const AR='٠١٢٣٤٥٦٧٨٩';const ar=s=>String(s).replace(/\d/g,d=>AR[d]);
+const num=n=>ar(Math.round(n).toLocaleString('en-US')).replace(/,/g,'٬');
+const numH=n=>num(n).replace(/٬/g,'<span style="font-family:Plex;font-weight:700">٬</span>');
 const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const p=(t,a,d)=>cl((t-a)/d);
 const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
 const back=x=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
 function set(el,o,tr){el=typeof el=='string'?$(el):el;
   if(o<=0.001){el.style.opacity=0;el.style.visibility='hidden';el.style.transform='none';return}
   el.style.visibility='visible';el.style.opacity=o;el.style.transform=tr||'none'}
-// text rise: in at a, optional out at b
 function rise(el,t,a,b){const i=eo(p(t,a,.5));let o=i,y=(1-i)*70;
   if(b!==undefined){const q=p(t,b,.35);o*=1-q;y-=q*40}
   set(el,o,y?`translateY(${y}px)`:'')}
 function slam(el,t,a,b){const x=p(t,a,.42);const s=x<1?2.3-1.3*back(x):1;let o=cl((t-a)/.12);
   if(b!==undefined)o*=1-p(t,b,.3);set(el,o,s!=1?`scale(${s})`:'')}
+(()=>{const cols=['#e4ff3a','#ff4b2b','#f4f1ea','#c9a83a','#7fb3ff','#ff9a3a'];let h='';
+ [200,430,660].forEach((y,r)=>{for(let i=0;i<10;i++){const x=40+i*72,ht=80+((i*37+r*13)%70);h+=`<div class="item" style="left:${x}px;top:${y-ht}px;height:${ht}px;background:${cols[(i+r*2)%6]}"></div>`}});
+ $('items').innerHTML=h})();
 const scenes=[['s1',0,5.4],['s2',5.4,11.4],['s3',11.4,17.4],['s4',17.4,21],['s5',21,33.6],['s6',33.6,40],['s7',40,43.4],['s8',43.4,48.6]];
 function render(t){
   for(const [id,a,b] of scenes)$(id).style.display=(t>=a&&t<b)?'block':'none';
   const st=$('stage');st.style.transform='none';
-  // camera shake after slams
-  for(const h of [3.3,13.9,15.9,18.4,18.85,37.7,40.25,41.3,43.7]){const d=t-h;if(d>0&&d<.25){const k=(1-d/.25)*14;st.style.transform=`translate(${Math.sin(d*90)*k}px,${Math.cos(d*70)*k}px)`}}
+  for(const h of [3.3,10.2,13.9,15.9,18.4,18.85,37.7,40.25,41.3,43.7]){const d=t-h;if(d>0&&d<.25){const k=(1-d/.25)*14;st.style.transform=`translate(${Math.sin(d*90)*k}px,${Math.cos(d*70)*k}px)`}}
   if(t<5.4){
-    ['b1','b2','b3','b4','b5'].forEach((id,i)=>{const a=.25+i*.5;const x=eo(p(t,a,.35));let o=x*(1-p(t,3.15,.25));
-      set(id,o,`translateY(${(1-x)*50}px) scale(${.85+.15*x-(p(t,3.15,.25))*.2}) rotate(${(i%2?1:-1)*2}deg)`)});
-    slam('s1t',t,3.3);rise('s1c1',t,.6);rise('s1c2',t,3.9);
+    const pi=eo(p(t,.2,.7));set('por',pi,pi<1?`scale(${.7+.3*pi})`:'');rise('s1n',t,.7);rise('s1r',t,1);
+    rise('s1c1',t,1.9);slam('s1t',t,3.3);
   } else if(t<11.4){
-    const k=p(t,5.6,5);const n=Math.round(30000*(1-Math.pow(1-k,2.2)));
-    $('cnt').textContent=ar(n.toLocaleString('en-US')).replace(/,/g,'٬');
-    rise('cnt',t,5.5);rise('cntl',t,5.8);
-    const rc=$('rc');const h=cl((t-5.7)/4.6)*720;rc.style.height=h+'px';rc.style.paddingTop=rc.style.paddingBottom=(h>80?40:0)+'px';rc.style.visibility=h>2?'visible':'hidden';
-    rise('s2c1',t,6);rise('s2c2',t,8.6);
+    const sd=eio(p(t,5.8,3.8));$('slats').style.height=(sd*720)+'px';
+    const kx=eo(p(t,9.6,.6));
+    set('key',1,`translateY(${kx*230}px) rotate(${kx*540}deg) scale(${1-kx*.25})`);
+    rise('s2c1',t,6);rise('s2c2',t,7.6);
   } else if(t<17.4){
-    rise('s3c1',t,11.7);slam('s3t1',t,13.9);slam('lock',t,14.6);
-    const u=eo(p(t,15.9,.4));$('shk').setAttribute('transform',`translate(${u*58},${-u*40}) rotate(${-u*25} 165 120)`);
+    rise('s3c1',t,11.7);rise('s3c2',t,12.6);slam('s3t1',t,13.9);
+    const kp=p(t,14.6,.4);set('s3k',kp?1:0,kp<1?`scale(${2-back(kp)}) rotate(${(1-eo(kp))*-30}deg)`:'');
     slam('s3t2',t,15.9);
   } else if(t<21){
-    const L=3700,dr=eo(p(t,17.45,.9));const rp=$('rpath');rp.style.strokeDasharray=L;rp.style.strokeDashoffset=L*(1-dr);
-    set('s4svg',dr>0?1:0);
-    slam('s4t1',t,18.4);slam('s4t2',t,18.85);rise('s4row',t,19.2);
-    const c=eo(p(t,19.9,.45));set('censor',1-c,`translateX(${-c*700}px) rotate(${-c*8}deg)`);
+    const L=603,dr=eo(p(t,17.45,.9));const lc=$('lc');lc.style.strokeDasharray=L;lc.style.strokeDashoffset=L*(1-dr);
+    set('s4lock',1,dr<1?`rotate(${(1-dr)*-200}deg) scale(${.6+.4*dr})`:'');
+    slam('s4t1',t,18.4);slam('s4t2',t,18.85);
   } else if(t<33.6){
-    const ph=document.querySelector('.phone');const pi=eo(p(t,21,.6));ph.style.transform=`translateY(${(1-pi)*500}px)`;
-    $('sline').style.top=(270+Math.abs(((t-21.2)*1.3%2)-1)*440)+'px';
-    set('scan',t<23.3?1:0);
-    const r=p(t,23.2,.35);set('res',r,`scale(${1.08-.08*eo(r)})`);
-    const W=548,vals=[9.40,.90,1.85,.35],ts=[24.8,25.9,27.0,28.2];
-    vals.forEach((v,i)=>{const g=eo(p(t,ts[i],.6));rise('l'+(i+1),t,ts[i]-.15);
-      const w=Math.max(i==3?18:0,W*v/12.5)*g;$('br'+(i+1)).style.width=w+'px';set('br'+(i+1),g>0?1:0)});
-    const rg=p(t,28.4,.9);set('ring',rg>0&&t<30?1-rg*.3:0,`translate(${-0}px,0) scale(${.6+.7*eo(rg)})`);$('ring').style.right='0px';
-    const nt=eo(p(t,30.2,.45));set('notif',nt*(1-p(t,32.9,.3)),`translateY(${(1-nt)*-260}px)`);
-    const sh=eo(p(t,30.6,.5));set('sheet',sh,`translateY(${(1-sh)*450}px)`);
-    const pv=3.2*eo(p(t,31,1.4));$('prof').textContent=ar(pv.toFixed(2));
-    rise('s5c1',t,21.4,29.8);rise('s5c2',t,26.4,29.8);rise('s5c3',t,30.3);rise('s5c4',t,31.0);
+    const ph=document.querySelector('.phone');const pi=eo(p(t,21,.6));ph.style.transform=pi<1?`translateY(${(1-pi)*500}px)`:'none';
+    $('ctag').textContent='CAM 03 · 23:41:'+String(7+Math.floor(t-21)).padStart(2,'0');
+    const k=p(t,21.5,11);const n=612487*(1-Math.pow(1-k,1.6));
+    $('dl').innerHTML=numH(n);$('fill').style.width=(n/1e6*100)+'%';
+    $('left').textContent=num(1e6-Math.max(n,252000));
+    $('vw').textContent=ar(214+Math.floor((t-21)*9));
+    [['m1',1e5],['m2',2.5e5],['m3',5e5]].forEach(([id,v])=>{$(id).style.color=n>=v?'#e4ff3a':'#888'});
+    const nt=eo(p(t,23.7,.45));set('notif',nt*(1-p(t,27.4,.35)),`translateY(${(1-nt)*-260}px)`);
+    const bp=(t>30&&t<33)?1+.04*Math.sin(t*14):1;set('btn',1,bp!=1?`scale(${bp})`:'');
+    rise('s5c1',t,21.4);rise('s5c2',t,27.8);
   } else if(t<40){
     slam('s6t',t,33.8);rise('k1',t,34.6);rise('k2',t,35.6);rise('k3',t,36.6);slam('k4',t,37.7);
   } else if(t<43.4){
@@ -221,5 +188,6 @@ function render(t){
   }
 }
 window.render=render;
-const q=new URLSearchParams(location.search).get('t');document.fonts.ready.then(()=>{render(q?+q:0);window.READY=1});
+const q=new URLSearchParams(location.search).get('t');
+Promise.all([document.fonts.ready,new Promise(r=>{const i=new Image();i.onload=r;i.onerror=r;i.src='assets/omar.jpg'})]).then(()=>{render(q?+q:0);window.READY=1});
 </script></body></html>
