@@ -7,9 +7,10 @@
 <meta name="description" content="استبدل النصوص والأرقام داخل الصور مباشرة من المتصفح — بدون رفع الصورة لأي خادم">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234F46E5'/%3E%3Ctext y='70' x='50' font-size='56' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'%3EAa%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&family=Almarai:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;700;900&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700;900&family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;700&family=Lalezar&family=Changa:wght@400;700;800&family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Scheherazade+New:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Readex+Pro:wght@400;700&family=Markazi+Text:wght@400;700&family=Rakkas&family=Mirza:wght@400;700&family=Harmattan:wght@400;700&family=Marhey:wght@400;700&family=Baloo+Bhaijaan+2:wght@400;800&family=Katibeh&family=Kufam:wght@400;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto:wght@400;700;900&family=Montserrat:wght@400;700;900&family=Poppins:wght@400;700;900&family=Open+Sans:wght@400;700&family=Lato:wght@400;700;900&family=Oswald:wght@400;700&family=Bebas+Neue&family=Anton&family=Playfair+Display:wght@400;700;900&family=Merriweather:wght@400;700;900&family=Roboto+Mono:wght@400;700&family=Raleway:wght@400;700;900&family=Barlow:wght@400;700;900&family=Pacifico&family=Dancing+Script:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@400;500;700;800;900&family=Almarai:wght@300;400;700;800&family=Noto+Kufi+Arabic:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&family=Noto+Naskh+Arabic:wght@400..700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Readex+Pro:wght@160..700&family=Vazirmatn:wght@100..900&family=Alexandria:wght@100..900&family=Mada:wght@200..900&family=Changa:wght@200..800&family=Kufam:wght@400..900&family=Reem+Kufi:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Lemonada:wght@300..700&family=Lalezar&family=Baloo+Bhaijaan+2:wght@400..800&family=Marhey:wght@300..700&family=Rakkas&family=Katibeh&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef:wght@300;400;700&family=Markazi+Text:wght@400..700&family=Mirza:wght@400;700&family=Harmattan:wght@400;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400..700&family=Tinos:wght@400;700&family=Cousine:wght@400;700&family=Inter:wght@100..900&family=Roboto:wght@100..900&family=Roboto+Condensed:wght@100..900&family=Open+Sans:wght@300..800&family=Noto+Sans:wght@100..900&family=Source+Sans+3:wght@200..900&family=Work+Sans:wght@100..900&family=DM+Sans:wght@100..1000&family=Nunito:wght@200..1000&family=Rubik:wght@300..900&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Poppins:wght@300;400;500;600;700;900&family=Raleway:wght@100..900&family=Barlow:wght@300;400;500;600;700;900&family=Ubuntu:wght@400;700&family=PT+Sans:wght@400;700&family=Oswald:wght@200..700&family=Bebas+Neue&family=Anton&family=Playfair+Display:wght@400..900&family=Merriweather:wght@300..900&family=Roboto+Mono:wght@100..700&family=Pacifico&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5F5FA; --surface:#FFFFFF; --surface-2:#EEEEF6; --ink:#15151F; --muted:#62627A;
@@ -93,6 +94,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .wbox{position:absolute;border:1.5px solid var(--box-line);background:var(--box);border-radius:3px;cursor:pointer;transition:background .12s}
 .wbox:hover{background:rgba(79,70,229,.35)}
 .wbox.sel{border-color:#F59E0B;background:rgba(245,158,11,.28);box-shadow:0 0 0 2px rgba(245,158,11,.5)}
+.wbox.ibox{border-color:#F97316;border-style:dashed;background:rgba(249,115,22,.10)}
 .wbox.done{border-color:var(--done);background:transparent;border-style:dashed}
 .hide-boxes .wbox{opacity:0;pointer-events:none}
 .drawing{position:absolute;border:2px dashed #F59E0B;background:rgba(245,158,11,.15);pointer-events:none}
@@ -183,6 +185,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
     <div class="toolbar">
       <button class="btn ghost sm" id="aiBtn" title="قراءة أبطأ لكن أدق — للصور الصعبة">🧠 كشف أدق</button>
       <button class="btn ghost sm" id="modeBtn" title="ارسم مربعًا حول أي نص لم يُكتشف">✏️ تحديد يدوي</button>
+      <button class="btn ghost sm" id="imgModeBtn" title="ارسم مربعًا حول صورة داخل الصورة لاستبدالها">🖼️ استبدال صورة</button>
       <button class="btn ghost sm" id="boxesBtn">👁️ إخفاء المربعات</button>
       <button class="btn ghost sm" id="compareBtn" title="اضغط مطولًا لرؤية الأصل">⇆ قارن بالأصل</button>
       <button class="btn ghost sm" id="undoBtn" disabled>↶ تراجع</button>
@@ -246,6 +249,8 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
           </div>
           <div class="field"><label>المحاذاة</label><div class="seg" id="alignSeg"><button data-v="right">يمين</button><button data-v="center">وسط</button><button data-v="left">يسار</button></div></div>
           <div class="field"><label>نوع الأرقام</label><div class="seg" id="digitSeg"><button data-v="keep" class="on">كما كتبتها</button><button data-v="ar">٠١٢٣</button><button data-v="en">0123</button></div></div>
+          <label class="check"><input type="checkbox" id="cloneGlyphs" checked> استنساخ الأرقام والحروف اللاتينية من الصورة نفسها (أدق تطابق)</label>
+          <div class="match-note" id="cloneNote"></div>
           <label class="check"><input type="checkbox" id="smartErase" checked> مسح ذكي (إعادة بناء الخلفية)</label>
           <label class="check"><input type="checkbox" id="fit"> تصغير النص الأطول ليناسب مكان القديم</label>
           <div class="row3" style="margin-top:10px">
@@ -260,6 +265,25 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
             <button class="btn" id="applyBtn">تطبيق ✓</button>
             <button class="btn ghost" id="eraseBtn" title="امسح النص فقط بدون كتابة">مسح فقط</button>
             <button class="btn ghost" id="cancelBtn">إلغاء</button>
+          </div>
+        </div>
+        <div id="panelImage" style="display:none">
+          <h3>استبدال صورة</h3>
+          <p class="hint">اختر الصورة البديلة — تُقصّ وتُملأ داخل المربع المحدد.</p>
+          <label class="btn ghost" style="margin-top:12px;width:100%">📁 اختر الصورة البديلة<input type="file" id="imgFile" accept="image/*" hidden></label>
+          <div class="field"><label>التكبير <span id="zoomVal">100%</span></label><input type="range" id="imgZoom" min="50" max="300" value="100" style="width:100%;accent-color:var(--accent)"></div>
+          <div class="row3" style="margin-top:6px">
+            <button class="btn ghost sm" data-inudge="x,-1">←</button><button class="btn ghost sm" data-inudge="y,-1">↑</button><button class="btn ghost sm" data-inudge="x,1">→</button>
+            <span></span><button class="btn ghost sm" data-inudge="y,1">↓</button><span></span>
+          </div>
+          <div class="row">
+            <div class="field"><label>تنعيم الحواف px</label><input type="number" id="imgFeather" value="1" min="0" max="40" step="1"></div>
+            <div class="field"><label>زوايا دائرية px</label><input type="number" id="imgRadius" value="0" min="0" max="400" step="1"></div>
+          </div>
+          <label class="check"><input type="checkbox" id="imgMatch"> مطابقة الإضاءة مع الصورة الأصلية (للصور الممسوحة ضوئيًا)</label>
+          <div class="actions">
+            <button class="btn" id="imgApply">تطبيق ✓</button>
+            <button class="btn ghost" id="imgCancel">إلغاء</button>
           </div>
         </div>
         <div class="list" id="list"></div>
@@ -280,7 +304,7 @@ const overlay = $('overlay'), cbox = $('cbox');
 const origCanvas = document.createElement('canvas'), octx = origCanvas.getContext('2d', { willReadFrequently: true });
 let original = null;
 let history = [], future = [];
-let words = [], lines = [];
+let words = [], lines = [], images = [];
 let level = 'word';
 let current = null;
 let opts = { weight: '700', align: 'right', digits: 'keep', dx: 0, dy: 0 };
@@ -291,52 +315,75 @@ let jobId = 0;
 
 /* ---------------- font library ---------------- */
 // ar: has Arabic glyphs, la: has Latin glyphs, cat: style family used by the AI hint
+// w: weights tried in the first (coarse) pass; vr: variable-weight range tuned continuously afterwards
 const FONTS = [
-  { f: 'Cairo', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Tajawal', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Almarai', w: [400, 700, 800], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Noto Kufi Arabic', w: [400, 700, 900], ar: 1, la: 1, cat: 'kufi' },
-  { f: 'Noto Sans Arabic', w: [400, 700, 900], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Noto Naskh Arabic', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
-  { f: 'IBM Plex Sans Arabic', w: [400, 700], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Readex Pro', w: [400, 700], ar: 1, la: 1, cat: 'sans' },
-  { f: 'Changa', w: [400, 700, 800], ar: 1, la: 1, cat: 'kufi' },
-  { f: 'Kufam', w: [400, 700, 900], ar: 1, la: 1, cat: 'kufi' },
-  { f: 'Reem Kufi', w: [400, 700], ar: 1, la: 1, cat: 'kufi' },
-  { f: 'El Messiri', w: [400, 700], ar: 1, la: 1, cat: 'display' },
+  { f: 'Cairo', w: [300, 400, 600, 700, 900], vr: [200, 1000], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Tajawal', w: [400, 500, 700, 800, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Almarai', w: [300, 400, 700, 800], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Noto Kufi Arabic', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Noto Sans Arabic', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Noto Naskh Arabic', w: [400, 500, 600, 700], vr: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'IBM Plex Sans Arabic', w: [300, 400, 500, 600, 700], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Readex Pro', w: [300, 400, 600, 700], vr: [160, 700], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Vazirmatn', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Alexandria', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Mada', w: [300, 400, 600, 700, 900], vr: [200, 900], ar: 1, la: 1, cat: 'sans' },
+  { f: 'Changa', w: [300, 400, 600, 800], vr: [200, 800], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Kufam', w: [400, 600, 700, 900], vr: [400, 900], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'Reem Kufi', w: [400, 500, 700], vr: [400, 700], ar: 1, la: 1, cat: 'kufi' },
+  { f: 'El Messiri', w: [400, 500, 700], vr: [400, 700], ar: 1, la: 1, cat: 'display' },
+  { f: 'Lemonada', w: [300, 400, 600, 700], vr: [300, 700], ar: 1, la: 1, cat: 'display' },
   { f: 'Lalezar', w: [400], ar: 1, la: 1, cat: 'display' },
-  { f: 'Baloo Bhaijaan 2', w: [400, 800], ar: 1, la: 1, cat: 'display' },
-  { f: 'Marhey', w: [400, 700], ar: 1, la: 1, cat: 'display' },
+  { f: 'Baloo Bhaijaan 2', w: [400, 600, 800], vr: [400, 800], ar: 1, la: 1, cat: 'display' },
+  { f: 'Marhey', w: [300, 500, 700], vr: [300, 700], ar: 1, la: 1, cat: 'display' },
   { f: 'Rakkas', w: [400], ar: 1, la: 1, cat: 'display' },
   { f: 'Katibeh', w: [400], ar: 1, la: 1, cat: 'display' },
   { f: 'Amiri', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
   { f: 'Scheherazade New', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
-  { f: 'Lateef', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
-  { f: 'Markazi Text', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Lateef', w: [300, 400, 700], ar: 1, la: 1, cat: 'naskh' },
+  { f: 'Markazi Text', w: [400, 500, 700], vr: [400, 700], ar: 1, la: 1, cat: 'naskh' },
   { f: 'Mirza', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
   { f: 'Harmattan', w: [400, 700], ar: 1, la: 1, cat: 'naskh' },
   { f: 'Aref Ruqaa', w: [400, 700], ar: 1, la: 1, cat: 'ruqaa' },
-  { f: 'Inter', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Roboto', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Roboto Condensed', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Open Sans', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Lato', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Montserrat', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Poppins', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Raleway', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Barlow', w: [400, 700, 900], ar: 0, la: 1, cat: 'sans' },
-  { f: 'Oswald', w: [400, 700], ar: 0, la: 1, cat: 'display' },
+  { f: 'Arimo', w: [400, 500, 700], vr: [400, 700], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Tinos', w: [400, 700], ar: 0, la: 1, cat: 'serif' },
+  { f: 'Cousine', w: [400, 700], ar: 0, la: 1, cat: 'mono' },
+  { f: 'Inter', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Roboto', w: [300, 400, 500, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Roboto Condensed', w: [300, 400, 700], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Open Sans', w: [300, 400, 600, 700, 800], vr: [300, 800], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Noto Sans', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Source Sans 3', w: [300, 400, 600, 700, 900], vr: [200, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Work Sans', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'DM Sans', w: [300, 400, 600, 700, 900], vr: [100, 1000], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Nunito', w: [300, 400, 600, 700, 900], vr: [200, 1000], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Rubik', w: [300, 400, 600, 700, 900], vr: [300, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Lato', w: [300, 400, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Montserrat', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Poppins', w: [300, 400, 500, 600, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Raleway', w: [300, 400, 600, 700, 900], vr: [100, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Barlow', w: [300, 400, 500, 600, 700, 900], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Ubuntu', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
+  { f: 'PT Sans', w: [400, 700], ar: 0, la: 1, cat: 'sans' },
+  { f: 'Oswald', w: [300, 400, 600, 700], vr: [200, 700], ar: 0, la: 1, cat: 'display' },
   { f: 'Bebas Neue', w: [400], ar: 0, la: 1, cat: 'display' },
   { f: 'Anton', w: [400], ar: 0, la: 1, cat: 'display' },
-  { f: 'Playfair Display', w: [400, 700, 900], ar: 0, la: 1, cat: 'serif' },
-  { f: 'Merriweather', w: [400, 700, 900], ar: 0, la: 1, cat: 'serif' },
-  { f: 'Roboto Mono', w: [400, 700], ar: 0, la: 1, cat: 'mono' },
+  { f: 'Playfair Display', w: [400, 600, 700, 900], vr: [400, 900], ar: 0, la: 1, cat: 'serif' },
+  { f: 'Merriweather', w: [300, 400, 700, 900], vr: [300, 900], ar: 0, la: 1, cat: 'serif' },
+  { f: 'Roboto Mono', w: [300, 400, 700], vr: [100, 700], ar: 0, la: 1, cat: 'mono' },
   { f: 'Pacifico', w: [400], ar: 0, la: 1, cat: 'handwritten' },
-  { f: 'Dancing Script', w: [400, 700], ar: 0, la: 1, cat: 'handwritten' },
+  { f: 'Dancing Script', w: [400, 700], vr: [400, 700], ar: 0, la: 1, cat: 'handwritten' },
   { f: 'Arial', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
   { f: 'Tahoma', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
   { f: 'Segoe UI', w: [400, 700], ar: 1, la: 1, cat: 'sans', sys: 1 },
   { f: 'Times New Roman', w: [400, 700], ar: 1, la: 1, cat: 'serif', sys: 1 },
+  { f: 'Simplified Arabic', w: [400, 700], ar: 1, la: 0, cat: 'naskh', sys: 1 },
+  { f: 'Traditional Arabic', w: [400, 700], ar: 1, la: 0, cat: 'naskh', sys: 1 },
+  { f: 'Sakkal Majalla', w: [400, 700], ar: 1, la: 1, cat: 'naskh', sys: 1 },
+  { f: 'Calibri', w: [400, 700], ar: 0, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Verdana', w: [400, 700], ar: 0, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Helvetica', w: [400, 700], ar: 0, la: 1, cat: 'sans', sys: 1 },
+  { f: 'Georgia', w: [400, 700], ar: 0, la: 1, cat: 'serif', sys: 1 },
   { f: 'Courier New', w: [400, 700], ar: 0, la: 1, cat: 'mono', sys: 1 },
 ];
 const fontInfo = name => FONTS.find(x => x.f === name);
@@ -459,7 +506,7 @@ function startEditor(img) {
   ctx.drawImage(img, 0, 0, cv.width, cv.height);
   original = ctx.getImageData(0, 0, cv.width, cv.height);
   origCanvas.width = cv.width; origCanvas.height = cv.height; octx.putImageData(original, 0, 0);
-  history = []; future = []; words = []; lines = []; current = null; tessRes = null; aiRes = null; pv = null;
+  history = []; future = []; words = []; lines = []; images = []; current = null; tessRes = null; aiRes = null; pv = null; glyphLib = null; endImageEdit(true);
   updateUndo(); renderBoxes(); showPanel(false);
   $('landing').style.display = 'none'; $('editor').classList.add('show'); $('newBtn').style.display = '';
   window.scrollTo({ top: 0 });
@@ -564,6 +611,7 @@ Rules:
 - font: the visually closest family from this list: ${FONT_NAMES}. category: one of naskh, kufi, ruqaa, thuluth, diwani, sans, serif, display, handwritten, mono. weight: 400, 700 or 900.
 Output format: JSON Lines. One compact JSON object per text line, each on its own single line, in top-to-bottom order. No array, no code fence, no commentary. Example line:
 {"text":"السعر 250 ريال","box":[520,300,930,380],"font":"Cairo","category":"sans","weight":700,"words":[{"text":"السعر","box":[780,300,930,380]},{"text":"250","box":[650,305,760,378]},{"text":"ريال","box":[520,300,630,380]}]}
+Also output one line {"image":true,"box":[left,top,right,bottom]} for every photograph, portrait/face photo, logo or picture embedded in the image (same 0-1000 coordinates).
 If there is no text at all, output exactly {"none":true}`;
 }
 // split big images into overlapping tiles so small text keeps its resolution (the model sees ~1.2 MP per image)
@@ -593,9 +641,9 @@ async function runAI(my, tier) {
   $('aiBtn').style.display = '';
   const tiles = makeTiles();
   setEng('engAI', 'run', (tier === 'quick' ? '🧠 الذكاء الاصطناعي يقرأ الصورة' : '🧠 قراءة أدق جارية') + (tiles.length > 1 ? ` (${tiles.length} أجزاء)…` : '…'));
-  const out = { words: [], lines: [] };
+  const out = { words: [], lines: [], images: [] };
   let rbTimer = null, done = 0, lastErr = null;
-  const publish = () => { aiRes = { words: dedupe(out.words), lines: dedupe(out.lines) }; };
+  const publish = () => { aiRes = { words: dedupe(out.words), lines: dedupe(out.lines), images: dedupe(out.images) }; };
   const readTile = async tile => {
     const toPx = b => Array.isArray(b) && b.length === 4 && b.every(v => isFinite(v)) ? { x0: tile.x0 + b[0] / 1000 * (tile.x1 - tile.x0), y0: tile.y0 + b[1] / 1000 * (tile.y1 - tile.y0), x1: tile.x0 + b[2] / 1000 * (tile.x1 - tile.x0), y1: tile.y0 + b[3] / 1000 * (tile.y1 - tile.y0) } : null;
     let buf = '', got = 0;
@@ -603,6 +651,7 @@ async function runAI(my, tier) {
       const line = raw.trim().replace(/^```\w*|```$/g, '').replace(/,$/, '').trim();
       if (!line.startsWith('{')) return;
       let L; try { L = JSON.parse(line); } catch (e) { return; }
+      if (L.image) { const ib = toPx(L.box); if (ib && ib.x1 - ib.x0 > 8 && ib.y1 - ib.y0 > 8) out.images.push({ ...ib, text: '🖼️ صورة', conf: 90 }); return; }
       const lb = toPx(L.box); if (!lb || !hasContent(L.text)) return;
       const hint = { font: fontInfo(L.font) ? L.font : null, weight: [400, 700, 900].includes(+L.weight) ? +L.weight : null, cat: L.category };
       out.lines.push({ ...refineBox(lb), text: String(L.text).trim(), hint, conf: 90 });
@@ -690,6 +739,8 @@ function rebuild() {
   const tag = (list, p) => list.map(r => ({ ...r, id: p + id++, done: prevDone.some(d => overlap(r, d) > 0.6) }));
   words = tag(merge(aiRes && aiRes.words, tessRes && tessRes.words), 'w');
   lines = tag(merge(aiRes && aiRes.lines, tessRes && tessRes.lines), 'l');
+  images = tag((aiRes && aiRes.images) || [], 'i');
+  glyphLib = null;
   setEng('engCount', 'ok', `${words.length} كلمة · ${lines.length} سطر`);
   renderBoxes();
 }
@@ -704,13 +755,13 @@ const regions = () => level === 'word' ? words : lines;
 function renderBoxes() {
   overlay.querySelectorAll('.wbox').forEach(n => n.remove());
   const W = cv.width, H = cv.height;
-  regions().forEach(r => {
+  [...regions(), ...images].forEach(r => {
     const d = document.createElement('div');
-    d.className = 'wbox' + (r.done ? ' done' : '') + (current && current.id === r.id ? ' sel' : '');
+    d.className = 'wbox' + (r.id && r.id[0] === 'i' ? ' ibox' : '') + (r.done ? ' done' : '') + (current && current.id === r.id ? ' sel' : '');
     d.style.left = (r.x0 / W * 100) + '%'; d.style.top = (r.y0 / H * 100) + '%';
     d.style.width = ((r.x1 - r.x0) / W * 100) + '%'; d.style.height = ((r.y1 - r.y0) / H * 100) + '%';
     d.title = r.text;
-    d.onclick = e => { e.stopPropagation(); select(r); };
+    d.onclick = async e => { e.stopPropagation(); await applyPending(); if (r.id[0] === 'i') startImageEdit(r); else select(r); };
     overlay.appendChild(d);
   });
   renderList();
@@ -724,7 +775,7 @@ function renderList() {
     it.innerHTML = '<span></span><span></span>';
     it.firstChild.textContent = r.text;
     it.lastChild.textContent = r.done ? '✓' : '';
-    it.onclick = () => select(r);
+    it.onclick = async () => { await applyPending(); select(r); };
     list.appendChild(it);
   });
   list.style.display = rs.length ? '' : 'none';
@@ -863,11 +914,19 @@ async function matchFont(r, a) {
 
 /* ---------------- fitting: coarse estimate, then pixel-level fine-tune ---------------- */
 const anchorOf = text => isArabic(text) || !text ? 'right' : /\p{L}/u.test(text) ? 'left' : 'center';
+// numbers/symbols follow the direction of the row they sit in: right in Arabic rows, left in English rows
+function contextAlign(r) {
+  const own = anchorOf(r.text);
+  if (own !== 'center') return own;
+  const row = [...words, ...lines].filter(o => o !== r && o.y1 > r.y0 + (r.y1 - r.y0) * 0.3 && o.y0 < r.y1 - (r.y1 - r.y0) * 0.3);
+  if (!row.length) return 'center';
+  return row.some(o => isArabic(o.text)) ? 'right' : 'left';
+}
 function anchorX(ink, align) { return align === 'right' ? ink.x1 : align === 'left' ? ink.x0 : (ink.x0 + ink.x1) / 2; }
 
 // draw `text` so its INK edge (right/left/centre) sits on anchor x, on the given baseline
 function drawAnchored(g, text, p, align, ax, by, color) {
-  g.font = `${p.weight} ${p.size}px "${p.font}"`;
+  g.font = `${Math.round(+p.weight)} ${p.size}px "${p.font}"`;
   try { g.letterSpacing = (p.spacing || 0) + 'px'; } catch (e) {}
   g.direction = isArabic(text) ? 'rtl' : 'ltr'; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
   const m = g.measureText(text), L = m.actualBoundingBoxLeft, R = m.actualBoundingBoxRight;
@@ -919,10 +978,15 @@ function renderMap(text, p, F, k, T) {
   for (let i = 0; i < out.length; i++) out[i] = 1 - d[i * 4] / 255;
   return out;
 }
+function blurMap(m, w, h) { // 3x3 box blur: compares shapes, not sub-pixel anti-aliasing noise
+  const o = new Float32Array(m.length);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let s = 0, n = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const X = x + dx, Y = y + dy; if (X >= 0 && Y >= 0 && X < w && Y < h) { s += m[Y * w + X]; n++; } } o[y * w + x] = s / n; }
+  return o;
+}
 function softIoU(a, b) { let mn = 0, mx = 0; for (let i = 0; i < a.length; i++) { const x = a[i], y = b[i]; mn += x < y ? x : y; mx += x > y ? x : y; } return mx ? mn / mx : 0; }
 
 // coordinate descent over size, width, baseline, anchor, stroke and blur so the original text re-rendered overlaps the original pixels
-function fineTune(r, a, font, weight) {
+function fineTune(r, a, font, weight, lockWeight) {
   const g0 = coarseGeo(r, a, font, weight);
   if (!g0 || g0.baseline == null || !r.text || !a.bgRGB) return g0;
   const inkH = a.ink.y1 - a.ink.y0, pad = Math.max(3, Math.round(inkH * 0.25));
@@ -932,8 +996,11 @@ function fineTune(r, a, font, weight) {
   const p = { ...g0, spacing: 0 };
   const evalP = q => softIoU(T.data, renderMap(r.text, q, F, k, T));
   let best = evalP(p);
-  const steps = { size: p.size * 0.05, sx: 0.05, baseline: Math.max(1, inkH * 0.04), ax: Math.max(1, inkH * 0.04), stroke: Math.max(0.3, p.size * 0.012), blur: 0.5 };
-  const lim = { size: [p.size * 0.6, p.size * 1.6], sx: [0.6, 1.6], baseline: [p.baseline - inkH * 0.4, p.baseline + inkH * 0.4], ax: [p.ax - inkH, p.ax + inkH], stroke: [0, p.size * 0.1], blur: [0, 3] };
+  const steps = { size: p.size * 0.05, sx: 0.05, baseline: Math.max(1, inkH * 0.04), ax: Math.max(1, inkH * 0.04), stroke: Math.max(0.3, p.size * 0.012), blur: 0.5, spacing: Math.max(0.3, p.size * 0.01) };
+  const lim = { size: [p.size * 0.6, p.size * 1.6], sx: [0.6, 1.6], baseline: [p.baseline - inkH * 0.4, p.baseline + inkH * 0.4], ax: [p.ax - inkH, p.ax + inkH], stroke: [0, p.size * 0.1], blur: [0, 3], spacing: [-p.size * 0.15, p.size * 0.3] };
+  const info = fontInfo(font);
+  if (info && info.vr && !lockWeight) { p.weight = +weight; steps.weight = 80; lim.weight = info.vr; } // variable font: tune the weight continuously
+  if ([...r.text].length < 2) { delete steps.spacing; }
   for (let round = 0; round < 5; round++) {
     let improved = true, guard = 0;
     while (improved && guard++ < 12) {
@@ -947,7 +1014,8 @@ function fineTune(r, a, font, weight) {
     }
     for (const key of Object.keys(steps)) steps[key] /= 2;
   }
-  return { ...p, size: +p.size.toFixed(1), score: best };
+  const shape = softIoU(blurMap(T.data, T.w, T.h), blurMap(renderMap(r.text, p, F, k, T), T.w, T.h));
+  return { ...p, weight: Math.round(+p.weight), size: +p.size.toFixed(1), score: shape, rawScore: best };
 }
 
 /* ---------------- erase: mask of the old glyphs (+halo, dots, earlier edits) → rebuild background ---------------- */
@@ -1127,24 +1195,270 @@ async function drawText(r, text, o, clip) {
   ctx.restore();
 }
 
+
+/* ---------------- glyph cloning: rebuild numbers / Latin text from glyphs that already exist in the image ---------------- */
+const CLONE_RE = /^[0-9٠-٩A-Za-z\/\-.:,%+#()$€£@&*]+$/;
+let glyphLib = null;
+const median = a => { const b = [...a].sort((x, y) => x - y); return b.length ? b[b.length >> 1] : 0; };
+// connected glyph shapes of a word, from the ORIGINAL pixels, each with its own soft alpha
+function glyphsOf(r) {
+  if (r._glyphs !== undefined) return r._glyphs;
+  r._glyphs = null;
+  if (!r.text || !CLONE_RE.test(r.text)) return null;
+  const a = r.analysis || analyze(r); if (!a.ink || !a.bgRGB) return null;
+  const F = clampRect(a.ink, 2), W = F.w, H = F.h;
+  const d = octx.getImageData(F.x0, F.y0, W, H).data, [br, bgc, bb] = a.bgRGB;
+  const alpha = new Float32Array(W * H), lab = new Int32Array(W * H);
+  for (let i = 0; i < W * H; i++) alpha[i] = Math.min(1, Math.sqrt((d[i * 4] - br) ** 2 + (d[i * 4 + 1] - bgc) ** 2 + (d[i * 4 + 2] - bb) ** 2) / a.inkLevel);
+  let comps = [], n = 0;
+  for (let i = 0; i < W * H; i++) {
+    if (alpha[i] < 0.45 || lab[i]) continue;
+    n++; const st = [i]; lab[i] = n; const c = { id: [n], x0: W, y0: H, x1: 0, y1: 0, area: 0 };
+    while (st.length) {
+      const j = st.pop(), x = j % W, y = (j / W) | 0; c.area++;
+      if (x < c.x0) c.x0 = x; if (x > c.x1) c.x1 = x; if (y < c.y0) c.y0 = y; if (y > c.y1) c.y1 = y;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= W || Y >= H) continue; const k = Y * W + X; if (!lab[k] && alpha[k] >= 0.45) { lab[k] = n; st.push(k); } }
+    }
+    comps.push(c);
+  }
+  const inkH = a.ink.y1 - a.ink.y0;
+  comps = comps.filter(c => c.area >= Math.max(2, inkH * inkH * 0.004)).sort((p, q) => p.x0 - q.x0);
+  // merge parts of one glyph (dots of i/j, colon, %, =): strongly overlapping columns
+  const merged = [];
+  comps.forEach(c => {
+    const m = merged[merged.length - 1];
+    if (m && Math.min(m.x1, c.x1) - Math.max(m.x0, c.x0) > 0.5 * Math.min(m.x1 - m.x0 + 1, c.x1 - c.x0 + 1)) {
+      m.x0 = Math.min(m.x0, c.x0); m.x1 = Math.max(m.x1, c.x1); m.y0 = Math.min(m.y0, c.y0); m.y1 = Math.max(m.y1, c.y1); m.id.push(...c.id); m.area += c.area;
+    } else merged.push({ ...c, id: [...c.id] });
+  });
+  const chars = [...r.text];
+  if (merged.length !== chars.length) return null;
+  // per-glyph alpha restricted to its own pixels (+1px of anti-aliasing)
+  merged.forEach(c => {
+    const ids = new Set(c.id), x0 = Math.max(0, c.x0 - 1), y0 = Math.max(0, c.y0 - 1), x1 = Math.min(W - 1, c.x1 + 1), y1 = Math.min(H - 1, c.y1 + 1);
+    const w = x1 - x0 + 1, h = y1 - y0 + 1, al = new Float32Array(w * h);
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      let own = false;
+      for (let dy = -1; dy <= 1 && !own; dy++) for (let dx = -1; dx <= 1 && !own; dx++) { const X = x + dx, Y = y + dy; if (X >= 0 && Y >= 0 && X < W && Y < H && ids.has(lab[Y * W + X])) own = true; }
+      if (own) al[(y - y0) * w + (x - x0)] = alpha[y * W + x];
+    }
+    Object.assign(c, { ax0: x0, ay0: y0, aw: w, ah: h, al });
+  });
+  const base = median(merged.map(c => c.y1)) + F.y0 + 1;
+  const ref = merged.filter((c, i) => /[0-9٠-٩A-Z]/.test(chars[i]));
+  const refH = median((ref.length ? ref : merged).map(c => c.y1 - c.y0 + 1));
+  const isD = ch => /[0-9٠-٩]/.test(ch);
+  const gaps = merged.slice(1).map((c, i) => c.x0 - merged[i].x1 - 1).filter((g, i) => !(isD(chars[i]) && isD(chars[i + 1])));
+  // digits are usually tabular: equal advance, so measure centre-to-centre pitch between neighbouring digits
+  const pitches = merged.slice(1).map((c, i) => isD(chars[i]) && isD(chars[i + 1]) ? (c.x0 + c.x1) / 2 - (merged[i].x0 + merged[i].x1) / 2 : null).filter(v => v != null);
+  const allGaps = merged.slice(1).map((c, i) => c.x0 - merged[i].x1 - 1);
+  const gap = gaps.length ? median(gaps) : allGaps.length ? median(allGaps) : refH * 0.12, pitch = pitches.length ? median(pitches) : null;
+  // advance (horizontal space) of each glyph: digits = pitch; next to a digit: from centre distance; else ink width + gap
+  const cx = c => (c.x0 + c.x1) / 2;
+  merged.forEach((c, i) => {
+    const w = c.x1 - c.x0 + 1;
+    if (pitch && isD(chars[i])) { c.adv = pitch; return; }
+    const est = [];
+    if (pitch && i > 0 && isD(chars[i - 1])) est.push(2 * (cx(c) - cx(merged[i - 1])) - pitch);
+    if (pitch && i < merged.length - 1 && isD(chars[i + 1])) est.push(2 * (cx(merged[i + 1]) - cx(c)) - pitch);
+    c.adv = est.length ? Math.max(w, median(est)) : w + gap;
+  });
+  r._glyphs = { F, chars, comps: merged, base, refH, gap, pitch };
+  return r._glyphs;
+}
+function buildLib() {
+  glyphLib = {};
+  words.forEach(w => { const g = glyphsOf(w); if (g) g.chars.forEach((ch, i) => (glyphLib[ch] = glyphLib[ch] || []).push({ g, i })); });
+}
+function clonePlan(r, text) {
+  if (!$('cloneGlyphs').checked) return null;
+  const t = text.replace(/[ \t]+/g, ' ').trim();
+  if (!t || /\n/.test(t) || !/^[0-9٠-٩A-Za-z\/\-.:,%+#()$€£@&* ]+$/.test(t)) return null;
+  if (!glyphLib) buildLib();
+  const own = glyphsOf(r), a = r.analysis;
+  const refH = own ? own.refH : (a && a.ink ? a.ink.y1 - a.ink.y0 : r.y1 - r.y0);
+  const base = own ? own.base : (a && a.ink ? a.ink.y1 : r.y1);
+  const pieces = []; const missing = [];
+  for (const ch of t) {
+    if (ch === ' ') { pieces.push({ space: true }); continue; }
+    let src = null;
+    if (own) { const i = own.chars.indexOf(ch); if (i >= 0) src = { g: own, i }; }
+    if (!src && glyphLib[ch]) src = glyphLib[ch].reduce((p, q) => Math.abs(q.g.refH - refH) < Math.abs(p.g.refH - refH) ? q : p);
+    if (src) pieces.push({ src, scale: refH / src.g.refH }); else { pieces.push({ ch }); missing.push(ch); }
+  }
+  if (missing.length === pieces.filter(x => !x.space).length) return null;
+  const gap = own ? own.gap : median(pieces.filter(x => x.src).map(x => x.src.g.gap * x.scale)) || refH * 0.12;
+  const pitchSrc = own && own.pitch ? [own.pitch] : pieces.filter(x => x.src && x.src.g.pitch).map(x => x.src.g.pitch * x.scale);
+  return { pieces, refH, base, gap, pitch: pitchSrc.length ? median(pitchSrc) : null, missing: [...new Set(missing)] };
+}
+function hexRGB(h) { return [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)); }
+function drawClone(r, plan, o, clip) {
+  const p = panelParams(), col = hexRGB($('color').value);
+  const fontW = ch => { const m = textMetrics(ch, p.font, p.weight, p.size, 0); return (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * p.sx; };
+  const widths = plan.pieces.map(x => x.space ? plan.refH * 0.35 : x.src ? (x.src.g.comps[x.src.i].x1 - x.src.g.comps[x.src.i].x0 + 1) * x.scale : fontW(x.ch));
+  // centre-to-centre spacing = half of each neighbour's advance (advances measured from the image itself)
+  const advs = plan.pieces.map((x, i) => x.space ? plan.refH * 0.35 : x.src ? x.src.g.comps[x.src.i].adv * x.scale : textMetrics(x.ch, p.font, p.weight, p.size, 0).width * p.sx);
+  const centres = []; plan.pieces.forEach((x, i) => centres.push(i ? centres[i - 1] + (advs[i - 1] + advs[i]) / 2 : 0));
+  const firstLeft = centres.length ? centres[0] - widths[0] / 2 : 0;
+  const lefts = centres.map((c, i) => c - widths[i] / 2 - firstLeft);
+  const total = centres.length ? centres[centres.length - 1] + widths[widths.length - 1] / 2 - firstLeft : 0;
+  const ink = r.geo && r.geo.ink ? r.geo.ink : r;
+  const x0 = (o.align === 'right' ? ink.x1 - total : o.align === 'left' ? ink.x0 : (ink.x0 + ink.x1) / 2 - total / 2) + o.dx;
+  const base = plan.base + o.dy;
+  let Rr = clampRect({ x0: x0 - 3, y0: base - plan.refH * 2.2, x1: x0 + total + 3, y1: base + plan.refH * 0.9 });
+  if (clip) Rr = clampRect({ x0: Math.max(Rr.x0, clip.x0), y0: Math.max(Rr.y0, clip.y0), x1: Math.min(Rr.x1, clip.x1), y1: Math.min(Rr.y1, clip.y1) });
+  if (Rr.w < 1 || Rr.h < 1) return;
+  const img = ctx.getImageData(Rr.x0, Rr.y0, Rr.w, Rr.h), d = img.data;
+  const fontChars = [];
+  plan.pieces.forEach((pc, i) => {
+    const x = x0 + lefts[i];
+    if (pc.src) {
+      const g = pc.src.g, c = g.comps[pc.src.i], s = pc.scale;
+      // glyph placement keeps its own offset from the source baseline (descenders, punctuation height)
+      const dLeft = x - (c.x0 - c.ax0) * s;
+      const dTop = base + ((g.F.y0 + c.ay0) - g.base) * s;
+      const dw = Math.ceil(c.aw * s), dh = Math.ceil(c.ah * s);
+      for (let yy = 0; yy < dh; yy++) for (let xx = 0; xx < dw; xx++) {
+        const X = Math.round(dLeft + xx), Y = Math.round(dTop + yy);
+        if (X < Rr.x0 || Y < Rr.y0 || X >= Rr.x1 || Y >= Rr.y1) continue;
+        const sx = (X - dLeft) / s, sy = (Y - dTop) / s;
+        const fx = Math.floor(sx), fy = Math.floor(sy), tx = sx - fx, ty = sy - fy;
+        const A = (u, v) => (u >= 0 && v >= 0 && u < c.aw && v < c.ah) ? c.al[v * c.aw + u] : 0;
+        const al = A(fx, fy) * (1 - tx) * (1 - ty) + A(fx + 1, fy) * tx * (1 - ty) + A(fx, fy + 1) * (1 - tx) * ty + A(fx + 1, fy + 1) * tx * ty;
+        if (al <= 0.002) continue;
+        const k = ((Y - Rr.y0) * Rr.w + (X - Rr.x0)) * 4;
+        for (let ch = 0; ch < 3; ch++) d[k + ch] = d[k + ch] * (1 - al) + col[ch] * al;
+      }
+    } else if (!pc.space) fontChars.push({ ch: pc.ch, x });
+  });
+  ctx.putImageData(img, Rr.x0, Rr.y0);
+  if (fontChars.length) {
+    ctx.save(); if (clip) { ctx.beginPath(); ctx.rect(clip.x0, clip.y0, clip.w, clip.h); ctx.clip(); }
+    fontChars.forEach(fc => drawAnchored(ctx, fc.ch, p, 'left', fc.x, base, $('color').value));
+    ctx.restore();
+  }
+}
+async function renderNew(r, t, clip) {
+  const plan = clonePlan(r, t);
+  if (plan) {
+    drawClone(r, plan, opts, clip);
+    $('cloneNote').textContent = plan.missing.length
+      ? `✓ رُكّب من حروف الصورة نفسها — ما عدا «${plan.missing.join(' ')}» غير موجودة في الصورة فرُسمت بالخط المطابق`
+      : '✓ رُكّب بالكامل من حروف الصورة نفسها — نفس الخط والحجم والحواف تمامًا';
+    $('cloneNote').style.color = plan.missing.length ? 'var(--muted)' : 'var(--done)';
+  } else {
+    $('cloneNote').textContent = '';
+    await drawText(r, t, opts, clip);
+  }
+}
+// an edit the user previewed but did not press «تطبيق» for: apply it instead of silently dropping it
+function isDirty() { return current && $('newText').value !== (current.done ? current.newText : (current.text || '')); }
+async function applyPending() {
+  if (imgEdit && imgEdit.img) { await applyImage(); return; }
+  if (isDirty()) await commit(false);
+}
+
+/* ---------------- replace an embedded photo / picture ---------------- */
+let imgEdit = null;
+function startImageEdit(r) {
+  endPreview(); current = null; selToken++;
+  endImageEdit(true);
+  const R = clampRect(r);
+  imgEdit = { r, R, img: null, zoom: 1, dx: 0, dy: 0, base: ctx.getImageData(R.x0, R.y0, R.w, R.h) };
+  $('panelEmpty').style.display = 'none'; $('panelEdit').style.display = 'none'; $('panelImage').style.display = '';
+  $('imgZoom').value = 100; $('zoomVal').textContent = '100%';
+  renderBoxes();
+  toast('اختر الصورة البديلة');
+}
+function endImageEdit(restore) {
+  if (!imgEdit) return;
+  if (restore) ctx.putImageData(imgEdit.base, imgEdit.R.x0, imgEdit.R.y0);
+  imgEdit = null;
+  $('panelImage').style.display = 'none'; showPanel(false);
+}
+function stats(d, mask) {
+  const m = [0, 0, 0], v = [0, 0, 0]; let n = 0;
+  for (let i = 0; i < d.length / 4; i++) { if (mask && !mask[i]) continue; n++; for (let c = 0; c < 3; c++) m[c] += d[i * 4 + c]; }
+  if (!n) return null; for (let c = 0; c < 3; c++) m[c] /= n;
+  for (let i = 0; i < d.length / 4; i++) { if (mask && !mask[i]) continue; for (let c = 0; c < 3; c++) v[c] += (d[i * 4 + c] - m[c]) ** 2; }
+  return { m, s: v.map(x => Math.sqrt(x / n) || 1) };
+}
+function drawImageEdit() {
+  const E = imgEdit; if (!E || !E.img) return;
+  const { R } = E, w = R.w, h = R.h;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  const iw = E.img.naturalWidth, ih = E.img.naturalHeight;
+  const sc = Math.max(w / iw, h / ih) * E.zoom;
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(E.img, (w - iw * sc) / 2 + E.dx, (h - ih * sc) / 2 + E.dy, iw * sc, ih * sc);
+  const nd = g.getImageData(0, 0, w, h);
+  if ($('imgMatch').checked) { // match brightness / contrast / colour cast of the picture being replaced
+    const so = stats(octx.getImageData(R.x0, R.y0, w, h).data), sn = stats(nd.data);
+    if (so && sn) for (let i = 0; i < nd.data.length; i += 4) for (let ch = 0; ch < 3; ch++) {
+      const v = (nd.data[i + ch] - sn.m[ch]) / sn.s[ch] * so.s[ch] + so.m[ch];
+      nd.data[i + ch] = nd.data[i + ch] * 0.6 + v * 0.4;
+    }
+  }
+  const base = E.base, out = new ImageData(new Uint8ClampedArray(base.data), w, h);
+  const fe = Math.max(0, +$('imgFeather').value || 0), rad = Math.max(0, Math.min(+$('imgRadius').value || 0, Math.min(w, h) / 2));
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    // distance inside the (rounded) rectangle → feathered alpha
+    let dEdge = Math.min(x + 0.5, y + 0.5, w - x - 0.5, h - y - 0.5);
+    if (rad > 0) { const cx = x < rad ? rad : x > w - rad ? w - rad : x, cy = y < rad ? rad : y > h - rad ? h - rad : y; if ((x < rad || x > w - rad) && (y < rad || y > h - rad)) dEdge = rad - Math.hypot(x + 0.5 - cx, y + 0.5 - cy); }
+    const al = fe > 0 ? Math.max(0, Math.min(1, dEdge / fe)) : (dEdge > 0 ? 1 : 0);
+    if (al <= 0) continue;
+    const i = (y * w + x) * 4;
+    for (let ch = 0; ch < 3; ch++) out.data[i + ch] = base.data[i + ch] * (1 - al) + nd.data[i + ch] * al;
+  }
+  ctx.putImageData(out, R.x0, R.y0);
+}
+$('imgFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f || !imgEdit) return;
+  const url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { if (imgEdit) { imgEdit.img = im; drawImageEdit(); } };
+  im.src = url; e.target.value = '';
+});
+$('imgZoom').addEventListener('input', () => { if (!imgEdit) return; imgEdit.zoom = $('imgZoom').value / 100; $('zoomVal').textContent = $('imgZoom').value + '%'; drawImageEdit(); });
+['imgFeather', 'imgRadius'].forEach(id => $(id).addEventListener('input', drawImageEdit));
+$('imgMatch').addEventListener('change', drawImageEdit);
+document.querySelectorAll('[data-inudge]').forEach(b => b.onclick = () => {
+  if (!imgEdit) return; const [axis, v] = b.dataset.inudge.split(','); const step = Math.max(2, Math.round(imgEdit.R.w / 60));
+  imgEdit['d' + axis] += +v * step; drawImageEdit();
+});
+async function applyImage() {
+  const E = imgEdit; if (!E) return;
+  if (!E.img) { endImageEdit(true); return; }
+  ctx.putImageData(E.base, E.R.x0, E.R.y0);
+  pushHistory(ctx.getImageData(0, 0, cv.width, cv.height));
+  drawImageEdit();
+  E.r.done = true; imgEdit = null;
+  $('panelImage').style.display = 'none'; showPanel(false); renderBoxes();
+  toast('تم استبدال الصورة ✓');
+}
+$('imgApply').onclick = applyImage;
+$('imgCancel').onclick = () => { endImageEdit(true); renderBoxes(); };
+
 /* ---------------- selection & panel ---------------- */
-function showPanel(edit) { $('panelEmpty').style.display = edit ? 'none' : ''; $('panelEdit').style.display = edit ? '' : 'none'; }
+function showPanel(edit) { $('panelEmpty').style.display = edit ? 'none' : ''; $('panelEdit').style.display = edit ? '' : 'none'; if (edit && imgEdit) endImageEdit(true); }
 function setSeg(id, v) { [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === String(v))); }
 function setWeight(w) {
-  const allowed = (fontInfo($('font').value) || { w: [400, 700] }).w;
-  const best = allowed.reduce((p, q) => Math.abs(q - w) < Math.abs(p - w) ? q : p, allowed[0]);
+  const info = fontInfo($('font').value) || { w: [400, 700] };
+  const best = info.vr ? Math.round(Math.max(info.vr[0], Math.min(info.vr[1], w))) : info.w.reduce((p, q) => Math.abs(q - w) < Math.abs(p - w) ? q : p, info.w[0]);
   opts.weight = String(best);
   const segVal = best >= 800 ? '900' : best >= 600 ? '700' : '400';
   setSeg('weightSeg', segVal);
 }
 ['weightSeg', 'alignSeg', 'digitSeg'].forEach(id => $(id).onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (id === 'weightSeg') { setWeight(+b.dataset.v); refit(); }
+  if (id === 'weightSeg') { setWeight(+b.dataset.v); refit(true); }
   else { opts[id === 'alignSeg' ? 'align' : 'digits'] = b.dataset.v; setSeg(id, b.dataset.v); }
   schedulePreview();
 });
 function showGeo(g) {
   if (!g) return;
+  if (g.weight) setWeight(+g.weight);
+  $('spacing').value = (+g.spacing || 0).toFixed(1);
   $('size').value = (+g.size).toFixed(1); $('sx').value = Math.round((g.sx || 1) * 100);
   $('stroke').value = (+g.stroke || 0).toFixed(1); $('blur').value = (+g.blur || 0).toFixed(1);
 }
@@ -1159,12 +1473,11 @@ async function select(r, keepText) {
   const typed = $('newText').value;
   $('origText').textContent = r.text || '—';
   $('newText').value = keepText ? typed : r.done ? r.newText : (r.text || '');
-  $('overflowHint').style.display = 'none';
+  $('overflowHint').style.display = 'none'; $('cloneNote').textContent = '';
   $('color').value = a.fg; $('colorHex').textContent = a.fg;
   $('bgColor').value = a.bg; $('bgHex').textContent = a.bg;
-  $('spacing').value = 0;
   // Arabic → right, Latin words → left, pure numbers/symbols → centred in their original slot
-  opts.align = anchorOf(r.text); setSeg('alignSeg', opts.align);
+  opts.align = contextAlign(r); setSeg('alignSeg', opts.align);
   opts.dx = 0; opts.dy = 0; $('offTxt').textContent = 'إزاحة 0,0';
   const provisional = (r.hint && r.hint.font && fontInfo(r.hint.font)) ? r.hint.font : (isArabic(r.text) ? 'Cairo' : 'Inter');
   $('font').value = provisional; setWeight((r.hint && r.hint.weight) || 700);
@@ -1202,7 +1515,7 @@ function renderMatches(r) {
   });
   if (r.matches && r.matches.length) {
     const b = r.matches[0];
-    $('matchNote').textContent = `أقرب تطابق: ${b.font} · الحجم ${(+b.geo.size).toFixed(1)}px · العرض ${Math.round(b.geo.sx * 100)}%` + (b.score < 0.55 ? ' — التطابق ضعيف: جرّب رفع خط الصورة الأصلي' : '');
+    $('matchNote').textContent = `أقرب تطابق: ${b.font} · وزن ${b.geo.weight} · الحجم ${(+b.geo.size).toFixed(1)}px · العرض ${Math.round(b.geo.sx * 100)}%` + (b.score < 0.8 ? ' — لو الخط الأصلي غير موجود هنا: ارفع ملفه، والأرقام تُستنسخ من الصورة تلقائيًا' : '');
   }
 }
 function useMatch(r, m) {
@@ -1211,9 +1524,9 @@ function useMatch(r, m) {
   [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === m.font));
   schedulePreview();
 }
-function refit() {
+function refit(lockWeight) {
   if (!current || !current.analysis) return;
-  current.geo = fineTune(current, current.analysis, $('font').value, opts.weight) || current.geo;
+  current.geo = fineTune(current, current.analysis, $('font').value, opts.weight, lockWeight) || current.geo;
   showGeo(current.geo);
 }
 $('font').addEventListener('change', async () => {
@@ -1279,7 +1592,7 @@ async function preview() {
   const P = ensurePv(current);
   ctx.putImageData(P.erased, P.B.x0, P.B.y0);
   const t = convertDigits($('newText').value, opts.digits);
-  if (t.trim()) await drawText(current, t, opts, P.B);
+  if (t.trim()) await renderNew(current, t, P.B);
   checkOverflow(current, t);
 }
 function lineOf(r) { return r.id && r.id[0] === 'w' ? lines.find(L => overlap(r, L) > 0.6 && L.text.includes(r.text)) : null; }
@@ -1311,7 +1624,7 @@ async function commit(eraseOnly) {
   ctx.putImageData(P.erased, P.B.x0, P.B.y0);
   pv = null;
   const t = convertDigits($('newText').value, opts.digits);
-  if (!eraseOnly && t.trim()) await drawText(current, t, opts);
+  if (!eraseOnly && t.trim()) await renderNew(current, t);
   current.done = true; current.newText = eraseOnly ? '' : $('newText').value;
   [...words, ...lines].forEach(o => { if (o !== current && overlap(o, current) > .6) o.done = true; });
   toast(eraseOnly ? 'تم مسح النص' : 'تم الاستبدال ✓');
@@ -1345,11 +1658,14 @@ $('boxesBtn').onclick = () => {
 };
 
 /* ---------------- manual selection ---------------- */
-let manual = false, start = null, drawEl = null, justDrew = false;
-$('modeBtn').onclick = () => {
-  manual = !manual; $('stage').classList.toggle('manual', manual); $('modeBtn').classList.toggle('on', manual);
-  if (manual) toast('ارسم مربعًا حول النص الذي تريد تغييره');
-};
+let manual = false, manualKind = 'text', start = null, drawEl = null, justDrew = false;
+function setManual(on, kind) {
+  manual = on; manualKind = kind || 'text';
+  $('stage').classList.toggle('manual', on);
+  $('modeBtn').classList.toggle('on', on && manualKind === 'text'); $('imgModeBtn').classList.toggle('on', on && manualKind === 'image');
+}
+$('modeBtn').onclick = async () => { await applyPending(); setManual(!(manual && manualKind === 'text'), 'text'); if (manual) toast('ارسم مربعًا حول النص الذي تريد تغييره'); };
+$('imgModeBtn').onclick = async () => { await applyPending(); setManual(!(manual && manualKind === 'image'), 'image'); if (manual) toast('ارسم مربعًا حول الصورة التي تريد استبدالها'); };
 const toImg = e => { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) * cv.width / b.width, y: (e.clientY - b.top) * cv.height / b.height }; };
 cbox.addEventListener('pointerdown', e => {
   if (!manual) return;
@@ -1369,14 +1685,17 @@ cbox.addEventListener('pointerup', async e => {
   const r = clampRect({ x0: Math.min(start.x, p.x), y0: Math.min(start.y, p.y), x1: Math.max(start.x, p.x), y1: Math.max(start.y, p.y) });
   start = null; drawEl.remove(); drawEl = null; justDrew = true;
   if (r.w < 4 || r.h < 4) return;
+  const kind = manualKind;
+  setManual(false);
+  if (kind === 'image') { const im = { x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1, text: '🖼️ صورة', id: 'i' + Date.now(), done: false }; images.push(im); startImageEdit(im); return; }
   const region = { x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1, text: '', id: 'm' + Date.now(), done: false, manual: true };
-  manual = false; $('stage').classList.remove('manual'); $('modeBtn').classList.remove('on');
   select(region);
   const t = await readRegion(region);
   if (t && current === region) {
     region.text = t.text; if (t.hint) region.hint = t.hint;
     $('origText').textContent = region.text;
     if (!$('newText').value) $('newText').value = region.text;
+    region._glyphs = undefined;
     select(region); // re-run analysis + font matching now that the text is known
     $('newText').value = region.text;
   }
@@ -1406,8 +1725,10 @@ async function readRegion(region) {
 overlay.addEventListener('click', e => { if (justDrew) { justDrew = false; return; } if (e.target === overlay && !manual && current) deselect(); });
 
 /* ---------------- download ---------------- */
-$('dlBtn').onclick = () => {
-  endPreview(); cmpOff();
+$('dlBtn').onclick = async () => {
+  cmpOff();
+  await applyPending(); // what you see in the preview is what you download
+  endPreview();
   const f = $('fmt').value;
   let src = cv;
   if (f === 'jpeg') {
