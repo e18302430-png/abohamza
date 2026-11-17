@@ -93,6 +93,10 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 #overlay{position:absolute;inset:0}
 .wbox{position:absolute;border:1.5px solid var(--box-line);background:var(--box);border-radius:3px;cursor:pointer;transition:background .12s}
 .wbox:hover{background:rgba(79,70,229,.35)}
+.sizebar{display:flex;gap:6px;align-items:center;margin-top:8px}
+.sizebar input{flex:1;min-width:0;accent-color:var(--accent)}
+.handle{position:absolute;width:16px;height:16px;right:-8px;bottom:-8px;background:#F59E0B;border:2px solid #fff;border-radius:5px;cursor:nwse-resize;touch-action:none;box-shadow:0 1px 4px rgba(0,0,0,.35);z-index:2}
+.sizebadge{position:absolute;bottom:calc(100% + 6px);right:0;background:var(--ink);color:var(--bg);font:700 12px Inter,sans-serif;padding:3px 8px;border-radius:7px;white-space:nowrap;pointer-events:none;line-height:1.4}
 .wbox.sel{border-color:#F59E0B;background:rgba(245,158,11,.28);box-shadow:0 0 0 2px rgba(245,158,11,.5)}
 .wbox.ibox{border-color:#F97316;border-style:dashed;background:rgba(249,115,22,.10)}
 .wbox.done{border-color:var(--done);background:transparent;border-style:dashed}
@@ -239,6 +243,13 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
             <div class="field"><label>عرض الحروف %</label><input type="number" id="sx" value="100" min="50" max="200" step="1"></div>
             <div class="field"><label>سماكة إضافية</label><input type="number" id="stroke" value="0" min="0" max="20" step="0.1"></div>
           </div>
+          <div class="sizebar">
+            <button class="btn ghost sm" id="sizeDown" title="تصغير">−</button>
+            <input type="range" id="sizeRange" min="4" max="200" step="0.1" aria-label="حجم الخط">
+            <button class="btn ghost sm" id="sizeUp" title="تكبير">+</button>
+            <button class="btn ghost sm" id="sizeReset" title="رجوع للحجم المكتشف">↺</button>
+          </div>
+          <div class="match-note">اسحب المقبض <b style="color:#F59E0B">◢</b> على الصورة، أو حرّك عجلة الماوس فوقها، أو <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> — مع <kbd>Shift</kbd> للتحكم الدقيق</div>
           <div class="row">
             <div class="field"><label>تباعد الأحرف</label><input type="number" id="spacing" value="0" step="0.5" min="-20" max="60"></div>
             <div class="field"><label>نعومة الحواف</label><input type="number" id="blur" value="0" min="0" max="5" step="0.1"></div>
@@ -798,6 +809,7 @@ function renderBoxes() {
     d.style.width = ((r.x1 - r.x0) / W * 100) + '%'; d.style.height = ((r.y1 - r.y0) / H * 100) + '%';
     d.title = r.text;
     d.onclick = async e => { e.stopPropagation(); await applyPending(); if (r.id[0] === 'i') startImageEdit(r); else select(r); };
+    if (current && current.id === r.id) addSizeHandle(d);
     overlay.appendChild(d);
   });
   renderList();
@@ -1475,6 +1487,55 @@ async function applyImage() {
 $('imgApply').onclick = applyImage;
 $('imgCancel').onclick = () => { endImageEdit(true); renderBoxes(); };
 
+/* ---------------- font-size control: slider, +/−, wheel, keyboard, drag handle ---------------- */
+function setSizeRange(base) { // slider spans a useful range around the detected size for fine control
+  const r = $('sizeRange'); r.min = Math.max(4, base * 0.4).toFixed(1); r.max = Math.max(12, base * 2.5).toFixed(1); r.value = base;
+}
+function setSize(v, fromRange) {
+  if (!current) return;
+  v = Math.max(4, Math.min(1000, Math.round(v * 10) / 10));
+  $('size').value = v.toFixed(1);
+  const rg = $('sizeRange');
+  if (!fromRange) { if (v < +rg.min || v > +rg.max) setSizeRange(v); rg.value = v; }
+  const badge = overlay.querySelector('.sizebadge'); if (badge) badge.textContent = v.toFixed(1) + ' px';
+  schedulePreview();
+}
+const curSize = () => +$('size').value || 16;
+$('sizeRange').addEventListener('input', () => setSize(+$('sizeRange').value, true));
+$('size').addEventListener('input', () => { const v = curSize(), rg = $('sizeRange'); if (v < +rg.min || v > +rg.max) setSizeRange(v); rg.value = v; });
+$('sizeUp').onclick = () => setSize(curSize() * 1.02);
+$('sizeDown').onclick = () => setSize(curSize() / 1.02);
+$('sizeReset').onclick = () => { if (current && current.autoSize) { setSize(current.autoSize); setSizeRange(current.autoSize); } };
+// mouse wheel over the image: 2% per notch, 0.5% with Shift
+cbox.addEventListener('wheel', e => {
+  if (!current || manual || imgEdit) return;
+  e.preventDefault();
+  const f = e.shiftKey ? 1.005 : 1.02;
+  setSize(e.deltaY < 0 ? curSize() * f : curSize() / f);
+}, { passive: false });
+// Alt + ↑/↓: ±0.5px, with Shift ±0.1px (works while typing too)
+window.addEventListener('keydown', e => {
+  if (!current || !e.altKey || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+  e.preventDefault();
+  const step = e.shiftKey ? 0.1 : 0.5;
+  setSize(curSize() + (e.key === 'ArrowUp' ? step : -step));
+});
+// drag handle on the selected box: drag down/right to enlarge, up/left to shrink
+function addSizeHandle(box) {
+  const h = document.createElement('div'); h.className = 'handle'; h.title = 'اسحب لتغيير الحجم';
+  const badge = document.createElement('div'); badge.className = 'sizebadge'; badge.textContent = curSize().toFixed(1) + ' px'; badge.style.display = 'none';
+  box.appendChild(h); box.appendChild(badge);
+  h.addEventListener('pointerdown', e => {
+    e.preventDefault(); e.stopPropagation(); h.setPointerCapture(e.pointerId);
+    const s0 = curSize(), y0 = e.clientY, x0 = e.clientX, bh = Math.max(12, box.getBoundingClientRect().height);
+    badge.style.display = '';
+    const move = ev => { const d = (ev.clientY - y0) + (ev.clientX - x0) * 0.5; setSize(s0 * Math.max(0.2, 1 + d * (ev.shiftKey ? 0.25 : 1) / (bh * 3))); }; // ~1% per screen pixel of a 33px box
+    const up = () => { h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up); badge.style.display = 'none'; justDrew = true; };
+    h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
+  });
+  h.addEventListener('click', e => e.stopPropagation());
+}
+
 /* ---------------- selection & panel ---------------- */
 function showPanel(edit) { $('panelEmpty').style.display = edit ? 'none' : ''; $('panelEdit').style.display = edit ? '' : 'none'; if (edit && imgEdit) endImageEdit(true); }
 function setSeg(id, v) { [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === String(v))); }
@@ -1493,6 +1554,7 @@ function setWeight(w) {
 });
 function showGeo(g) {
   if (!g) return;
+  if (current) { current.autoSize = +g.size; setSizeRange(+g.size); }
   if (g.weight) setWeight(+g.weight);
   $('spacing').value = (+g.spacing || 0).toFixed(1);
   $('size').value = (+g.size).toFixed(1); $('sx').value = Math.round((g.sx || 1) * 100);
