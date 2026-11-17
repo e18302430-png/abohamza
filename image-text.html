@@ -217,7 +217,9 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
         <div id="panelEdit" style="display:none">
           <h3>تعديل النص</h3>
           <div class="field"><label>النص الأصلي</label><div class="orig" id="origText"></div></div>
-          <div class="field"><label>النص الجديد</label><textarea id="newText" placeholder="اكتب النص أو الرقم الجديد…"></textarea></div>
+          <div class="field"><label>النص الجديد</label><textarea id="newText" placeholder="اكتب النص أو الرقم الجديد…"></textarea>
+            <div id="overflowHint" class="match-note" style="display:none;color:var(--danger)">النص الجديد أطول من مكان القديم وسيغطي الكلمة المجاورة.
+              <button class="btn ghost sm" id="lineBtn" style="margin-top:6px;width:100%">↔️ عدّل السطر كله (تتحرك الكلمات تلقائيًا)</button></div></div>
           <div class="field">
             <label>الخط الأقرب للأصلي</label>
             <div class="chips" id="fontMatches"></div>
@@ -226,11 +228,17 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
           <div class="field">
             <label>الخط</label>
             <select id="font"></select>
+            <label class="btn ghost sm" style="margin-top:8px;width:100%">＋ ارفع خط الصورة الأصلي (TTF / OTF / WOFF)<input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" hidden></label>
           </div>
           <div class="field"><label>الوزن</label><div class="seg" id="weightSeg"><button data-v="400">عادي</button><button data-v="700" class="on">عريض</button><button data-v="900">أسود</button></div></div>
+          <div class="row3">
+            <div class="field"><label>الحجم px</label><input type="number" id="size" min="4" max="1000" step="0.5"></div>
+            <div class="field"><label>عرض الحروف %</label><input type="number" id="sx" value="100" min="50" max="200" step="1"></div>
+            <div class="field"><label>سماكة إضافية</label><input type="number" id="stroke" value="0" min="0" max="20" step="0.1"></div>
+          </div>
           <div class="row">
-            <div class="field"><label>الحجم (px)</label><input type="number" id="size" min="4" max="1000" step="0.5"></div>
             <div class="field"><label>تباعد الأحرف</label><input type="number" id="spacing" value="0" step="0.5" min="-20" max="60"></div>
+            <div class="field"><label>نعومة الحواف</label><input type="number" id="blur" value="0" min="0" max="5" step="0.1"></div>
           </div>
           <div class="row">
             <div class="field"><label>لون الخط</label><div class="colorpick"><input type="color" id="color"><code id="colorHex"></code></div></div>
@@ -239,7 +247,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
           <div class="field"><label>المحاذاة</label><div class="seg" id="alignSeg"><button data-v="right">يمين</button><button data-v="center">وسط</button><button data-v="left">يسار</button></div></div>
           <div class="field"><label>نوع الأرقام</label><div class="seg" id="digitSeg"><button data-v="keep" class="on">كما كتبتها</button><button data-v="ar">٠١٢٣</button><button data-v="en">0123</button></div></div>
           <label class="check"><input type="checkbox" id="smartErase" checked> مسح ذكي (إعادة بناء الخلفية)</label>
-          <label class="check"><input type="checkbox" id="fit" checked> تصغير النص ليناسب المساحة</label>
+          <label class="check"><input type="checkbox" id="fit"> تصغير النص الأطول ليناسب مكان القديم</label>
           <div class="row3" style="margin-top:10px">
             <button class="btn ghost sm" data-nudge="x,-1" title="يسار">←</button>
             <button class="btn ghost sm" data-nudge="y,-1" title="أعلى">↑</button>
@@ -277,7 +285,7 @@ let level = 'word';
 let current = null;
 let opts = { weight: '700', align: 'right', digits: 'keep', dx: 0, dy: 0 };
 let worker = null, workerReady = null;
-let previewSnapshot = null;
+let pv = null;
 let tessRes = null, aiRes = null;   // raw results of each engine
 let jobId = 0;
 
@@ -451,7 +459,7 @@ function startEditor(img) {
   ctx.drawImage(img, 0, 0, cv.width, cv.height);
   original = ctx.getImageData(0, 0, cv.width, cv.height);
   origCanvas.width = cv.width; origCanvas.height = cv.height; octx.putImageData(original, 0, 0);
-  history = []; future = []; words = []; lines = []; current = null; tessRes = null; aiRes = null; previewSnapshot = null;
+  history = []; future = []; words = []; lines = []; current = null; tessRes = null; aiRes = null; pv = null;
   updateUndo(); renderBoxes(); showPanel(false);
   $('landing').style.display = 'none'; $('editor').classList.add('show'); $('newBtn').style.display = '';
   window.scrollTo({ top: 0 });
@@ -767,11 +775,12 @@ function analyze(r) {
     if (dist[i] > thr) { inkPix.push(i); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   }
   // text colour: core of the strokes (most distant 40% of ink pixels), not the anti-aliased edges
-  let fg = [0, 0, 0];
+  let fg = [0, 0, 0], inkLevel = thr * 1.5 || 60;
   if (inkPix.length) {
     const core = inkPix.sort((a, b) => dist[b] - dist[a]).slice(0, Math.max(1, Math.floor(inkPix.length * 0.4)));
     core.forEach(i => { fg[0] += d[i * 4]; fg[1] += d[i * 4 + 1]; fg[2] += d[i * 4 + 2]; });
     fg = fg.map(v => v / core.length);
+    inkLevel = Math.max(20, core.reduce((t, i) => t + dist[i], 0) / core.length);
   }
   let mask = null, ink = null;
   if (x1 > x0 && y1 > y0) {
@@ -783,7 +792,7 @@ function analyze(r) {
     }
     mask = { w: mw, h: mh, data: m };
   }
-  return { bg: hex(...bg), fg: hex(...fg), ink, mask };
+  return { bg: hex(...bg), fg: hex(...fg), ink, mask, bgRGB: bg, inkLevel };
 }
 
 /* ---------------- font matching ---------------- */
@@ -848,60 +857,242 @@ async function matchFont(r, a) {
   results.sort((p, q) => q.score - p.score);
   // de-duplicate: best weight per family for the chip list
   const seen = new Set(), top = [];
-  for (const x of results) { if (seen.has(x.font)) continue; seen.add(x.font); top.push(x); if (top.length === 4) break; }
+  for (const x of results) { if (seen.has(x.font)) continue; seen.add(x.font); top.push(x); if (top.length === 6) break; }
   return top;
 }
 
-/* Fit font size + baseline so the ORIGINAL text in this font covers the original ink box */
-function geometry(r, a, font, weight) {
+/* ---------------- fitting: coarse estimate, then pixel-level fine-tune ---------------- */
+const anchorOf = text => isArabic(text) || !text ? 'right' : /\p{L}/u.test(text) ? 'left' : 'center';
+function anchorX(ink, align) { return align === 'right' ? ink.x1 : align === 'left' ? ink.x0 : (ink.x0 + ink.x1) / 2; }
+
+// draw `text` so its INK edge (right/left/centre) sits on anchor x, on the given baseline
+function drawAnchored(g, text, p, align, ax, by, color) {
+  g.font = `${p.weight} ${p.size}px "${p.font}"`;
+  try { g.letterSpacing = (p.spacing || 0) + 'px'; } catch (e) {}
+  g.direction = isArabic(text) ? 'rtl' : 'ltr'; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+  const m = g.measureText(text), L = m.actualBoundingBoxLeft, R = m.actualBoundingBoxRight;
+  const xl = align === 'right' ? -R : align === 'left' ? L : -(R - L) / 2;
+  g.save(); g.translate(ax, by); g.scale(p.sx || 1, 1);
+  if (p.stroke > 0) { g.lineWidth = p.stroke; g.lineJoin = 'round'; g.strokeStyle = color; g.strokeText(text, xl, 0); }
+  g.fillStyle = color; g.fillText(text, xl, 0);
+  g.restore();
+  return m;
+}
+
+function coarseGeo(r, a, font, weight) {
   if (!a.ink) return null;
   const inkW = a.ink.x1 - a.ink.x0, inkH = a.ink.y1 - a.ink.y0;
+  const align = anchorOf(r.text);
   if (r.text) {
     const m = textMetrics(r.text, font, weight, 100);
     const mh = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent, mw = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
     if (mh > 0 && mw > 0) {
-      const sH = inkH / mh, sW = inkW / mw;
-      const ratio = sW / sH;
-      const s = (ratio > 0.7 && ratio < 1.4 && [...r.text].length >= 3) ? Math.sqrt(sH * sW) : sH;
-      return { size: +(100 * s).toFixed(1), baseline: a.ink.y0 + m.actualBoundingBoxAscent * s, ink: a.ink };
+      const s = inkH / mh, sx = Math.max(0.7, Math.min(1.4, (inkW / mw) / s));
+      return { font, weight, size: 100 * s, sx, stroke: 0, blur: 0, baseline: a.ink.y0 + m.actualBoundingBoxAscent * s, ax: anchorX(a.ink, align), align, ink: a.ink, score: 0 };
     }
   }
-  return { size: Math.round(inkH * (isArabic(r.text) ? 1.05 : 1.35)), baseline: null, ink: a.ink };
+  return { font, weight, size: inkH * (isArabic(r.text) ? 1.05 : 1.35), sx: 1, stroke: 0, blur: 0, baseline: null, ax: anchorX(a.ink, align), align, ink: a.ink, score: 0 };
 }
 
-/* ---------------- erase (background reconstruction) ---------------- */
+const tCanvas = document.createElement('canvas'), tCtx = tCanvas.getContext('2d', { willReadFrequently: true });
+// soft "how much ink" map of the ORIGINAL pixels in a frame around the text, downscaled for speed
+function targetMap(a, F, k) {
+  const w = Math.max(4, Math.round(F.w * k)), h = Math.max(4, Math.round(F.h * k));
+  tCanvas.width = w; tCanvas.height = h;
+  tCtx.imageSmoothingQuality = 'high';
+  tCtx.drawImage(origCanvas, F.x0, F.y0, F.w, F.h, 0, 0, w, h);
+  const d = tCtx.getImageData(0, 0, w, h).data, out = new Float32Array(w * h), [br, bg, bb] = a.bgRGB;
+  for (let i = 0; i < w * h; i++) {
+    const v = Math.sqrt((d[i * 4] - br) ** 2 + (d[i * 4 + 1] - bg) ** 2 + (d[i * 4 + 2] - bb) ** 2);
+    out[i] = Math.max(0, Math.min(1, v / a.inkLevel));
+  }
+  return { w, h, data: out };
+}
+function renderMap(text, p, F, k, T) {
+  tCanvas.width = T.w; tCanvas.height = T.h;
+  tCtx.setTransform(1, 0, 0, 1, 0, 0); tCtx.fillStyle = '#fff'; tCtx.fillRect(0, 0, T.w, T.h);
+  tCtx.setTransform(k, 0, 0, k, -k * F.x0, -k * F.y0);
+  tCtx.filter = p.blur > 0.05 ? `blur(${(p.blur * k).toFixed(2)}px)` : 'none';
+  drawAnchored(tCtx, text, p, p.align, p.ax, p.baseline, '#000');
+  tCtx.filter = 'none'; tCtx.setTransform(1, 0, 0, 1, 0, 0);
+  const d = tCtx.getImageData(0, 0, T.w, T.h).data, out = new Float32Array(T.w * T.h);
+  for (let i = 0; i < out.length; i++) out[i] = 1 - d[i * 4] / 255;
+  return out;
+}
+function softIoU(a, b) { let mn = 0, mx = 0; for (let i = 0; i < a.length; i++) { const x = a[i], y = b[i]; mn += x < y ? x : y; mx += x > y ? x : y; } return mx ? mn / mx : 0; }
+
+// coordinate descent over size, width, baseline, anchor, stroke and blur so the original text re-rendered overlaps the original pixels
+function fineTune(r, a, font, weight) {
+  const g0 = coarseGeo(r, a, font, weight);
+  if (!g0 || g0.baseline == null || !r.text || !a.bgRGB) return g0;
+  const inkH = a.ink.y1 - a.ink.y0, pad = Math.max(3, Math.round(inkH * 0.25));
+  const F = clampRect(a.ink, pad);
+  const k = Math.min(1, 90 / F.h, 420 / F.w);
+  const T = targetMap(a, F, k);
+  const p = { ...g0, spacing: 0 };
+  const evalP = q => softIoU(T.data, renderMap(r.text, q, F, k, T));
+  let best = evalP(p);
+  const steps = { size: p.size * 0.05, sx: 0.05, baseline: Math.max(1, inkH * 0.04), ax: Math.max(1, inkH * 0.04), stroke: Math.max(0.3, p.size * 0.012), blur: 0.5 };
+  const lim = { size: [p.size * 0.6, p.size * 1.6], sx: [0.6, 1.6], baseline: [p.baseline - inkH * 0.4, p.baseline + inkH * 0.4], ax: [p.ax - inkH, p.ax + inkH], stroke: [0, p.size * 0.1], blur: [0, 3] };
+  for (let round = 0; round < 5; round++) {
+    let improved = true, guard = 0;
+    while (improved && guard++ < 12) {
+      improved = false;
+      for (const key of Object.keys(steps)) for (const dir of [1, -1]) {
+        const q = { ...p, [key]: Math.max(lim[key][0], Math.min(lim[key][1], p[key] + dir * steps[key])) };
+        if (q[key] === p[key]) continue;
+        const s = evalP(q);
+        if (s > best + 1e-4) { best = s; Object.assign(p, q); improved = true; }
+      }
+    }
+    for (const key of Object.keys(steps)) steps[key] /= 2;
+  }
+  return { ...p, size: +p.size.toFixed(1), score: best };
+}
+
+/* ---------------- erase: mask of the old glyphs (+halo, dots, earlier edits) → rebuild background ---------------- */
+function inkMaskIn(c2d, E) {
+  const d = c2d.getImageData(E.x0, E.y0, E.w, E.h).data;
+  const st = inkStats(d, E.w, E.h);
+  const m = new Uint8Array(E.w * E.h);
+  // low threshold: also catches anti-aliasing, glow and soft shadows
+  if (st.thr > 0) { const t = st.thr * 0.3; for (let i = 0; i < m.length; i++) if (st.dist[i] > t) m[i] = 1; }
+  return m;
+}
+function dilate(m, w, h, rad) {
+  let cur = m;
+  for (let it = 0; it < rad; it++) {
+    const nx = new Uint8Array(cur);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      if (cur[y * w + x]) continue;
+      if ((x > 0 && cur[y * w + x - 1]) || (x < w - 1 && cur[y * w + x + 1]) || (y > 0 && cur[(y - 1) * w + x]) || (y < h - 1 && cur[(y + 1) * w + x])) nx[y * w + x] = 1;
+    }
+    cur = nx;
+  }
+  return cur;
+}
+function eraseText(r, smart, bgHex) {
+  const area = eraseArea(r);
+  const hh = area.y1 - area.y0;
+  if (!smart) { const R = clampRect(area, 2); ctx.fillStyle = bgHex; ctx.fillRect(R.x0, R.y0, R.w, R.h); return; }
+  const dil = Math.max(2, Math.round(hh * 0.08)) + 1;
+  const mY = Math.max(3, Math.round(hh * 0.3)), mX = dil + 3;
+  const E = clampRect({ x0: area.x0 - mX - 4, y0: area.y0 - mY - 4, x1: area.x1 + mX + 4, y1: area.y1 + mY + 4 });
+  if (E.w < 3 || E.h < 3) return;
+  // old text as it is in the original image, plus whatever is on the canvas now (an earlier replacement)
+  const mo = inkMaskIn(octx, E), mc = inkMaskIn(ctx, E);
+  const raw = new Uint8Array(mo.length); for (let i = 0; i < raw.length; i++) raw[i] = mo[i] | mc[i];
+  const grown = dilate(raw, E.w, E.h, dil);
+  // keep only ink connected to the text box (catches dots, diacritics and halos without eating the neighbours)
+  const ax0 = area.x0 - E.x0, ay0 = area.y0 - E.y0, ax1 = area.x1 - E.x0, ay1 = area.y1 - E.y0;
+  const ix0 = Math.max(0, ax0 - mX), iy0 = Math.max(0, ay0 - mY), ix1 = Math.min(E.w - 1, ax1 + mX), iy1 = Math.min(E.h - 1, ay1 + mY);
+  const mask = new Uint8Array(raw.length), stack = [];
+  for (let y = Math.max(0, Math.floor(ay0)); y < Math.min(E.h, Math.ceil(ay1)); y++) for (let x = Math.max(0, Math.floor(ax0)); x < Math.min(E.w, Math.ceil(ax1)); x++) {
+    const i = y * E.w + x; if (grown[i] && !mask[i]) { mask[i] = 1; stack.push(i); }
+  }
+  while (stack.length) {
+    const i = stack.pop(), x = i % E.w, y = (i / E.w) | 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < ix0 || nx > ix1 || ny < iy0 || ny > iy1) continue;
+      const j = ny * E.w + nx; if (grown[j] && !mask[j]) { mask[j] = 1; stack.push(j); }
+    }
+  }
+  let count = 0; for (let i = 0; i < mask.length; i++) count += mask[i];
+  if (!count) { eraseRect(area, true, bgHex); return; }
+  const finalMask = dilate(mask, E.w, E.h, 1);
+  inpaint(E, finalMask);
+}
+// onion-peel fill from the edges inward, then diffusion smoothing, then matching grain
+// smooth backgrounds (flat, gradients, vignettes): robust quadratic surface fitted to a ring of clean pixels around the mask
+function solve6(A, b) {
+  const n = 6, M = A.map((row, i) => [...row, b[i]]);
+  for (let c = 0; c < n; c++) {
+    let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+    [M[c], M[piv]] = [M[piv], M[c]];
+    if (Math.abs(M[c][c]) < 1e-9) return null;
+    for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  return M.map((row, i) => row[n] / row[i]);
+}
+function polyFill(d, w, h, mask) {
+  const ring = dilate(mask, w, h, 8), pts = [];
+  for (let i = 0; i < mask.length; i++) if (ring[i] && !mask[i]) pts.push(i);
+  if (pts.length < 40) return false;
+  const fx = x => x / w - 0.5, fy = y => y / h - 0.5;
+  const feat = i => { const x = fx(i % w), y = fy((i / w) | 0); return [1, x, y, x * x, x * y, y * y]; };
+  const F = pts.map(feat), coef = [];
+  let worst = 0;
+  for (let c = 0; c < 3; c++) {
+    let wts = new Float32Array(pts.length).fill(1), sol = null;
+    for (let it = 0; it < 4; it++) { // iteratively reweighted: stray ink / JPEG fringes in the ring get ignored
+      const A = Array.from({ length: 6 }, () => new Array(6).fill(0)), bb = new Array(6).fill(0);
+      pts.forEach((i, k) => { const f = F[k], v = d[i * 4 + c], wt = wts[k]; for (let a = 0; a < 6; a++) { bb[a] += wt * f[a] * v; for (let q = 0; q < 6; q++) A[a][q] += wt * f[a] * f[q]; } });
+      sol = solve6(A, bb); if (!sol) return false;
+      const res = pts.map((i, k) => Math.abs(d[i * 4 + c] - F[k].reduce((t, f, a) => t + f * sol[a], 0)));
+      const med = [...res].sort((p, q) => p - q)[res.length >> 1] || 0;
+      const s = Math.max(2, med * 2.5);
+      wts = Float32Array.from(res, r => r <= s ? 1 : s / r);
+      if (it === 3) worst = Math.max(worst, med);
+    }
+    coef.push(sol);
+  }
+  if (worst > 7) return false; // textured / busy background: the surface model does not fit
+  for (let i = 0; i < mask.length; i++) if (mask[i]) {
+    const f = feat(i);
+    for (let c = 0; c < 3; c++) d[i * 4 + c] = f.reduce((t, v, a) => t + v * coef[c][a], 0);
+    d[i * 4 + 3] = 255;
+  }
+  return true;
+}
+function inpaint(E, mask) {
+  const img = ctx.getImageData(E.x0, E.y0, E.w, E.h), d = img.data, w = E.w, h = E.h;
+  if (polyFill(d, w, h, mask)) { addGrain(d, w, h, mask); ctx.putImageData(img, E.x0, E.y0); return; }
+  const known = new Uint8Array(w * h); for (let i = 0; i < known.length; i++) known[i] = mask[i] ? 0 : 1;
+  let frontier = [];
+  const isFront = i => { const x = i % w, y = (i / w) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const nx = x + dx, ny = y + dy; if (nx >= 0 && ny >= 0 && nx < w && ny < h && known[ny * w + nx]) return true; } return false; };
+  for (let i = 0; i < mask.length; i++) if (mask[i] && isFront(i)) frontier.push(i);
+  let guard = 0;
+  while (frontier.length && guard++ < 4000) {
+    const vals = frontier.map(i => {
+      const x = i % w, y = (i / w) | 0; let r = 0, g = 0, b = 0, n = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue; const j = ny * w + nx; if (!known[j]) continue; const wt = (dx && dy) ? 0.7 : 1; r += d[j * 4] * wt; g += d[j * 4 + 1] * wt; b += d[j * 4 + 2] * wt; n += wt; }
+      return n ? [r / n, g / n, b / n] : null;
+    });
+    const next = new Set();
+    frontier.forEach((i, k) => { if (!vals[k]) return; d[i * 4] = vals[k][0]; d[i * 4 + 1] = vals[k][1]; d[i * 4 + 2] = vals[k][2]; d[i * 4 + 3] = 255; known[i] = 1; });
+    frontier.forEach(i => { const x = i % w, y = (i / w) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue; const j = ny * w + nx; if (!known[j]) next.add(j); } });
+    frontier = [...next];
+  }
+  const idx = []; for (let i = 0; i < mask.length; i++) if (mask[i]) idx.push(i);
+  for (let it = 0; it < 70; it++) idx.forEach(i => { // converge towards a smooth (harmonic) fill so no letter-shaped blotches remain
+    const x = i % w, y = (i / w) | 0;
+    for (let c = 0; c < 3; c++) {
+      let s = 0, n = 0;
+      if (x > 0) { s += d[(i - 1) * 4 + c]; n++; } if (x < w - 1) { s += d[(i + 1) * 4 + c]; n++; }
+      if (y > 0) { s += d[(i - w) * 4 + c]; n++; } if (y < h - 1) { s += d[(i + w) * 4 + c]; n++; }
+      d[i * 4 + c] = s / n;
+    }
+  });
+  addGrain(d, w, h, mask);
+  ctx.putImageData(img, E.x0, E.y0);
+}
+// grain: copy the noise level of the untouched surroundings so the patch is not suspiciously smooth
+function addGrain(d, w, h, mask) {
+  let ns = 0, nn = 0;
+  for (let y = 1; y < h; y++) for (let x = 1; x < w; x++) { const i = y * w + x; if (mask[i] || mask[i - 1]) continue; ns += Math.abs(d[i * 4] - d[(i - 1) * 4]); nn++; }
+  const noise = nn ? ns / nn : 0;
+  if (noise > 1.2) for (let i = 0; i < mask.length; i++) if (mask[i]) { const n = (Math.random() - 0.5) * noise * 1.5; d[i * 4] += n; d[i * 4 + 1] += n; d[i * 4 + 2] += n; }
+}
+// fallback for flat areas with no detectable ink: blend the four borders
 function eraseRect(r, smart, bgHex) {
   const R = clampRect(r, 2);
   if (R.w < 1 || R.h < 1) return;
   if (!smart) { ctx.fillStyle = bgHex; ctx.fillRect(R.x0, R.y0, R.w, R.h); return; }
   const E = clampRect({ x0: R.x0 - 3, y0: R.y0 - 3, x1: R.x1 + 3, y1: R.y1 + 3 });
-  const img = ctx.getImageData(E.x0, E.y0, E.w, E.h), d = img.data;
-  const ix = R.x0 - E.x0, iy = R.y0 - E.y0, iw = R.w, ih = R.h;
-  const px = (x, y) => { x = Math.max(0, Math.min(E.w - 1, x)); y = Math.max(0, Math.min(E.h - 1, y)); return (y * E.w + x) * 4; };
-  const sample = (x, y, dx, dy) => {
-    const out = [0, 0, 0];
-    for (let c = 0; c < 3; c++) { const v = [1, 2, 3].map(k => d[px(x + dx * k, y + dy * k) + c]).sort((a, b) => a - b); out[c] = v[1]; }
-    return out;
-  };
-  const L = [], Rt = [], T = [], B = [];
-  for (let y = 0; y < ih; y++) { L[y] = sample(ix, iy + y, -1, 0); Rt[y] = sample(ix + iw - 1, iy + y, 1, 0); }
-  for (let x = 0; x < iw; x++) { T[x] = sample(ix + x, iy, 0, -1); B[x] = sample(ix + x, iy + ih - 1, 0, 1); }
-  const atLeft = R.x0 === 0, atRight = R.x1 === cv.width, atTop = R.y0 === 0, atBottom = R.y1 === cv.height;
-  for (let y = 0; y < ih; y++) for (let x = 0; x < iw; x++) {
-    let wl = atLeft ? 0 : 1 / (x + 1), wr = atRight ? 0 : 1 / (iw - x), wt = atTop ? 0 : 1 / (y + 1), wb = atBottom ? 0 : 1 / (ih - y);
-    let sum = wl + wr + wt + wb; if (!sum) { wl = wr = wt = wb = 1; sum = 4; }
-    const i = ((iy + y) * E.w + (ix + x)) * 4;
-    for (let c = 0; c < 3; c++) d[i + c] = (L[y][c] * wl + Rt[y][c] * wr + T[x][c] * wt + B[x][c] * wb) / sum;
-    d[i + 3] = 255;
-  }
-  let ns = 0, nn = 0; const row = Math.max(0, iy - 2);
-  for (let x = Math.max(1, ix); x < Math.min(E.w, ix + iw); x++) { const a = (row * E.w + x) * 4, b = a - 4; ns += Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]); nn += 3; }
-  const noise = nn ? ns / nn : 0;
-  if (noise > 1.5) for (let y = 0; y < ih; y++) for (let x = 0; x < iw; x++) {
-    const i = ((iy + y) * E.w + (ix + x)) * 4, n = (Math.random() - .5) * noise * 1.6;
-    d[i] += n; d[i + 1] += n; d[i + 2] += n;
-  }
-  ctx.putImageData(img, E.x0, E.y0);
+  const m = new Uint8Array(E.w * E.h);
+  for (let y = R.y0 - E.y0; y < R.y1 - E.y0; y++) for (let x = R.x0 - E.x0; x < R.x1 - E.x0; x++) m[y * E.w + x] = 1;
+  inpaint(E, m);
 }
 
 /* ---------------- draw text ---------------- */
@@ -911,35 +1102,28 @@ function convertDigits(s, mode) {
   if (mode === 'en') return s.replace(/[٠-٩]/g, d => EN[AR.indexOf(d)]);
   return s;
 }
-async function drawText(r, text, o) {
-  const family = $('font').value, weight = o.weight, spacing = +$('spacing').value || 0;
-  let size = +$('size').value || 16;
-  await ensureFont(family, weight);
+function panelParams() {
+  return { font: $('font').value, weight: opts.weight, size: +$('size').value || 16, sx: (+$('sx').value || 100) / 100, stroke: Math.max(0, +$('stroke').value || 0), blur: Math.max(0, +$('blur').value || 0), spacing: +$('spacing').value || 0 };
+}
+async function drawText(r, text, o, clip) {
+  const p = panelParams();
+  await ensureFont(p.font, p.weight);
   const linesTxt = text.split('\n');
-  const box = r.geo && r.geo.ink ? r.geo.ink : r;
-  const boxW = Math.max(r.x1 - r.x0, box.x1 - box.x0);
+  const ink = r.geo && r.geo.ink ? r.geo.ink : r;
   if ($('fit').checked) {
-    const widest = Math.max(...linesTxt.map(t => { const m = textMetrics(t, family, weight, size, spacing); return m.actualBoundingBoxLeft + m.actualBoundingBoxRight; }));
-    if (widest > boxW * 1.04 && widest > 0) size = Math.max(4, size * boxW * 1.04 / widest);
+    const boxW = Math.max(r.x1 - r.x0, ink.x1 - ink.x0);
+    const widest = Math.max(...linesTxt.map(t => { const m = textMetrics(t, p.font, p.weight, p.size, p.spacing); return (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * p.sx; }));
+    if (widest > boxW * 1.04) p.size = Math.max(4, p.size * boxW * 1.04 / widest);
   }
+  const lh = p.size * 1.3;
+  const base = r.geo && r.geo.baseline != null ? r.geo.baseline : (r.y0 + r.y1) / 2 + p.size * 0.3;
+  // keep the fine-tuned horizontal correction when the anchor side is unchanged
+  const corr = r.geo && r.geo.align === o.align && r.geo.ax != null ? r.geo.ax - anchorX(ink, o.align) : 0;
+  const ax = anchorX(ink, o.align) + corr + o.dx;
   ctx.save();
-  ctx.font = `${weight} ${size}px "${family}"`;
-  try { ctx.letterSpacing = spacing + 'px'; } catch (e) {}
-  ctx.fillStyle = $('color').value;
-  ctx.textAlign = 'left';
-  const lh = size * 1.3;
-  let baseline0;
-  if (r.geo && r.geo.baseline != null) { ctx.textBaseline = 'alphabetic'; baseline0 = r.geo.baseline - lh * (linesTxt.length - 1) / 2; }
-  else { ctx.textBaseline = 'middle'; baseline0 = (r.y0 + r.y1) / 2 - lh * (linesTxt.length - 1) / 2; }
-  linesTxt.forEach((t, i) => {
-    ctx.direction = isArabic(t) ? 'rtl' : 'ltr';
-    const m = ctx.measureText(t);
-    let x;
-    if (o.align === 'right') x = box.x1 - m.actualBoundingBoxRight;
-    else if (o.align === 'left') x = box.x0 + m.actualBoundingBoxLeft;
-    else x = (box.x0 + box.x1) / 2 - (m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2;
-    ctx.fillText(t, x + o.dx, baseline0 + i * lh + o.dy);
-  });
+  if (clip) { ctx.beginPath(); ctx.rect(clip.x0, clip.y0, clip.w, clip.h); ctx.clip(); }
+  if (p.blur > 0.05) ctx.filter = `blur(${p.blur}px)`;
+  linesTxt.forEach((t, i) => drawAnchored(ctx, t, p, o.align, ax, base - lh * (linesTxt.length - 1) / 2 + i * lh + o.dy, $('color').value));
   ctx.restore();
 }
 
@@ -959,106 +1143,175 @@ function setWeight(w) {
   else { opts[id === 'alignSeg' ? 'align' : 'digits'] = b.dataset.v; setSeg(id, b.dataset.v); }
   schedulePreview();
 });
+function showGeo(g) {
+  if (!g) return;
+  $('size').value = (+g.size).toFixed(1); $('sx').value = Math.round((g.sx || 1) * 100);
+  $('stroke').value = (+g.stroke || 0).toFixed(1); $('blur').value = (+g.blur || 0).toFixed(1);
+}
 
 let selToken = 0;
-async function select(r) {
+async function select(r, keepText) {
   endPreview();
   current = r;
   const tok = ++selToken;
   const a = analyze(r);
   r.analysis = a;
+  const typed = $('newText').value;
   $('origText').textContent = r.text || '—';
-  $('newText').value = r.done ? r.newText : (r.text || '');
+  $('newText').value = keepText ? typed : r.done ? r.newText : (r.text || '');
+  $('overflowHint').style.display = 'none';
   $('color').value = a.fg; $('colorHex').textContent = a.fg;
   $('bgColor').value = a.bg; $('bgHex').textContent = a.bg;
   $('spacing').value = 0;
   // Arabic → right, Latin words → left, pure numbers/symbols → centred in their original slot
-  opts.align = isArabic(r.text) || !r.text ? 'right' : /\p{L}/u.test(r.text) ? 'left' : 'center'; setSeg('alignSeg', opts.align);
+  opts.align = anchorOf(r.text); setSeg('alignSeg', opts.align);
   opts.dx = 0; opts.dy = 0; $('offTxt').textContent = 'إزاحة 0,0';
-  // provisional font while matching runs
-  const provisional = (r.hint && r.hint.font) || (isArabic(r.text) ? 'Cairo' : 'Inter');
+  const provisional = (r.hint && r.hint.font && fontInfo(r.hint.font)) ? r.hint.font : (isArabic(r.text) ? 'Cairo' : 'Inter');
   $('font').value = provisional; setWeight((r.hint && r.hint.weight) || 700);
-  r.geo = geometry(r, a, provisional, opts.weight);
-  if (r.geo) $('size').value = r.geo.size;
-  $('fontMatches').innerHTML = ''; $('matchNote').textContent = r.text ? 'جاري مقارنة شكل الحروف بالخطوط…' : 'اكتب النص الأصلي غير متاح — اختر الخط يدويًا';
+  r.geo = coarseGeo(r, a, provisional, opts.weight); showGeo(r.geo);
+  $('fontMatches').innerHTML = ''; $('matchNote').textContent = r.text ? 'جاري مطابقة الخط والحجم مع الحروف الأصلية…' : 'النص الأصلي غير معروف — اختر الخط يدويًا';
   showPanel(true); renderBoxes();
-  setTimeout(() => { $('newText').focus(); $('newText').select(); }, 30);
+  if (!keepText) setTimeout(() => { $('newText').focus(); $('newText').select(); }, 30);
   schedulePreview();
-  const matches = await matchFont(r, a);
+  const coarse = await matchFont(r, a);
   if (tok !== selToken || current !== r) return;
-  r.matches = matches;
+  // re-rank the best candidates by how well they fit the real pixels after fine-tuning
+  const tuned = [];
+  for (const c of coarse) {
+    await new Promise(res => setTimeout(res, 0));
+    if (tok !== selToken || current !== r) return;
+    const g = fineTune(r, a, c.font, c.weight);
+    if (g) tuned.push({ font: c.font, weight: c.weight, score: g.baseline != null ? g.score : c.score, geo: g });
+  }
+  tuned.sort((x, y) => y.score - x.score);
+  r.matches = tuned;
   renderMatches(r);
-  if (matches.length) applyFont(r, matches[0].font, matches[0].weight);
+  if (tuned.length) useMatch(r, tuned[0]);
   else if (r.text) $('matchNote').textContent = 'تعذّرت المطابقة التلقائية — اختر الخط يدويًا';
 }
 function renderMatches(r) {
   const box = $('fontMatches'); box.innerHTML = '';
-  (r.matches || []).forEach((m, i) => {
+  (r.matches || []).slice(0, 4).forEach(m => {
     const c = document.createElement('button');
     c.className = 'chip' + ($('font').value === m.font ? ' on' : '');
     c.innerHTML = '<span></span><b></b>';
     c.firstChild.textContent = m.font; c.firstChild.style.fontFamily = `"${m.font}"`; c.firstChild.style.fontWeight = m.weight;
     c.lastChild.textContent = Math.round(Math.min(1, m.score) * 100) + '%';
-    c.onclick = () => applyFont(r, m.font, m.weight);
+    c.onclick = () => useMatch(r, m);
     box.appendChild(c);
   });
   if (r.matches && r.matches.length) {
     const b = r.matches[0];
-    $('matchNote').textContent = `أقرب تطابق: ${b.font} بوزن ${b.weight}` + (r.hint && r.hint.font ? ` · اقتراح الذكاء الاصطناعي: ${r.hint.font}` : '');
+    $('matchNote').textContent = `أقرب تطابق: ${b.font} · الحجم ${(+b.geo.size).toFixed(1)}px · العرض ${Math.round(b.geo.sx * 100)}%` + (b.score < 0.55 ? ' — التطابق ضعيف: جرّب رفع خط الصورة الأصلي' : '');
   }
 }
-function applyFont(r, font, weight) {
-  $('font').value = font; setWeight(weight);
-  r.geo = geometry(r, r.analysis, font, opts.weight);
-  if (r.geo) $('size').value = r.geo.size;
-  [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === font));
+function useMatch(r, m) {
+  $('font').value = m.font; setWeight(m.weight);
+  r.geo = m.geo; showGeo(r.geo);
+  [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === m.font));
   schedulePreview();
 }
-function refit() { if (current && current.analysis) { current.geo = geometry(current, current.analysis, $('font').value, opts.weight); if (current.geo) $('size').value = current.geo.size; } }
+function refit() {
+  if (!current || !current.analysis) return;
+  current.geo = fineTune(current, current.analysis, $('font').value, opts.weight) || current.geo;
+  showGeo(current.geo);
+}
 $('font').addEventListener('change', async () => {
   const f = $('font').value; setWeight(+opts.weight); await ensureFont(f, opts.weight); refit();
   [...$('fontMatches').children].forEach(c => c.classList.toggle('on', c.firstChild.textContent === f));
   schedulePreview();
+});
+$('fontFile').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const name = 'خطّك: ' + file.name.replace(/\.[^.]+$/, '');
+    const face = new FontFace(name, await file.arrayBuffer());
+    await face.load(); document.fonts.add(face);
+    if (!fontInfo(name)) {
+      FONTS.unshift({ f: name, w: [400], ar: 1, la: 1, cat: 'user', user: 1 });
+      let g = $('font').querySelector('optgroup[data-user]');
+      if (!g) { g = document.createElement('optgroup'); g.label = 'خطوطك'; g.dataset.user = '1'; $('font').prepend(g); }
+      const o = document.createElement('option'); o.value = name; o.textContent = name; g.appendChild(o);
+    }
+    delete fontLoads[name + 400];
+    toast('تمت إضافة الخط ✓');
+    if (current) select(current, true);
+  } catch (err) { toast('تعذّر قراءة ملف الخط'); }
+  e.target.value = '';
 });
 
 function deselect() { endPreview(); current = null; selToken++; showPanel(false); renderBoxes(); }
 $('cancelBtn').onclick = deselect;
 $('color').oninput = () => { $('colorHex').textContent = $('color').value; schedulePreview(); };
 $('bgColor').oninput = () => { $('bgHex').textContent = $('bgColor').value; schedulePreview(); };
-['newText', 'size', 'spacing'].forEach(id => $(id).addEventListener('input', schedulePreview));
+['newText', 'size', 'spacing', 'sx', 'stroke', 'blur'].forEach(id => $(id).addEventListener('input', schedulePreview));
 ['smartErase', 'fit'].forEach(id => $(id).addEventListener('change', schedulePreview));
 document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => {
   const [axis, v] = b.dataset.nudge.split(','); opts['d' + axis] += +v;
   $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`; schedulePreview();
 });
 
+/* ---------------- preview: work on a horizontal band around the text, erase once, redraw text per keystroke ---------------- */
 let pvTimer = null;
-function schedulePreview() { clearTimeout(pvTimer); pvTimer = setTimeout(preview, 60); }
-async function preview() {
-  if (!current) return;
-  if (!previewSnapshot) previewSnapshot = ctx.getImageData(0, 0, cv.width, cv.height);
-  else ctx.putImageData(previewSnapshot, 0, 0);
-  await render(current, false);
-}
-function endPreview() { if (previewSnapshot) { ctx.putImageData(previewSnapshot, 0, 0); previewSnapshot = null; } }
+function schedulePreview() { clearTimeout(pvTimer); pvTimer = setTimeout(preview, 50); }
 function eraseArea(r) {
   if (!r.geo || !r.geo.ink) return r;
   const k = r.geo.ink;
   return { x0: Math.min(r.x0, k.x0 - 1), y0: Math.min(r.y0, k.y0 - 1), x1: Math.max(r.x1, k.x1 + 1), y1: Math.max(r.y1, k.y1 + 1) };
 }
-async function render(r, eraseOnly) {
-  eraseRect(eraseArea(r), $('smartErase').checked, $('bgColor').value);
-  const t = convertDigits($('newText').value, opts.digits);
-  if (!eraseOnly && t.trim()) await drawText(r, t, opts);
+function ensurePv(r) {
+  if (!pv || pv.r !== r) {
+    endPreview();
+    const h = r.y1 - r.y0;
+    const B = clampRect({ x0: 0, y0: r.y0 - h * 3, x1: cv.width, y1: r.y1 + h * 3 });
+    pv = { r, B, base: ctx.getImageData(B.x0, B.y0, B.w, B.h), erased: null, key: '' };
+  }
+  const key = $('smartErase').checked + $('bgColor').value + JSON.stringify(eraseArea(r));
+  if (pv.key !== key) {
+    ctx.putImageData(pv.base, pv.B.x0, pv.B.y0);
+    eraseText(r, $('smartErase').checked, $('bgColor').value);
+    pv.erased = ctx.getImageData(pv.B.x0, pv.B.y0, pv.B.w, pv.B.h); pv.key = key;
+  }
+  return pv;
 }
+async function preview() {
+  if (!current) return;
+  const P = ensurePv(current);
+  ctx.putImageData(P.erased, P.B.x0, P.B.y0);
+  const t = convertDigits($('newText').value, opts.digits);
+  if (t.trim()) await drawText(current, t, opts, P.B);
+  checkOverflow(current, t);
+}
+function lineOf(r) { return r.id && r.id[0] === 'w' ? lines.find(L => overlap(r, L) > 0.6 && L.text.includes(r.text)) : null; }
+function checkOverflow(r, t) {
+  const p = panelParams(), ink = r.geo && r.geo.ink ? r.geo.ink : r;
+  const wNew = t.trim() ? Math.max(...t.split('\n').map(x => { const m = textMetrics(x, p.font, p.weight, p.size, p.spacing); return (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * p.sx; })) : 0;
+  const slot = Math.max(r.x1 - r.x0, ink.x1 - ink.x0);
+  const neighbour = words.some(o => o !== r && o.y1 > r.y0 && o.y0 < r.y1 && Math.min(Math.abs(o.x1 - r.x0), Math.abs(r.x1 - o.x0)) < (wNew - slot) + 4);
+  const over = !$('fit').checked && wNew > slot * 1.08 && neighbour;
+  $('overflowHint').style.display = over ? '' : 'none';
+  $('lineBtn').style.display = over && lineOf(r) ? '' : 'none';
+}
+$('lineBtn').onclick = async () => {
+  const r = current, L = r && lineOf(r); if (!L) return;
+  const newLine = L.text.replace(r.text, $('newText').value);
+  level = 'line'; setSeg('levelSeg', 'line');
+  await select(L, true);
+  $('newText').value = newLine; schedulePreview();
+  toast('تم التحويل لتعديل السطر كاملًا');
+};
+function endPreview() { if (pv) { ctx.putImageData(pv.base, pv.B.x0, pv.B.y0); pv = null; } }
 
 async function commit(eraseOnly) {
   if (!current) return;
   clearTimeout(pvTimer);
-  const snap = previewSnapshot || ctx.getImageData(0, 0, cv.width, cv.height);
-  ctx.putImageData(snap, 0, 0); previewSnapshot = null;
-  pushHistory(snap);
-  await render(current, eraseOnly);
+  const P = ensurePv(current);
+  ctx.putImageData(P.base, P.B.x0, P.B.y0);
+  pushHistory(ctx.getImageData(0, 0, cv.width, cv.height));
+  ctx.putImageData(P.erased, P.B.x0, P.B.y0);
+  pv = null;
+  const t = convertDigits($('newText').value, opts.digits);
+  if (!eraseOnly && t.trim()) await drawText(current, t, opts);
   current.done = true; current.newText = eraseOnly ? '' : $('newText').value;
   [...words, ...lines].forEach(o => { if (o !== current && overlap(o, current) > .6) o.done = true; });
   toast(eraseOnly ? 'تم مسح النص' : 'تم الاستبدال ✓');
