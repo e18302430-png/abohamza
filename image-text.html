@@ -97,6 +97,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .sizebar input{flex:1;min-width:0;accent-color:var(--accent)}
 .handle{position:absolute;width:16px;height:16px;right:-8px;bottom:-8px;background:#F59E0B;border:2px solid #fff;border-radius:5px;cursor:nwse-resize;touch-action:none;box-shadow:0 1px 4px rgba(0,0,0,.35);z-index:2}
 .sizebadge{position:absolute;bottom:calc(100% + 6px);right:0;background:var(--ink);color:var(--bg);font:700 12px Inter,sans-serif;padding:3px 8px;border-radius:7px;white-space:nowrap;pointer-events:none;line-height:1.4}
+.wbox.sel{cursor:move;touch-action:none}
 .wbox.sel{border-color:#F59E0B;background:rgba(245,158,11,.28);box-shadow:0 0 0 2px rgba(245,158,11,.5)}
 .wbox.ibox{border-color:#F97316;border-style:dashed;background:rgba(249,115,22,.10)}
 .wbox.done{border-color:var(--done);background:transparent;border-style:dashed}
@@ -249,7 +250,7 @@ kbd{font-family:Inter,monospace;font-size:12px;background:var(--surface-2);borde
             <button class="btn ghost sm" id="sizeUp" title="تكبير">+</button>
             <button class="btn ghost sm" id="sizeReset" title="رجوع للحجم المكتشف">↺</button>
           </div>
-          <div class="match-note">اسحب المقبض <b style="color:#F59E0B">◢</b> على الصورة، أو حرّك عجلة الماوس فوقها، أو <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> — مع <kbd>Shift</kbd> للتحكم الدقيق</div>
+          <div class="match-note">🖐️ اسحب المربع المحدد لتحريك النص (أو الأسهم في الكيبورد، Shift = 10px). اسحب المقبض <b style="color:#F59E0B">◢</b> على الصورة، أو حرّك عجلة الماوس فوقها، أو <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> — مع <kbd>Shift</kbd> للتحكم الدقيق</div>
           <div class="row">
             <div class="field"><label>تباعد الأحرف</label><input type="number" id="spacing" value="0" step="0.5" min="-20" max="60"></div>
             <div class="field"><label>نعومة الحواف</label><input type="number" id="blur" value="0" min="0" max="5" step="0.1"></div>
@@ -808,8 +809,8 @@ function renderBoxes() {
     d.style.left = (r.x0 / W * 100) + '%'; d.style.top = (r.y0 / H * 100) + '%';
     d.style.width = ((r.x1 - r.x0) / W * 100) + '%'; d.style.height = ((r.y1 - r.y0) / H * 100) + '%';
     d.title = r.text;
-    d.onclick = async e => { e.stopPropagation(); await applyPending(); if (r.id[0] === 'i') startImageEdit(r); else select(r); };
-    if (current && current.id === r.id) addSizeHandle(d);
+    d.onclick = async e => { e.stopPropagation(); if (current && current.id === r.id) return; await applyPending(); if (r.id[0] === 'i') startImageEdit(r); else select(r); };
+    if (current && current.id === r.id) { addSizeHandle(d); addMoveDrag(d); }
     overlay.appendChild(d);
   });
   renderList();
@@ -1521,6 +1522,40 @@ window.addEventListener('keydown', e => {
   setSize(curSize() + (e.key === 'ArrowUp' ? step : -step));
 });
 // drag handle on the selected box: drag down/right to enlarge, up/left to shrink
+// drag the selected box to move the new text (1:1 with the pointer); Shift = slow, for fine placement
+function addMoveDrag(box) {
+  box.addEventListener('pointerdown', e => {
+    if (e.target !== box || !current) return;
+    e.preventDefault(); e.stopPropagation(); box.setPointerCapture(e.pointerId);
+    const rect = cv.getBoundingClientRect(), k = cv.width / rect.width;
+    const sx = e.clientX, sy = e.clientY, dx0 = opts.dx, dy0 = opts.dy;
+    let moved = false;
+    const move = ev => {
+      const f = ev.shiftKey ? 0.25 : 1;
+      const ddx = (ev.clientX - sx) * k * f, ddy = (ev.clientY - sy) * k * f;
+      if (Math.abs(ddx) + Math.abs(ddy) > 1) moved = true;
+      opts.dx = Math.round((dx0 + ddx) * 2) / 2; opts.dy = Math.round((dy0 + ddy) * 2) / 2;
+      box.style.transform = `translate(${opts.dx / k}px, ${opts.dy / k}px)`;
+      $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`; schedulePreview();
+    };
+    const up = () => { box.removeEventListener('pointermove', move); box.removeEventListener('pointerup', up); box.removeEventListener('pointercancel', up); if (moved) justDrew = true; };
+    box.addEventListener('pointermove', move); box.addEventListener('pointerup', up); box.addEventListener('pointercancel', up);
+  });
+  // keep the box visually where the text currently is
+  const k = cv.width / Math.max(1, cv.getBoundingClientRect().width);
+  if (opts.dx || opts.dy) box.style.transform = `translate(${opts.dx / k}px, ${opts.dy / k}px)`;
+}
+// arrow keys (when not typing): move 1px, Shift = 10px
+window.addEventListener('keydown', e => {
+  if (!current || e.altKey || e.ctrlKey || e.metaKey || e.target.matches('input,textarea,select')) return;
+  const map = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!map) return;
+  e.preventDefault(); const st = e.shiftKey ? 10 : 1;
+  opts.dx += map[0] * st; opts.dy += map[1] * st;
+  $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`;
+  const sel = overlay.querySelector('.wbox.sel'), k = cv.width / cv.getBoundingClientRect().width;
+  if (sel) sel.style.transform = `translate(${opts.dx / k}px, ${opts.dy / k}px)`;
+  schedulePreview();
+});
 function addSizeHandle(box) {
   const h = document.createElement('div'); h.className = 'handle'; h.title = 'اسحب لتغيير الحجم';
   const badge = document.createElement('div'); badge.className = 'sizebadge'; badge.textContent = curSize().toFixed(1) + ' px'; badge.style.display = 'none';
@@ -1659,7 +1694,10 @@ $('bgColor').oninput = () => { $('bgHex').textContent = $('bgColor').value; sche
 ['smartErase', 'fit'].forEach(id => $(id).addEventListener('change', schedulePreview));
 document.querySelectorAll('[data-nudge]').forEach(b => b.onclick = () => {
   const [axis, v] = b.dataset.nudge.split(','); opts['d' + axis] += +v;
-  $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`; schedulePreview();
+  $('offTxt').textContent = `إزاحة ${opts.dx},${opts.dy}`;
+  const sel = overlay.querySelector('.wbox.sel'), k = cv.width / cv.getBoundingClientRect().width;
+  if (sel) sel.style.transform = `translate(${opts.dx / k}px, ${opts.dy / k}px)`;
+  schedulePreview();
 });
 
 /* ---------------- preview: work on a horizontal band around the text, erase once, redraw text per keystroke ---------------- */
