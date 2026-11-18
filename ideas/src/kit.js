@@ -115,7 +115,7 @@ function photoHead(R, disguise) {
 }
 function person(o) {
   const s = o.s || 1, skin = o.skin || C.skin, outfit = o.outfit || 'thobe';
-  const shirt = { thobe: '#f7f4ec', vest: '#3a7bd5', guard: C.navy, casual: o.color || '#e07a3a', lady: '#1a1a1a', ref: '#141414' }[outfit];
+  const shirt = { team: '#141414', thobe: '#f7f4ec', vest: '#3a7bd5', guard: C.navy, casual: o.color || '#e07a3a', lady: '#1a1a1a', ref: '#141414' }[outfit];
   const pants = outfit === 'guard' ? '#16203a' : '#2b2b35';
   const pose = o.pose || 'down';
   const hand = { down: [[-115, -235], [115, -235]], up: [[-170, -620], [170, -620]], point: [[-115, -235], [250, -430]], hold: [[-70, -320], [70, -320]],
@@ -134,6 +134,7 @@ function person(o) {
   if (outfit === 'vest') g += `<path d="M-90 -436L-40 -440L-20 -215H-86Z M90 -436L40 -440L20 -215H86Z" fill="${C.l}" stroke="#141414" stroke-width="4"/>`;
   if (outfit === 'ref') g += `<path d="M-60 -440V-215M-20 -455V-215M20 -455V-215M60 -440V-215" stroke="#f4f1ea" stroke-width="16"/>`;
   if (outfit === 'guard') g += `<rect x="30" y="-410" width="40" height="30" rx="4" fill="${C.l}"/>`;
+  if (outfit === 'team') g += `<path d="M-88 -330H88V-290H-88Z" fill="${C.l}"/><text x="0" y="-360" font-family="Lalezar" font-size="52" text-anchor="middle" fill="${C.l}">كيو</text>`;
   if (outfit === 'thobe') g += `<path d="M0 -455V-330" stroke="#141414" stroke-width="3"/>`;
   g += arm(hand[0][0], hand[0][1], -1) + arm(hand[1][0], hand[1][1], 1);
   // head
@@ -148,6 +149,8 @@ function person(o) {
     else g += `<path d="M-64 -520Q-60 -585 0 -585Q60 -585 64 -520Q40 -548 0 -550Q-40 -548 -64 -520Z" fill="#1d1712"/>`;
     if (o.kid) { }
     g += face(o.expr, skin);
+    if (o.glasses) g += `<circle cx="-26" cy="-510" r="20" fill="none" stroke="#141414" stroke-width="6"/><circle cx="26" cy="-510" r="20" fill="none" stroke="#141414" stroke-width="6"/><path d="M-6 -510h12" stroke="#141414" stroke-width="6"/>`;
+    if (o.capC) g += `<path d="M-66 -530Q0 -620 66 -530Z" fill="${o.capC}" stroke="#141414" stroke-width="4"/><path d="M10 -532H110" stroke="#141414" stroke-width="14" stroke-linecap="round"/>`;
     if (o.mustache) g += `<path d="M-28 -486q28 -14 56 0q-28 10 -56 0z" fill="#1d1712"/>`;
   }
   if (o.sweat) g += `<path d="M70 -560q12 20 0 30q-12 -10 0 -30z" fill="#7cc7ff" stroke="#141414" stroke-width="3"/>`;
