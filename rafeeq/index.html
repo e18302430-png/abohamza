@@ -1,0 +1,749 @@
+<title>رفيق | Rafeeq</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="رفيق: مساعد ذكاء اصطناعي لشركات الحج والعمرة، يرافق الموظف في كل مكالمة ويرد على الحجاج على مدار الساعة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<style>
+/* Layout: a single reading column (max 1120px) of full-width bands; the hero and demo split into text + live console, stacking on phones. */
+:root{
+  --bg:#F5F7F4; --surface:#FFFFFF; --sunk:#ECF0EC; --ink:#13211D; --muted:#56655F; --line:#DCE3DD;
+  --accent:#0F766E; --accent-ink:#FFFFFF; --accent-soft:#E2F0EC; --brass:#8F7234; --warn:#B4532A; --warn-soft:#F8E9E1;
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:14px; --r-sm:9px;
+  --shadow:0 1px 2px rgba(19,33,29,.06),0 12px 32px -12px rgba(19,33,29,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1412; --surface:#141E1B; --sunk:#101916; --ink:#E7EEEA; --muted:#97A8A1; --line:#24312D;
+  --accent:#3BB5A6; --accent-ink:#04201B; --accent-soft:#132E29; --brass:#C8A865; --warn:#E48A63; --warn-soft:#33201A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 36px -14px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1412; --surface:#141E1B; --sunk:#101916; --ink:#E7EEEA; --muted:#97A8A1; --line:#24312D;
+  --accent:#3BB5A6; --accent-ink:#04201B; --accent-soft:#132E29; --brass:#C8A865; --warn:#E48A63; --warn-soft:#33201A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 36px -14px rgba(0,0,0,.6); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+html[lang="en"] body{line-height:1.6}
+.wrap{max-width:1120px;margin-inline:auto}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.25}
+html[lang="en"] h1,html[lang="en"] h2,html[lang="en"] h3{font-family:var(--f-body);font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+.eyebrow{font-size:13px;font-weight:600;color:var(--brass);letter-spacing:.02em}
+html[lang="en"] .eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.lead{color:var(--muted);font-size:18px;max-width:62ch}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+header.top .wrap{display:flex;align-items:center;gap:16px;padding-block:12px;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:34px;height:34px;flex:none}
+.brand-name{font-family:var(--f-display);font-size:24px;font-weight:700;line-height:1}
+.brand-sub{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+nav.links{display:flex;gap:22px;margin-inline-start:auto}
+nav.links a{color:var(--muted);text-decoration:none;font-size:15px}
+nav.links a:hover{color:var(--ink)}
+.lang{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:600 13px var(--f-mono);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 22px;font:600 15px var(--f-body);text-decoration:none;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .15s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{background:color-mix(in srgb,var(--accent) 88%,var(--ink))}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{background:var(--surface)}
+@media (max-width:820px){nav.links{display:none}.lang{margin-inline-start:auto}header.top .btn{display:none}}
+
+section{padding-block:72px}
+@media (max-width:640px){section{padding-block:52px}}
+.sec-head{display:grid;gap:12px;margin-bottom:36px;max-width:720px}
+.sec-head h2{font-size:clamp(26px,3.4vw,36px)}
+
+/* hero */
+.hero{padding-block:56px 64px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+@media (max-width:920px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:36px}}
+.hero h1{font-size:clamp(34px,5vw,54px);margin-block:14px 18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-note{margin-top:18px;font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+
+/* console (shared by hero + demo) */
+.console{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.console-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--sunk);font-size:13px}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--warn);font-weight:600}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--warn);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.console-bar .meta{margin-inline-start:auto;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.transcript{padding:16px;display:grid;gap:10px}
+.line{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:14.5px}
+.who{font:600 11px var(--f-mono);color:var(--muted);padding-top:4px;min-width:56px}
+.bubble{background:var(--sunk);border-radius:var(--r-sm);padding:8px 12px;min-width:0}
+.bubble small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.suggest{margin:4px 16px 16px;border:1.5px solid var(--accent);background:var(--accent-soft);border-radius:var(--r-sm);padding:14px}
+.suggest-head{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.suggest p{font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font:500 11.5px var(--f-mono);padding:3px 9px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip.ok{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media (max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);padding:24px 22px;display:grid;gap:6px;align-content:start}
+.stat b{font:600 clamp(28px,3.4vw,38px) var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.1}
+.stat span{color:var(--muted);font-size:14.5px}
+.stat a{font-size:12px;color:var(--muted)}
+.problem-points{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:40px}
+@media (max-width:820px){.problem-points{grid-template-columns:1fr;gap:20px}}
+.problem-points h3{font-size:19px;margin-bottom:6px}
+.problem-points p{color:var(--muted);font-size:15px}
+
+/* modes */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:820px){.modes{grid-template-columns:1fr}}
+.mode{border:1px solid var(--line);border-radius:var(--r);padding:28px;background:var(--surface);display:grid;gap:14px;align-content:start}
+.mode-tag{font:600 12px var(--f-mono);color:var(--accent)}
+.mode h3{font-size:24px}
+.mode ul{margin:0;padding-inline-start:20px;display:grid;gap:6px;color:var(--muted)}
+.mode li::marker{color:var(--accent)}
+
+/* steps */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s;border-top:1px solid var(--line)}
+@media (max-width:820px){.flow{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.flow{grid-template-columns:1fr}}
+.flow li{list-style:none;padding:22px 20px 0 0;counter-increment:s;display:grid;gap:6px}
+html[dir="rtl"] .flow li{padding:22px 0 0 20px}
+.flow li::before{content:counter(s);font:600 13px var(--f-mono);color:var(--brass)}
+.flow h3{font-size:18px}
+.flow p{font-size:14.5px;color:var(--muted)}
+ol.flow{margin:0;padding:0}
+
+/* demo */
+.demo-band{background:var(--sunk);border-block:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.demo-band>.wrap{padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.demo-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:start}
+@media (max-width:920px){.demo-grid{grid-template-columns:minmax(0,1fr)}}
+.demo-grid>*,.hero-grid>*,.pilot>*,.modes>*,.plans>*{min-width:0}
+.ask{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.ask label{font-weight:600;font-size:14px}
+.ask-row{display:flex;gap:8px}
+.ask-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:12px 18px;font:15px var(--f-body)}
+.ask-row input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.samples{display:flex;flex-wrap:wrap;gap:8px}
+.sample{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 13px;font:14px var(--f-body);cursor:pointer;text-align:start}
+.sample:hover{border-color:var(--accent)}
+.demo-note{font-size:13px;color:var(--muted);border-inline-start:2px solid var(--brass);padding-inline-start:12px}
+#demoTranscript{min-height:120px}
+.suggest.guard{border-color:var(--warn);background:var(--warn-soft)}
+.suggest.guard .suggest-head{color:var(--warn)}
+.suggest-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mini{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:600 12.5px var(--f-body);cursor:pointer}
+.mini.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.alt{padding:0 16px 16px;font-size:13px;color:var(--muted)}
+.alt button{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.toast{position:fixed;inset-inline:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));margin-inline:auto;width:max-content;max-width:calc(100% - 32px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:none}
+
+/* languages */
+.langs{display:flex;flex-wrap:wrap;gap:10px}
+.langs span{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);padding:10px 16px;font-size:16px;display:grid;line-height:1.3}
+.langs small{color:var(--muted);font-size:12px;font-family:var(--f-mono)}
+
+/* trust */
+.trust{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+@media (max-width:720px){.trust{grid-template-columns:1fr}}
+.trust div{padding:22px 0;border-bottom:1px solid var(--line);display:grid;gap:4px;padding-inline-end:24px}
+.trust h3{font-size:18px}
+.trust p{color:var(--muted);font-size:15px}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+@media (max-width:900px){.plans{grid-template-columns:1fr}}
+.plan{border:1px solid var(--line);border-radius:var(--r);padding:26px;background:var(--surface);display:flex;flex-direction:column;gap:14px}
+.plan.featured{border:2px solid var(--accent);box-shadow:var(--shadow)}
+.plan-name{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.plan-name h3{font-size:20px}
+.badge{font:600 11px var(--f-mono);background:var(--accent);color:var(--accent-ink);padding:3px 9px;border-radius:999px}
+.price{display:flex;align-items:baseline;gap:8px}
+.price b{font:600 38px var(--f-mono);font-variant-numeric:tabular-nums;line-height:1}
+.price span{color:var(--muted);font-size:14px}
+.plan ul{margin:0;padding-inline-start:20px;display:grid;gap:6px;font-size:15px;color:var(--muted);flex:1}
+.plan li::marker{color:var(--accent)}
+.price-foot{margin-top:18px;font-size:14px;color:var(--muted)}
+
+/* pilot form */
+.pilot{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:start}
+@media (max-width:900px){.pilot{grid-template-columns:minmax(0,1fr)}}
+.pilot-list{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.pilot-list li{display:flex;gap:10px;align-items:start;font-size:15.5px}
+.pilot-list li::before{content:"";width:18px;height:18px;flex:none;margin-top:5px;border-radius:50%;background:var(--accent-soft);border:5px solid var(--accent)}
+form.card{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:26px;display:grid;gap:16px;box-shadow:var(--shadow)}
+.field{display:grid;gap:6px;min-width:0}
+.field label,.field legend{font-weight:600;font-size:14px}
+.field input,.field select{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:var(--r-sm);padding:11px 13px;font:15px var(--f-body);width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+fieldset{border:0;padding:0;margin:0}
+.checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.checks label{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:500;font-size:14px;cursor:pointer}
+.checks input{accent-color:var(--accent)}
+.err{color:var(--warn);font-size:13px;min-height:1em}
+.result{border:1.5px dashed var(--accent);border-radius:var(--r-sm);padding:16px;background:var(--accent-soft);display:grid;gap:10px}
+.result pre{margin:0;white-space:pre-wrap;font:13.5px/1.7 var(--f-body);background:var(--surface);border-radius:8px;padding:12px;border:1px solid var(--line)}
+
+/* faq */
+.faq{display:grid;gap:0;border-top:1px solid var(--line);max-width:820px}
+.faq details{border-bottom:1px solid var(--line);padding-block:16px}
+.faq summary{cursor:pointer;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::after{content:"+";font-family:var(--f-mono);color:var(--accent);font-size:20px;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq p{color:var(--muted);margin-top:10px;font-size:15.5px}
+
+footer{border-top:1px solid var(--line);padding-block:32px 40px;color:var(--muted);font-size:13.5px}
+footer .wrap{display:grid;gap:12px}
+footer .srcs{display:flex;flex-wrap:wrap;gap:6px 16px}
+footer .srcs a{color:var(--muted)}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Rafeeq">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="1" y="1" width="38" height="38" rx="11" fill="var(--accent)"/>
+        <path d="M11 25c3.5 4 14.5 4 18 0" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="15" cy="16" r="2.6" fill="var(--accent-ink)"/><circle cx="25" cy="16" r="2.6" fill="var(--accent-ink)"/>
+      </svg>
+      <span><span class="brand-name" data-i18n="brand">رفيق</span><br><span class="brand-sub">Rafeeq · AI copilot</span></span>
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#how" data-i18n="nav_how">كيف يعمل</a>
+      <a href="#demo" data-i18n="nav_demo">جرّبه الآن</a>
+      <a href="#pricing" data-i18n="nav_pricing">الأسعار</a>
+      <a href="#faq" data-i18n="nav_faq">أسئلة</a>
+    </nav>
+    <button class="lang" id="langBtn" type="button" aria-label="Switch language">EN</button>
+    <a class="btn btn-primary" href="#pilot" data-i18n="cta_short">جرّبه مجاناً</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow" data-i18n="hero_eyebrow">لشركات الحج والعمرة ووكلائها حول العالم</p>
+      <h1 data-i18n-html="hero_h1">كل مكالمة مع ضيوف الرحمن، <em>بإجابة صحيحة</em> من أول مرة.</h1>
+      <p class="lead" data-i18n="hero_lead">رفيق مساعد ذكي يجلس بجانب موظف خدمة العملاء في شركتك: يسمع السؤال، ويقترح الرد، ويعرف الحجز والفندق والباص، ويرد بنفسه على الواتساب طوال الليل، بالعربية والأوردو والإندونيسية والإنجليزية.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#pilot" data-i18n="cta_pilot">اطلب تجربة مجانية 30 يوماً</a>
+        <a class="btn btn-ghost" href="#demo" data-i18n="cta_demo">جرّب المساعد الآن</a>
+      </div>
+      <p class="hero-note"><span class="dot"></span><span data-i18n="hero_note">التجربة المجانية متاحة لـ 10 شركات قبل موسم رمضان 1448هـ</span></p>
+    </div>
+
+    <div class="console" aria-label="Rafeeq copilot example">
+      <div class="console-bar">
+        <span class="live"><i></i><span data-i18n="c_live">مكالمة جارية</span></span>
+        <span data-i18n="c_caller">حاج · باكستان · أوردو</span>
+        <span class="meta">02:41</span>
+      </div>
+      <div class="transcript">
+        <div class="line"><span class="who" data-i18n="c_pilgrim">الحاج</span><div class="bubble">ہماری بس کب نکلے گی؟ ہم حرم جانا چاہتے ہیں<small data-i18n="c_tr1">ترجمة: متى يتحرك باصنا؟ نريد الذهاب إلى الحرم</small></div></div>
+        <div class="line"><span class="who" data-i18n="c_staff">الموظف</span><div class="bubble" data-i18n="c_staff_line">لحظة، أتحقق من حجزك...</div></div>
+      </div>
+      <div class="suggest">
+        <div class="suggest-head">
+          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.8 4.6L14.5 7l-4.7 1.4L8 13l-1.8-4.6L1.5 7l4.7-1.4z" fill="currentColor"/></svg>
+          <span data-i18n="c_suggest">رفيق يقترح · قل للحاج</span>
+        </div>
+        <p data-i18n="c_answer">باص مجموعتكم «النور 12» يتحرك الساعة 4:30 عصراً من البوابة الشمالية للفندق. أرسلت له الموعد ورقم المشرف على الواتساب بالأوردو.</p>
+        <div class="chips">
+          <span class="chip ok" data-i18n="c_chip1">من بيانات الحجز RF-20417</span>
+          <span class="chip" data-i18n="c_chip2">أُرسل بالأوردو</span>
+          <span class="chip" data-i18n="c_chip3">زمن الرد 1.2 ث</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problem" style="padding-top:24px">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><b class="num">18.03M</b><span data-i18n="s1">معتمر من خارج المملكة في 2025</span><a href="https://pep.gov.sa/en/news/1011" target="_blank" rel="noopener">pep.gov.sa</a></div>
+      <div class="stat"><b class="num">30M</b><span data-i18n="s2">مستهدف رؤية 2030 من معتمري الخارج سنوياً</span><a href="https://pep.gov.sa/en/about" target="_blank" rel="noopener">pep.gov.sa</a></div>
+      <div class="stat"><b class="num">346</b><span data-i18n="s3">شركة عمرة مرخّصة لموسم 1448هـ</span><a href="https://english.aawsat.com/node/5319073" target="_blank" rel="noopener">aawsat.com</a></div>
+      <div class="stat"><b class="num">190+</b><span data-i18n="s4">دولة يأتي منها الحجاج والمعتمرون</span><a href="https://meatechwatch.com/2026/04/01/saudi-arabias-nusuk-pilgrimage-app-crosses-51-million-users-as-digital-hajj-infrastructure-scales/" target="_blank" rel="noopener">meatechwatch.com</a></div>
+    </div>
+    <div class="problem-points">
+      <div><h3 data-i18n="p1h">الضيوف يزيدون، والفريق نفسه</h3><p data-i18n="p1">عدد المعتمرين يقترب من الضعف، وموظف خدمة العملاء واحد يتكلم لغة أو لغتين.</p></div>
+      <div><h3 data-i18n="p2h">الموسم يضرب مرة واحدة</h3><p data-i18n="p2">رمضان وذو الحجة يضاعفان الاتصالات أضعافاً، ولا يمكن توظيف فريق كامل لأسابيع.</p></div>
+      <div><h3 data-i18n="p3h">كل شكوى لها ثمن</h3><p data-i18n="p3">الوزارة أوقفت شركات بسبب ضعف الخدمة في 2026. السؤال الذي لا يُرد عليه يصير شكوى.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow" data-i18n="how_eyebrow">وضعان في منتج واحد</p>
+      <h2 data-i18n="how_h">رفيق يساعد موظفك، ويغطي عنه حين يغيب</h2>
+    </div>
+    <div class="modes">
+      <div class="mode">
+        <span class="mode-tag">01 · Copilot</span>
+        <h3 data-i18n="m1h">رفيق الموظف</h3>
+        <ul>
+          <li data-i18n="m1a">يسمع المكالمة مباشرة ويقترح الرد الصحيح خلال ثانية</li>
+          <li data-i18n="m1b">يبحث في الحجز والفندق والباص بدل أن يفتح الموظف خمس شاشات</li>
+          <li data-i18n="m1c">يكتب رسالة المتابعة بلغة الحاج ويرسلها بضغطة</li>
+          <li data-i18n="m1d">يتحدث مع الموظف بالصوت: «رفيق، ما سياسة تغيير الموعد؟»</li>
+        </ul>
+      </div>
+      <div class="mode">
+        <span class="mode-tag">02 · Agent</span>
+        <h3 data-i18n="m2h">رفيق الحاج</h3>
+        <ul>
+          <li data-i18n="m2a">يرد على الواتساب والهاتف 24 ساعة طوال أيام الموسم</li>
+          <li data-i18n="m2b">يجيب من مصادر رسمية ومن بيانات شركتك فقط</li>
+          <li data-i18n="m2c">يحوّل الحالات الطارئة والمسائل الشرعية الخاصة إلى إنسان فوراً</li>
+          <li data-i18n="m2d">يرسل ملخص المحادثة للموظف حتى لا يعيد الحاج شرح طلبه</li>
+        </ul>
+      </div>
+    </div>
+    <ol class="flow" style="margin-top:44px">
+      <li><h3 data-i18n="f1h">نربط بياناتك</h3><p data-i18n="f1">الباقات والفنادق والنقل والأسئلة المتكررة، من ملف Excel أو نظامك الحالي.</p></li>
+      <li><h3 data-i18n="f2h">نغذّيه بالمعرفة</h3><p data-i18n="f2">أدلة وزارة الحج ونُسك وفتاوى المصادر الرسمية، مع مراجعة شرعية.</p></li>
+      <li><h3 data-i18n="f3h">نجرّبه معك</h3><p data-i18n="f3">30 يوماً على رقم واتساب حقيقي، مع تقرير أسبوعي بالأرقام.</p></li>
+      <li><h3 data-i18n="f4h">يكبر مع الموسم</h3><p data-i18n="f4">في رمضان والحج يتحمل الضغط فوراً دون توظيف إضافي.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="demo" class="demo-band">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow" data-i18n="demo_eyebrow">تجربة حية</p>
+      <h2 data-i18n="demo_h">اسأل كما يسأل الحاج، وشاهد ما يقترحه رفيق على الموظف</h2>
+    </div>
+    <div class="demo-grid">
+      <div class="ask">
+        <label for="q" data-i18n="demo_label">سؤال الحاج</label>
+        <form class="ask-row" id="askForm">
+          <input id="q" type="text" autocomplete="off" data-i18n-ph="demo_ph" placeholder="مثلاً: من أين أحرم وأنا في الطائرة؟">
+          <button class="btn btn-primary" type="submit" data-i18n="demo_btn">اسأل</button>
+        </form>
+        <div class="samples" id="samples"></div>
+        <p class="demo-note" data-i18n="demo_note">هذا العرض يعمل على 50 سؤالاً من قاعدة معرفة رفيق الأولى. بيانات الحجز في الردود مثال توضيحي لشركة افتراضية. الأحكام الشرعية تخضع لمراجعة مختص قبل التشغيل.</p>
+      </div>
+      <div class="console" aria-live="polite">
+        <div class="console-bar">
+          <span class="live"><i></i><span data-i18n="c_live2">محادثة واتساب</span></span>
+          <span class="meta" id="demoLang">AR</span>
+        </div>
+        <div class="transcript" id="demoTranscript"></div>
+        <div id="demoSuggest"></div>
+        <div class="alt" id="demoAlt" hidden></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="languages">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow" data-i18n="lang_eyebrow">لغات ضيوف الرحمن</p>
+      <h2 data-i18n="lang_h">يتكلم لغة الحاج، حتى لو خلط بين لغتين</h2>
+    </div>
+    <div class="langs">
+      <span>العربية<small>Gulf · Egyptian · Levantine</small></span>
+      <span>اردو<small>Urdu</small></span>
+      <span>Bahasa Indonesia<small>Indonesian</small></span>
+      <span>English<small>English</small></span>
+      <span>Bahasa Melayu<small>Malay</small></span>
+      <span>Türkçe<small>Turkish</small></span>
+      <span>বাংলা<small>Bengali</small></span>
+      <span>Français<small>French</small></span>
+      <span>Hausa<small>Hausa</small></span>
+    </div>
+  </div>
+</section>
+
+<section id="trust" style="padding-top:12px">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow" data-i18n="trust_eyebrow">مبني لهذا القطاع تحديداً</p>
+      <h2 data-i18n="trust_h">ضوابط واضحة قبل أي ذكاء</h2>
+    </div>
+    <div class="trust">
+      <div><h3 data-i18n="t1h">لا يُفتي أبداً</h3><p data-i18n="t1">ينقل ما ورد في المصادر الرسمية نصاً، ويحوّل المسائل الخاصة إلى جهة الإفتاء.</p></div>
+      <div><h3 data-i18n="t2h">بيانات الحجاج داخل المملكة</h3><p data-i18n="t2">استضافة داخل المملكة والتزام بنظام حماية البيانات الشخصية، وعقد معالجة بيانات مع كل شركة.</p></div>
+      <div><h3 data-i18n="t3h">يعرّف بنفسه</h3><p data-i18n="t3">يبدأ كل محادثة بأنه مساعد ذكي، ويعرض التحويل لإنسان في أي لحظة، وفق مبادئ سدايا.</p></div>
+      <div><h3 data-i18n="t4h">يكمّل نُسك ولا ينافسه</h3><p data-i18n="t4">نُسك يخدم الحاج في المناسك العامة، ورفيق يخدم شركتك في حجوزاتها وعملائها.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow" data-i18n="pr_eyebrow">الأسعار بالريال، دون ضريبة القيمة المضافة</p>
+      <h2 data-i18n="pr_h">أقل من راتب موظف موسمي واحد</h2>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name"><h3 data-i18n="pl1">الأساسية</h3></div>
+        <div class="price"><b>990</b><span data-i18n="per_month">ر.س / شهرياً</span></div>
+        <ul>
+          <li data-i18n="pl1a">وكيل واتساب ذكي على مدار الساعة</li>
+          <li data-i18n="pl1b">2,000 محادثة و200 دقيقة صوت</li>
+          <li data-i18n="pl1c">العربية والإنجليزية</li>
+          <li data-i18n="pl1d">قاعدة معرفة لباقاتك وأسئلتك المتكررة</li>
+        </ul>
+        <a class="btn btn-ghost" href="#pilot" data-i18n="pl_cta">ابدأ بتجربة مجانية</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-name"><h3 data-i18n="pl2">الاحترافية</h3><span class="badge" data-i18n="pl2_badge">الأنسب للشركات</span></div>
+        <div class="price"><b>2,490</b><span data-i18n="per_month">ر.س / شهرياً</span></div>
+        <ul>
+          <li data-i18n="pl2a">رفيق الموظف الصوتي أثناء المكالمات</li>
+          <li data-i18n="pl2b">صوت وواتساب، 1,500 دقيقة</li>
+          <li data-i18n="pl2c">العربية والإنجليزية والأوردو والإندونيسية</li>
+          <li data-i18n="pl2d">ربط بنظام الحجوزات وتحويل للموظف</li>
+        </ul>
+        <a class="btn btn-primary" href="#pilot" data-i18n="pl_cta">ابدأ بتجربة مجانية</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name"><h3 data-i18n="pl3">باقة الموسم</h3></div>
+        <div class="price"><b>9,900</b><span data-i18n="per_season">ر.س / 3 أشهر</span></div>
+        <ul>
+          <li data-i18n="pl3a">كل مزايا الاحترافية</li>
+          <li data-i18n="pl3b">5,000 دقيقة لموسم رمضان أو الحج</li>
+          <li data-i18n="pl3c">رقم مخصص وتقارير يومية</li>
+          <li data-i18n="pl3d">تنبيهات جماعية للمجموعات قبل التحرك</li>
+        </ul>
+        <a class="btn btn-ghost" href="#pilot" data-i18n="pl_cta3">احجز موسمك</a>
+      </div>
+    </div>
+    <p class="price-foot" data-i18n="pr_foot">للوكلاء خارج المملكة: 249 أو 649 دولاراً شهرياً. رسوم التأسيس 1,500 ريال تُلغى بعد التجربة المجانية.</p>
+  </div>
+</section>
+
+<section id="pilot" class="demo-band">
+  <div class="wrap pilot">
+    <div>
+      <p class="eyebrow" data-i18n="pi_eyebrow">برنامج الشركاء المؤسسين</p>
+      <h2 style="font-size:clamp(26px,3.4vw,36px);margin-top:10px" data-i18n="pi_h">10 شركات فقط، قبل رمضان 1448هـ</h2>
+      <ul class="pilot-list">
+        <li data-i18n="pi1">30 يوماً مجاناً على رقم واتساب حقيقي لشركتك</li>
+        <li data-i18n="pi2">نُعدّ قاعدة المعرفة من بياناتك خلال أسبوع</li>
+        <li data-i18n="pi3">تقرير أسبوعي: نسبة الرد، وسرعة الاستجابة، والحجوزات</li>
+        <li data-i18n="pi4">بعد التجربة: شهران مجاناً عند الاشتراك السنوي</li>
+      </ul>
+    </div>
+    <form class="card" id="pilotForm" novalidate>
+      <div class="row2">
+        <div class="field"><label for="pf_company" data-i18n="ff_company">اسم الشركة</label><input id="pf_company" required autocomplete="organization"></div>
+        <div class="field"><label for="pf_name" data-i18n="ff_name">اسمك ومنصبك</label><input id="pf_name" required autocomplete="name"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="pf_city" data-i18n="ff_city">المدينة / الدولة</label><input id="pf_city" autocomplete="address-level2"></div>
+        <div class="field"><label for="pf_phone" data-i18n="ff_phone">رقم الجوال أو الواتساب</label><input id="pf_phone" type="tel" required autocomplete="tel" dir="ltr"></div>
+      </div>
+      <div class="field">
+        <label for="pf_volume" data-i18n="ff_volume">كم محادثة واتصال تستقبلون شهرياً في الموسم؟</label>
+        <select id="pf_volume">
+          <option value="<1000" data-i18n="v1">أقل من 1,000</option>
+          <option value="1000-5000" data-i18n="v2" selected>1,000 إلى 5,000</option>
+          <option value="5000-20000" data-i18n="v3">5,000 إلى 20,000</option>
+          <option value=">20000" data-i18n="v4">أكثر من 20,000</option>
+        </select>
+      </div>
+      <fieldset class="field">
+        <legend data-i18n="ff_langs">لغات حجاجكم</legend>
+        <div class="checks" id="pf_langs">
+          <label><input type="checkbox" value="العربية" checked> العربية</label>
+          <label><input type="checkbox" value="English"> English</label>
+          <label><input type="checkbox" value="اردو"> اردو</label>
+          <label><input type="checkbox" value="Indonesia"> Indonesia</label>
+          <label><input type="checkbox" value="Türkçe"> Türkçe</label>
+          <label><input type="checkbox" value="বাংলা"> বাংলা</label>
+        </div>
+      </fieldset>
+      <p class="err" id="pf_err" role="alert"></p>
+      <button class="btn btn-primary" type="submit" data-i18n="ff_submit">أرسل طلب التجربة</button>
+      <div class="result" id="pf_result" hidden>
+        <strong data-i18n="ff_done">طلبك جاهز. انسخه وأرسله لفريق رفيق:</strong>
+        <pre id="pf_text"></pre>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <button class="mini primary" type="button" id="pf_copy" data-i18n="copy">نسخ</button>
+          <span id="pf_contact" class="num" hidden></span>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2 data-i18n="faq_h">أسئلة الشركات</h2></div>
+    <div class="faq">
+      <details><summary data-i18n="q1">هل يستبدل رفيق موظفي خدمة العملاء؟</summary><p data-i18n="a1">لا. رفيق يجعل موظفك أسرع وأدق، ويغطي الليل وذروة الموسم. القرار والحالات الحساسة تبقى عند الإنسان.</p></details>
+      <details><summary data-i18n="q2">ماذا لو أخطأ في حكم شرعي؟</summary><p data-i18n="a2">رفيق لا يُصدر أحكاماً. ينقل نصوص المصادر الرسمية التي راجعها مختص، ويحوّل أي مسألة خاصة إلى إنسان.</p></details>
+      <details><summary data-i18n="q3">أين تُحفظ بيانات الحجاج؟</summary><p data-i18n="a3">داخل المملكة، وفق نظام حماية البيانات الشخصية، مع عقد معالجة بيانات واضح بيننا وبين شركتك.</p></details>
+      <details><summary data-i18n="q4">كم يستغرق التشغيل؟</summary><p data-i18n="a4">أسبوع واحد لتجهيز قاعدة المعرفة وربط رقم الواتساب، ثم تبدأ التجربة المجانية مباشرة.</p></details>
+      <details><summary data-i18n="q5">هل يعمل مع وكلاء خارج المملكة؟</summary><p data-i18n="a5">نعم، بالأوردو والإندونيسية والإنجليزية وغيرها، وبتسعير بالدولار للوكلاء في باكستان وإندونيسيا وبريطانيا وأمريكا.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="foot">رفيق · نموذج أولي، نوفمبر 2026. الأرقام من مصادر منشورة، والمحتوى الشرعي يخضع لمراجعة مختص قبل التشغيل.</p>
+    <div class="srcs">
+      <a href="https://pep.gov.sa/en/news/1011" target="_blank" rel="noopener">Pilgrim Experience Program</a>
+      <a href="https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform" target="_blank" rel="noopener">Nusuk</a>
+      <a href="https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf" target="_blank" rel="noopener">PRH Hajj fatwas</a>
+      <a href="https://www.thenationalnews.com/news/mena/2026/10/07/saudi-arabia-suspends-four-companies-for-putting-umrah-pilgrims-in-unlicensed-housing/" target="_blank" rel="noopener">The National, Oct 2026</a>
+    </div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== Config: fill in your WhatsApp number to show it under the pilot request ===== */
+const CONTACT_WHATSAPP = "";
+
+/* Example company data used to fill {placeholders} in company answers (demo only). */
+const DEMO_DATA = {
+  booking_id:"RF-20417", group_name:{ar:"النور 12",en:"Al-Noor 12"}, bus_time:{ar:"4:30 عصراً",en:"4:30 pm"},
+  bus_point:{ar:"البوابة الشمالية للفندق",en:"the hotel's north gate"}, supervisor_phone:"+966 5X XXX XXXX",
+  hotel_name:{ar:"فندق جوار الحرم (مثال)",en:"Jiwar Al-Haram Hotel (example)"}, hotel_distance:{ar:"350 متراً",en:"350 m"},
+  checkin_time:{ar:"4:00 عصراً",en:"4:00 pm"}, checkout_time:{ar:"12:00 ظهراً",en:"12:00 noon"},
+  change_policy:{ar:"مجاني قبل 7 أيام من السفر، وبعدها حسب توفر الفنادق",en:"free up to 7 days before travel, then subject to hotel availability"},
+  refund_policy:{ar:"استرداد كامل قبل 14 يوماً، و50% قبل 7 أيام",en:"full refund up to 14 days before, 50% up to 7 days before"},
+  sla:{ar:"ساعتين",en:"two hours"}, company_name:{ar:"شركة المثال للعمرة",en:"Example Umrah Co."}, working_hours:{ar:"من 8 صباحاً إلى 12 ليلاً",en:"8 am to midnight"}
+};
+
+const I18N = {
+ en:{
+  brand:"Rafeeq", nav_how:"How it works", nav_demo:"Try it", nav_pricing:"Pricing", nav_faq:"FAQ", cta_short:"Free pilot",
+  hero_eyebrow:"For Hajj and Umrah companies and their agents worldwide",
+  hero_h1:"Every pilgrim call, <em>answered right</em> the first time.",
+  hero_lead:"Rafeeq is an AI copilot that sits beside your customer service staff. It hears the question, suggests the answer, knows the booking, hotel and bus, and answers WhatsApp by itself through the night, in Arabic, Urdu, Indonesian and English.",
+  cta_pilot:"Request a free 30-day pilot", cta_demo:"Try the assistant", hero_note:"Free pilot open to 10 companies before Ramadan 1448 AH",
+  c_live:"Live call", c_caller:"Pilgrim · Pakistan · Urdu", c_pilgrim:"Pilgrim", c_staff:"Staff", c_staff_line:"One moment, checking your booking...",
+  c_tr1:"Translation: When does our bus leave? We want to go to the Haram", c_suggest:"Rafeeq suggests · tell the pilgrim",
+  c_answer:"Your group 'Al-Noor 12' bus leaves at 4:30 pm from the hotel's north gate. I've sent the time and supervisor's number on WhatsApp in Urdu.",
+  c_chip1:"From booking RF-20417", c_chip2:"Sent in Urdu", c_chip3:"Answered in 1.2 s",
+  s1:"Umrah pilgrims from abroad in 2025", s2:"Vision 2030 target for Umrah pilgrims from abroad each year", s3:"Licensed Umrah companies for the 1448 AH season", s4:"Countries pilgrims travel from",
+  p1h:"More guests, same team", p1:"Pilgrim numbers are close to doubling, and one service agent speaks one or two languages.",
+  p2h:"The season hits all at once", p2:"Ramadan and Dhul Hijjah multiply contact volume, and you can't hire a full team for a few weeks.",
+  p3h:"Every complaint has a cost", p3:"The Ministry suspended companies over poor service in 2026. An unanswered question becomes a complaint.",
+  how_eyebrow:"Two modes, one product", how_h:"Rafeeq helps your staff, and covers for them when they're away",
+  m1h:"Staff copilot", m1a:"Listens to the live call and suggests the right answer within a second", m1b:"Looks up the booking, hotel and bus so staff don't open five screens", m1c:"Writes the follow-up in the pilgrim's language and sends it in one click", m1d:"Talks with staff by voice: 'Rafeeq, what's the date change policy?'",
+  m2h:"Pilgrim agent", m2a:"Answers WhatsApp and phone 24 hours a day through the season", m2b:"Answers only from official sources and your company's data", m2c:"Hands emergencies and personal religious questions to a person immediately", m2d:"Sends staff a summary so the pilgrim never repeats themselves",
+  f1h:"We connect your data", f1:"Packages, hotels, transport and FAQs, from an Excel file or your current system.",
+  f2h:"We load the knowledge", f2:"Ministry of Hajj guides, Nusuk and official fatwa sources, with scholarly review.",
+  f3h:"We pilot it with you", f3:"30 days on a real WhatsApp number, with a weekly report in numbers.",
+  f4h:"It scales with the season", f4:"In Ramadan and Hajj it absorbs the load instantly, with no extra hiring.",
+  demo_eyebrow:"Live demo", demo_h:"Ask like a pilgrim would, and see what Rafeeq suggests to your staff",
+  demo_label:"Pilgrim's question", demo_ph:"e.g. I'm flying in, when do I enter ihram?", demo_btn:"Ask",
+  demo_note:"This demo runs on the 50 questions in Rafeeq's first knowledge base. Booking details in answers are example data for a fictional company. Religious content is reviewed by a qualified scholar before launch.",
+  c_live2:"WhatsApp chat",
+  lang_eyebrow:"The languages of pilgrims", lang_h:"It speaks the pilgrim's language, even when they mix two",
+  trust_eyebrow:"Built for this sector", trust_h:"Clear rules before any AI",
+  t1h:"Never issues fatwas", t1:"Quotes official sources word for word and refers personal questions to a fatwa authority.",
+  t2h:"Pilgrim data stays in Saudi Arabia", t2:"In-Kingdom hosting, PDPL compliance and a data processing agreement with every company.",
+  t3h:"Says what it is", t3:"Opens every chat as an AI assistant and offers a person at any moment, following SDAIA principles.",
+  t4h:"Complements Nusuk", t4:"Nusuk serves pilgrims on the rites; Rafeeq serves your company's bookings and customers.",
+  pr_eyebrow:"Prices in SAR, excluding VAT", pr_h:"Less than one seasonal agent's salary",
+  pl1:"Starter", per_month:"SAR / month", pl1a:"24/7 AI WhatsApp agent", pl1b:"2,000 conversations and 200 voice minutes", pl1c:"Arabic and English", pl1d:"Knowledge base for your packages and FAQs", pl_cta:"Start with a free pilot",
+  pl2:"Pro", pl2_badge:"Best for companies", pl2a:"Voice staff copilot during calls", pl2b:"Voice and WhatsApp, 1,500 minutes", pl2c:"Arabic, English, Urdu and Indonesian", pl2d:"Booking system integration and staff handoff",
+  pl3:"Season pack", per_season:"SAR / 3 months", pl3a:"Everything in Pro", pl3b:"5,000 minutes for Ramadan or Hajj", pl3c:"Dedicated number and daily reports", pl3d:"Group alerts before departures", pl_cta3:"Book your season",
+  pr_foot:"For agents outside Saudi Arabia: $249 or $649 a month. The SAR 1,500 setup fee is waived after the free pilot.",
+  pi_eyebrow:"Founding partner programme", pi_h:"Only 10 companies, before Ramadan 1448 AH",
+  pi1:"30 days free on a real WhatsApp number for your company", pi2:"We build the knowledge base from your data within a week", pi3:"Weekly report: answer rate, response time and bookings", pi4:"After the pilot: two months free on an annual plan",
+  ff_company:"Company name", ff_name:"Your name and role", ff_city:"City / country", ff_phone:"Mobile or WhatsApp number",
+  ff_volume:"How many chats and calls do you get a month in season?", v1:"Under 1,000", v2:"1,000 to 5,000", v3:"5,000 to 20,000", v4:"Over 20,000",
+  ff_langs:"Your pilgrims' languages", ff_submit:"Send pilot request", ff_done:"Your request is ready. Copy it and send it to the Rafeeq team:", copy:"Copy",
+  faq_h:"Questions from companies",
+  q1:"Does Rafeeq replace customer service staff?", a1:"No. Rafeeq makes your staff faster and more accurate, and covers nights and peak season. Decisions and sensitive cases stay with people.",
+  q2:"What if it gets a religious ruling wrong?", a2:"Rafeeq doesn't issue rulings. It quotes official sources reviewed by a scholar and passes any personal question to a person.",
+  q3:"Where is pilgrim data stored?", a3:"In Saudi Arabia, under the Personal Data Protection Law, with a clear data processing agreement between us and your company.",
+  q4:"How long does setup take?", a4:"One week to prepare the knowledge base and connect the WhatsApp number, then the free pilot starts.",
+  q5:"Does it work for agents outside Saudi Arabia?", a5:"Yes, in Urdu, Indonesian, English and more, with USD pricing for agents in Pakistan, Indonesia, the UK and the US.",
+  foot:"Rafeeq · prototype, November 2026. Figures are from published sources; religious content is reviewed by a qualified scholar before launch.",
+  /* dynamic */
+  you:"Pilgrim", rafeeq:"Rafeeq", sugg:"Rafeeq suggests · reply to send", guard:"Hand to a person · Rafeeq's answer",
+  send:"Send on WhatsApp", edit:"Edit", handoff:"Hand to staff", sent:"Sent to the pilgrim (demo)", handed:"Passed to on-duty staff (demo)",
+  src:"Source", official:"Official source", fiqh:"Fiqh · scholar review", company:"Your company data", guardrail:"Safety rule",
+  nomatch:"I couldn't find a confident answer in the knowledge base. I'm passing this question to a staff member, with a summary.",
+  also:"Did you mean:", copied:"Copied", copyfail:"Select the text and copy it", required:"Please fill in company name, your name and phone number.",
+  contact:"WhatsApp: ", empty:"Ask a question, or tap one of the examples."
+ },
+ ar:{
+  you:"الحاج", rafeeq:"رفيق", sugg:"رفيق يقترح · رد جاهز للإرسال", guard:"تحويل لإنسان · رد رفيق",
+  send:"أرسل على الواتساب", edit:"تعديل", handoff:"حوّل للموظف", sent:"أُرسل للحاج (تجريبي)", handed:"حُوّل للموظف المناوب (تجريبي)",
+  src:"المصدر", official:"مصدر رسمي", fiqh:"فقهي · بمراجعة مختص", company:"بيانات شركتك", guardrail:"قاعدة سلامة",
+  nomatch:"لم أجد إجابة مؤكدة في قاعدة المعرفة. سأحوّل سؤالك إلى موظف الشركة مع ملخص المحادثة.",
+  also:"هل تقصد:", copied:"تم النسخ", copyfail:"حدّد النص وانسخه يدوياً", required:"أكمل اسم الشركة واسمك ورقم الجوال.",
+  contact:"واتساب: ", empty:"اكتب سؤالاً، أو اختر أحد الأمثلة."
+ }
+};
+const SAMPLES = {
+  ar:["من أين أحرم وأنا في الطائرة؟","متى موعد الباص؟","كيف أسعى بين الصفا والمروة؟","هل أحتاج تصريح للعمرة؟","هل يجوز أن أعتمر عن أمي المتوفاة؟","تهت عن مجموعتي"],
+  en:["When do I enter ihram on the plane?","What is the refund policy?","How do I perform tawaf?","Which vaccines do I need?","Can I do Hajj on a tourist visa?","Medical emergency"]
+};
+
+let lang = "ar", KB = [];
+const $ = s => document.querySelector(s);
+const original = new Map();
+document.querySelectorAll("[data-i18n],[data-i18n-html],[data-i18n-ph]").forEach(el=>{
+  original.set(el,{t:el.textContent,h:el.innerHTML,p:el.getAttribute("placeholder")});
+});
+const t = k => (I18N[lang] && I18N[lang][k]) || I18N.ar[k] || k;
+
+function applyLang(next){
+  lang = next;
+  const root = document.documentElement;
+  root.lang = lang; root.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.dataset.i18n; el.textContent = lang === "ar" ? original.get(el).t : (I18N.en[k] ?? original.get(el).t);
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{
+    const k = el.dataset.i18nHtml; el.innerHTML = lang === "ar" ? original.get(el).h : (I18N.en[k] ?? original.get(el).h);
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+    const k = el.dataset.i18nPh; el.placeholder = lang === "ar" ? original.get(el).p : (I18N.en[k] ?? original.get(el).p);
+  });
+  $("#langBtn").textContent = lang === "ar" ? "EN" : "عربي";
+  renderSamples();
+  try{ localStorage.setItem("rafeeq-lang", lang) }catch(e){}
+}
+$("#langBtn").addEventListener("click",()=>applyLang(lang==="ar"?"en":"ar"));
+
+function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),2200); }
+
+/* ===== Retrieval over the knowledge base ===== */
+const AR_STOP = new Set(["من","في","على","الى","إلى","عن","هل","ما","ماذا","كيف","متى","انا","أنا","و","او","أو","ان","أن","لا","يا","هو","هي","مع","كم","اين","أين","اريد","أريد","لو","ثم","قد","الي","التي","الذي"]);
+const EN_STOP = new Set(["the","a","an","is","are","do","does","i","my","me","to","of","in","on","for","and","or","can","what","how","when","where","which","it","be","we","our","you","your","with","at","from","need","want","there","any","please","get"]);
+function norm(s){
+  return (s||"").toLowerCase()
+    .replace(/[ً-ٰٟـ]/g,"")
+    .replace(/[إأآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/ؤ/g,"و").replace(/ئ/g,"ي")
+    .replace(/[^\p{L}\p{N}\s]/gu," ").replace(/\s+/g," ").trim();
+}
+function tokens(s){
+  return norm(s).split(" ").filter(w=>w.length>1 && !AR_STOP.has(w) && !EN_STOP.has(w))
+    .map(w=>w.replace(/^(وال|بال|فال|كال|لل|ال)/,"").replace(/^([a-z]{4,})(es|s)$/,"$1"));
+}
+function isArabic(s){ return /[؀-ۿ]/.test(s) }
+let INDEX = [];
+function buildIndex(){
+  INDEX = KB.map(e=>{
+    const tagToks = new Set(e.tags.flatMap(tokens));
+    const qToks = new Set([...tokens(e.q_ar),...tokens(e.q_en)]);
+    const aToks = new Set([...tokens(e.a_ar),...tokens(e.a_en)]);
+    return {e,tagToks,qToks,aToks};
+  });
+}
+function search(q){
+  const qt = tokens(q); if(!qt.length) return [];
+  return INDEX.map(({e,tagToks,qToks,aToks})=>{
+    let s=0;
+    for(const w of qt){
+      const hit = (set,weight)=>{ if(set.has(w)) return weight; for(const x of set){ if(x.length>3 && w.length>3 && (x.startsWith(w)||w.startsWith(x))) return weight*.6 } return 0 };
+      s += Math.max(hit(tagToks,3), hit(qToks,2.2), hit(aToks,.6));
+    }
+    return {e,score:s/Math.sqrt(qt.length+1)};
+  }).filter(r=>r.score>0.9).sort((a,b)=>b.score-a.score);
+}
+function fill(text,l){
+  return text.replace(/\{(\w+)\}/g,(m,k)=>{ const v=DEMO_DATA[k]; if(v==null) return m; return typeof v==="string"?v:(v[l]||v.ar) });
+}
+
+/* ===== Demo rendering ===== */
+function el(tag,attrs={},...kids){ const n=document.createElement(tag); for(const[k,v] of Object.entries(attrs)){ if(k==="class") n.className=v; else if(k==="text") n.textContent=v; else n.setAttribute(k,v) } kids.forEach(c=>n.append(c)); return n; }
+function renderSamples(){
+  const box=$("#samples"); box.replaceChildren();
+  SAMPLES[lang].forEach(s=>{ const b=el("button",{class:"sample",type:"button",text:s}); b.addEventListener("click",()=>{ $("#q").value=s; ask(s) }); box.append(b) });
+}
+function ask(q){
+  q=(q||"").trim(); if(!q) return;
+  const l = isArabic(q) ? "ar" : "en";
+  const L = I18N[l];
+  $("#demoLang").textContent = l.toUpperCase();
+  const tr=$("#demoTranscript"); tr.replaceChildren(
+    el("div",{class:"line"}, el("span",{class:"who",text:L.you}), el("div",{class:"bubble",text:q}))
+  );
+  const res = search(q); const box=$("#demoSuggest"); box.replaceChildren(); const alt=$("#demoAlt"); alt.hidden=true; alt.replaceChildren();
+  const top = res[0];
+  const guard = !top || top.e.type==="guardrail";
+  const card = el("div",{class:"suggest"+(guard?" guard":"")});
+  const head = el("div",{class:"suggest-head"}); head.append(el("span",{text: guard?L.guard:L.sugg}));
+  const answer = top ? fill(l==="ar"?top.e.a_ar:top.e.a_en,l) : L.nomatch;
+  const p = el("p",{text:answer}); p.style.whiteSpace="pre-line";
+  card.append(head,p);
+  if(top){
+    const chips = el("div",{class:"chips"});
+    chips.append(el("span",{class:"chip ok",text:L[top.e.type]||top.e.type}));
+    if(top.e.source && top.e.source.startsWith("http")){
+      const a=el("a",{class:"chip",href:top.e.source,target:"_blank",rel:"noopener",text:L.src+": "+new URL(top.e.source).hostname.replace("www.","")}); chips.append(a);
+    }
+    chips.append(el("span",{class:"chip num",text:top.e.id}));
+    card.append(chips);
+  }
+  const actions = el("div",{class:"suggest-actions"});
+  const send = el("button",{class:"mini primary",type:"button",text: guard?L.handoff:L.send});
+  send.addEventListener("click",()=>toast(guard?L.handed:L.sent));
+  const ed = el("button",{class:"mini",type:"button",text:L.edit});
+  ed.addEventListener("click",()=>{ p.contentEditable="true"; p.focus(); });
+  actions.append(send,ed); card.append(actions); box.append(card);
+  const others = res.slice(1,3).filter(r=>r.score>1.4);
+  if(others.length){
+    alt.hidden=false; alt.append(document.createTextNode(L.also+" "));
+    others.forEach((r,i)=>{ const b=el("button",{type:"button",text:l==="ar"?r.e.q_ar:r.e.q_en}); b.addEventListener("click",()=>{ $("#q").value=b.textContent; ask(b.textContent) }); alt.append(b); if(i<others.length-1) alt.append(document.createTextNode(" · ")) });
+  }
+}
+$("#askForm").addEventListener("submit",ev=>{ ev.preventDefault(); ask($("#q").value) });
+
+/* ===== Pilot form ===== */
+$("#pilotForm").addEventListener("submit",ev=>{
+  ev.preventDefault();
+  const v=id=>$(id).value.trim();
+  if(!v("#pf_company")||!v("#pf_name")||!v("#pf_phone")){ $("#pf_err").textContent=t("required"); return }
+  $("#pf_err").textContent="";
+  const langs=[...document.querySelectorAll("#pf_langs input:checked")].map(i=>i.value).join("، ");
+  const text = lang==="ar"
+   ? `طلب تجربة رفيق المجانية\nالشركة: ${v("#pf_company")}\nالاسم والمنصب: ${v("#pf_name")}\nالمدينة: ${v("#pf_city")||"-"}\nالجوال: ${v("#pf_phone")}\nالحجم الشهري في الموسم: ${$("#pf_volume").selectedOptions[0].textContent}\nاللغات: ${langs||"-"}`
+   : `Rafeeq free pilot request\nCompany: ${v("#pf_company")}\nName and role: ${v("#pf_name")}\nCity: ${v("#pf_city")||"-"}\nPhone: ${v("#pf_phone")}\nMonthly volume in season: ${$("#pf_volume").selectedOptions[0].textContent}\nLanguages: ${langs||"-"}`;
+  $("#pf_text").textContent=text; $("#pf_result").hidden=false;
+  const c=$("#pf_contact"); if(CONTACT_WHATSAPP){ c.hidden=false; c.textContent=t("contact")+CONTACT_WHATSAPP } else c.hidden=true;
+});
+$("#pf_copy").addEventListener("click",()=>{
+  const txt=$("#pf_text").textContent;
+  try{ navigator.clipboard.writeText(txt).then(()=>toast(t("copied")),()=>selectPre()) }catch(e){ selectPre() }
+});
+function selectPre(){ const r=document.createRange(); r.selectNodeContents($("#pf_text")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast(t("copyfail")) }
+
+/* ===== Boot ===== */
+let saved=null; try{ saved=localStorage.getItem("rafeeq-lang") }catch(e){}
+applyLang(saved==="en"?"en":"ar");
+fetch("knowledge-base.json").then(r=>{ if(!r.ok) throw 0; return r.json() }).then(d=>{
+  KB=d; buildIndex(); ask(lang==="ar"?SAMPLES.ar[0]:SAMPLES.en[0]);
+}).catch(()=>{
+  $("#demoTranscript").replaceChildren(el("p",{class:"bubble",text: lang==="ar"?"تعذّر تحميل قاعدة المعرفة. افتح الصفحة من الرابط المنشور.":"Couldn't load the knowledge base. Open the page from its published link."}));
+});
+</script>

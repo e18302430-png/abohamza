@@ -1,0 +1,962 @@
+[
+ {
+  "id": "ih-01",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ما هو الإحرام؟",
+  "a_ar": "الإحرام هو نية الدخول في النسك (العمرة أو الحج). ويلبس الرجل قبله إزاراً ورداءً أبيضين غير مخيطين، ويبدأ التلبية: «لبيك اللهم عمرة». ويُستحب الاغتسال والتطيّب في البدن قبل النية لا بعدها.",
+  "q_en": "What is ihram?",
+  "a_en": "Ihram is the intention to enter the rites of Umrah or Hajj. Before it, men put on two white unstitched sheets (izar and rida) and begin the talbiyah: 'Labbayk Allahumma Umrah'. Bathing and applying perfume to the body before the intention is recommended, not after it.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "احرام",
+   "نية",
+   "تلبية",
+   "ihram",
+   "intention",
+   "talbiyah"
+  ]
+ },
+ {
+  "id": "ih-02",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "من أين يُحرم القادم من المدينة المنورة؟",
+  "a_ar": "ميقات أهل المدينة ومن مرّ بها هو ذو الحليفة، ويُعرف اليوم بـ«أبيار علي»، ويبعد عن المدينة نحو 13 كيلومتراً.",
+  "q_en": "Where does someone coming from Madinah enter ihram?",
+  "a_en": "The miqat for Madinah and anyone passing through it is Dhul Hulayfah, known today as Abyar Ali, about 13 km from Madinah.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "ميقات",
+   "المدينة",
+   "ذو الحليفة",
+   "ابيار علي",
+   "miqat",
+   "madinah",
+   "abyar ali"
+  ]
+ },
+ {
+  "id": "ih-03",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "أنا قادم بالطائرة، متى أُحرم؟",
+  "a_ar": "تُحرم عند محاذاة الميقات وأنت في الطائرة. البس ملابس الإحرام قبل الصعود أو في المطار، وانوِ وابدأ التلبية عند إعلان الطاقم الاقتراب من الميقات أو قبله بقليل احتياطاً. لا تؤجّل الإحرام إلى مطار جدة إذا كانت الطائرة تمر بالميقات.",
+  "q_en": "I am flying in. When do I enter ihram?",
+  "a_en": "You enter ihram when the plane is level with the miqat. Change into ihram clothing before boarding or at the airport, then make the intention and start the talbiyah when the crew announces the miqat, or a little before as a precaution. Do not delay it to Jeddah airport if your flight passes the miqat.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "طائرة",
+   "محاذاة",
+   "جدة",
+   "plane",
+   "flight",
+   "jeddah"
+  ]
+ },
+ {
+  "id": "ih-04",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ما ميقات القادمين من مصر والشام والمغرب؟",
+  "a_ar": "ميقاتهم الجحفة، ويُحرم الناس اليوم من مدينة رابغ القريبة منها.",
+  "q_en": "What is the miqat for pilgrims from Egypt, the Levant and Morocco?",
+  "a_en": "Their miqat is Al-Juhfah. Today pilgrims enter ihram at the nearby town of Rabigh.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "الجحفة",
+   "رابغ",
+   "مصر",
+   "الشام",
+   "juhfah",
+   "rabigh",
+   "egypt"
+  ]
+ },
+ {
+  "id": "ih-05",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ما ميقات القادمين من الرياض ونجد والطائف؟",
+  "a_ar": "ميقاتهم قرن المنازل، ويُعرف اليوم بـ«السيل الكبير»، ويُحرم بعضهم من وادي محرم وهو محاذٍ له.",
+  "q_en": "What is the miqat for pilgrims from Riyadh, Najd and Taif?",
+  "a_en": "Their miqat is Qarn al-Manazil, known today as As-Sayl al-Kabir. Some enter ihram at Wadi Mahram, which is level with it.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "قرن المنازل",
+   "السيل",
+   "الرياض",
+   "الطائف",
+   "qarn",
+   "sayl",
+   "riyadh",
+   "taif"
+  ]
+ },
+ {
+  "id": "ih-06",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ما ميقات القادمين من اليمن ومن العراق؟",
+  "a_ar": "ميقات أهل اليمن يلملم، وميقات أهل العراق ذات عرق.",
+  "q_en": "What is the miqat for pilgrims from Yemen and Iraq?",
+  "a_en": "Yemen's miqat is Yalamlam, and Iraq's miqat is Dhat Irq.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "يلملم",
+   "ذات عرق",
+   "اليمن",
+   "العراق",
+   "yalamlam",
+   "iraq",
+   "yemen"
+  ]
+ },
+ {
+  "id": "ih-07",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "أنا مقيم في مكة وأريد العمرة، من أين أُحرم؟",
+  "a_ar": "يخرج المقيم في مكة إلى الحِلّ، وأقربه مسجد التنعيم (مسجد عائشة)، فيُحرم منه ثم يأتي لأداء العمرة.",
+  "q_en": "I am staying in Makkah and want to perform Umrah. Where do I enter ihram?",
+  "a_en": "Someone staying in Makkah goes out to the area outside the sanctuary (al-Hill). The nearest point is Masjid At-Tan'eem (Masjid Aisha), where they enter ihram and then return for Umrah.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "التنعيم",
+   "مسجد عائشة",
+   "مقيم",
+   "مكة",
+   "taneem",
+   "aisha",
+   "makkah"
+  ]
+ },
+ {
+  "id": "ih-08",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ما محظورات الإحرام؟",
+  "a_ar": "يحرم على المُحرم: أخذ الشعر وتقليم الأظافر، والتطيّب، وقتل الصيد، وعقد النكاح، والجماع ومقدماته. ويحرم على الرجل لبس المخيط وتغطية الرأس، وعلى المرأة لبس النقاب والقفازين.",
+  "q_en": "What is forbidden in ihram?",
+  "a_en": "In ihram it is forbidden to cut hair or nails, use perfume, hunt, contract a marriage, or have marital relations. Men may not wear stitched clothing or cover their heads, and women may not wear the niqab or gloves.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "محظورات",
+   "عطر",
+   "شعر",
+   "اظافر",
+   "prohibitions",
+   "perfume",
+   "forbidden"
+  ]
+ },
+ {
+  "id": "ih-09",
+  "category": "ihram",
+  "type": "fiqh",
+  "q_ar": "ماذا تلبس المرأة في الإحرام؟",
+  "a_ar": "تلبس المرأة ما شاءت من الثياب الساترة الفضفاضة، دون لون محدد، وتتجنب الزينة والطيب، ولا تلبس النقاب ولا القفازين، وتستر وجهها عند وجود الرجال الأجانب.",
+  "q_en": "What does a woman wear in ihram?",
+  "a_en": "A woman may wear any loose, modest clothing in any colour. She avoids adornment and perfume, does not wear the niqab or gloves, and covers her face in the presence of unrelated men.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "المراة",
+   "ملابس",
+   "نقاب",
+   "woman",
+   "women",
+   "clothes"
+  ]
+ },
+ {
+  "id": "ih-10",
+  "category": "ihram",
+  "type": "guardrail",
+  "q_ar": "تجاوزت الميقات دون إحرام، ماذا أفعل؟",
+  "a_ar": "الأصل أن تعود إلى الميقات وتُحرم منه إن استطعت. أما إن أحرمت بعده فالحكم يحتاج إلى سؤال عالم مختص. سأحوّلك الآن إلى موظف الشركة ليرشدك إلى جهة الإفتاء المعتمدة.",
+  "q_en": "I passed the miqat without ihram. What should I do?",
+  "a_en": "The general rule is to go back to the miqat and enter ihram there if you can. If you have already entered ihram after it, the ruling needs a qualified scholar. I am passing you to a staff member who will direct you to an approved fatwa service.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "تجاوز",
+   "الميقات",
+   "دم",
+   "passed",
+   "missed miqat"
+  ]
+ },
+ {
+  "id": "um-01",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "ما خطوات العمرة بالترتيب؟",
+  "a_ar": "1. الإحرام من الميقات. 2. الطواف حول الكعبة سبعة أشواط. 3. صلاة ركعتين خلف مقام إبراهيم إن تيسّر. 4. السعي بين الصفا والمروة سبعة أشواط. 5. الحلق أو التقصير، وبه تنتهي العمرة.",
+  "q_en": "What are the steps of Umrah in order?",
+  "a_en": "1. Enter ihram at the miqat. 2. Perform tawaf, seven circuits around the Kaaba. 3. Pray two rak'ahs behind Maqam Ibrahim if possible. 4. Perform sa'i, seven laps between Safa and Marwah. 5. Shave or shorten the hair, which completes the Umrah.",
+  "source": "https://www.siasat.com/saudi-arabia-launches-digital-umrah-guide-to-make-pilgrimage-easier-safer-3390383",
+  "needs_review": true,
+  "tags": [
+   "خطوات",
+   "العمرة",
+   "كيف",
+   "ترتيب",
+   "steps",
+   "how",
+   "umrah"
+  ]
+ },
+ {
+  "id": "um-02",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "كيف أطوف حول الكعبة؟",
+  "a_ar": "تبدأ من محاذاة الحجر الأسود، وتجعل الكعبة عن يسارك، وتطوف سبعة أشواط كاملة، كل شوط ينتهي عند الحجر الأسود. تكبّر عند محاذاته في بداية كل شوط وتشير إليه إن لم تستطع استلامه.",
+  "q_en": "How do I perform tawaf?",
+  "a_en": "Start level with the Black Stone, keep the Kaaba on your left, and complete seven full circuits, each ending at the Black Stone. Say 'Allahu Akbar' when level with it at the start of each circuit, and point to it if you cannot touch it.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "طواف",
+   "الكعبة",
+   "الحجر الاسود",
+   "tawaf",
+   "kaaba",
+   "black stone"
+  ]
+ },
+ {
+  "id": "um-03",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "ما الاضطباع والرَّمَل؟",
+  "a_ar": "الاضطباع أن يجعل الرجل وسط ردائه تحت إبطه الأيمن وطرفيه على كتفه الأيسر، ويكون في طواف القدوم أو العمرة فقط. والرمل الإسراع في المشي مع تقارب الخطى في الأشواط الثلاثة الأولى. وكلاهما سنة للرجال دون النساء.",
+  "q_en": "What are idtiba' and raml?",
+  "a_en": "Idtiba' is when a man places the middle of his upper sheet under his right armpit and its ends over his left shoulder, only during the arrival or Umrah tawaf. Raml is walking briskly with short steps in the first three circuits. Both are sunnah for men, not women.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "اضطباع",
+   "رمل",
+   "idtiba",
+   "raml"
+  ]
+ },
+ {
+  "id": "um-04",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "كيف أسعى بين الصفا والمروة؟",
+  "a_ar": "تبدأ من الصفا وتنتهي عند المروة. الذهاب من الصفا إلى المروة شوط، والعودة شوط ثانٍ، حتى تكمل سبعة أشواط تنتهي عند المروة. ويُسن للرجل الإسراع بين العلمين الأخضرين.",
+  "q_en": "How do I perform sa'i between Safa and Marwah?",
+  "a_en": "Start at Safa and finish at Marwah. Safa to Marwah is one lap and the return is a second, until you complete seven laps ending at Marwah. Men are encouraged to move briskly between the two green markers.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "سعي",
+   "الصفا",
+   "المروة",
+   "sai",
+   "safa",
+   "marwah"
+  ]
+ },
+ {
+  "id": "um-05",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "الحلق أم التقصير؟ وماذا تفعل المرأة؟",
+  "a_ar": "الحلق أفضل للرجل والتقصير يجزئ، بشرط أن يعمّ الرأس. وتقصّر المرأة من أطراف شعرها قدر أنملة (نحو 2 سم) ولا تحلق.",
+  "q_en": "Should I shave or shorten my hair? What does a woman do?",
+  "a_en": "Shaving is better for men, and shortening is valid if it covers the whole head. A woman shortens the ends of her hair by about a fingertip's length (around 2 cm) and does not shave.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "حلق",
+   "تقصير",
+   "شعر",
+   "shave",
+   "shorten",
+   "hair",
+   "haircut"
+  ]
+ },
+ {
+  "id": "um-06",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "هل يجب الوضوء للطواف والسعي؟",
+  "a_ar": "الطهارة شرط لصحة الطواف عند جمهور العلماء، فتوضأ قبله. أما السعي فلا تُشترط له الطهارة لكنها مستحبة.",
+  "q_en": "Do I need wudu for tawaf and sa'i?",
+  "a_en": "Most scholars hold that purity is a condition for tawaf, so make wudu before it. Purity is not required for sa'i, though it is recommended.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "وضوء",
+   "طهارة",
+   "wudu",
+   "ablution"
+  ]
+ },
+ {
+  "id": "um-07",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "شككت في عدد أشواط الطواف، ماذا أفعل؟",
+  "a_ar": "تبني على الأقل لأنه المتيقَّن. فإذا شككت هل طفت خمسة أم ستة، فاعتبرها خمسة وأكمل.",
+  "q_en": "I lost count of my tawaf circuits. What do I do?",
+  "a_en": "Go with the lower number, since that is what you are certain of. If you are unsure whether you did five or six, count five and continue.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "شك",
+   "عدد",
+   "الاشواط",
+   "count",
+   "doubt",
+   "lost count"
+  ]
+ },
+ {
+  "id": "um-08",
+  "category": "umrah",
+  "type": "official",
+  "q_ar": "هل توجد عربات لكبار السن في الطواف والسعي؟",
+  "a_ar": "نعم، تتوفر في المسجد الحرام عربات يدوية وكهربائية لكبار السن وذوي الإعاقة، ولها مسارات مخصصة في الطواف والسعي. اسأل مشرف المجموعة عن أفضل وقت ومكان لاستلامها.",
+  "q_en": "Are there wheelchairs for elderly pilgrims in tawaf and sa'i?",
+  "a_en": "Yes. The Grand Mosque provides manual and electric carts for elderly and disabled pilgrims, with dedicated routes for tawaf and sa'i. Ask your group supervisor for the best time and place to collect one.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "عربة",
+   "كبار السن",
+   "كرسي",
+   "wheelchair",
+   "elderly",
+   "cart",
+   "disabled"
+  ]
+ },
+ {
+  "id": "um-09",
+  "category": "umrah",
+  "type": "guardrail",
+  "q_ar": "جاءتني الدورة الشهرية، هل أكمل العمرة؟",
+  "a_ar": "الحائض لا تطوف حتى تطهر، ولها أن تبقى على إحرامها وتؤدي ما سوى الطواف. ولأن لكل حالة تفاصيلها، سأحوّلك إلى موظفة الشركة لترتيب موعدك والتواصل مع جهة الإفتاء إن لزم.",
+  "q_en": "My period started. Can I continue my Umrah?",
+  "a_en": "A menstruating woman does not perform tawaf until she is pure. She can stay in ihram and do everything else. Because each case has its details, I am passing you to a female staff member to rearrange your schedule and contact a fatwa service if needed.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "حيض",
+   "الدورة",
+   "period",
+   "menstruation"
+  ]
+ },
+ {
+  "id": "um-10",
+  "category": "umrah",
+  "type": "fiqh",
+  "q_ar": "هل أستطيع أداء العمرة عن شخص متوفى أو عاجز؟",
+  "a_ar": "نعم، تجوز العمرة عن الميت وعن العاجز عجزاً لا يُرجى زواله، بشرط أن يكون المؤدي قد أدّى عمرته عن نفسه أولاً. وتنوي عند الإحرام: «لبيك عمرة عن فلان».",
+  "q_en": "Can I perform Umrah on behalf of someone who has died or cannot travel?",
+  "a_en": "Yes. Umrah may be performed for a deceased person or for someone permanently unable to go, provided the person performing it has already done their own Umrah. At ihram, say: 'Labbayk, Umrah on behalf of [name]'.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "عن",
+   "متوفى",
+   "ميت",
+   "بدل",
+   "on behalf",
+   "deceased",
+   "proxy",
+   "المتوفاة",
+   "المتوفى",
+   "امي",
+   "ابوي",
+   "ابي",
+   "اعتمر عن",
+   "اعتمر",
+   "والدتي",
+   "mother",
+   "father"
+  ]
+ },
+ {
+  "id": "nu-01",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "ما هي منصة نُسك؟",
+  "a_ar": "نُسك هي المنصة الرسمية لوزارة الحج والعمرة، ومنها تُصدر تصاريح العمرة وحجوزات الروضة الشريفة وكثير من خدمات الحاج والمعتمر، ويتوفر لها تطبيق على الجوال.",
+  "q_en": "What is Nusuk?",
+  "a_en": "Nusuk is the official platform of the Ministry of Hajj and Umrah. It issues Umrah permits, Rawdah bookings and many other pilgrim services, and has a mobile app.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": false,
+  "tags": [
+   "نسك",
+   "منصة",
+   "تطبيق",
+   "nusuk",
+   "app",
+   "platform"
+  ]
+ },
+ {
+  "id": "nu-02",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "هل أحتاج تصريحاً لأداء العمرة؟",
+  "a_ar": "نعم، تُصدر تصاريح العمرة عبر تطبيق نُسك باختيار التاريخ والوقت المتاحين. احمل التصريح على جوالك عند الدخول إلى صحن المطاف.",
+  "q_en": "Do I need a permit to perform Umrah?",
+  "a_en": "Yes. Umrah permits are issued through the Nusuk app by choosing an available date and time. Keep the permit on your phone when entering the mataf.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": false,
+  "tags": [
+   "تصريح",
+   "العمرة",
+   "permit"
+  ]
+ },
+ {
+  "id": "nu-03",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "كيف أحجز زيارة الروضة الشريفة؟",
+  "a_ar": "تُحجز زيارة الروضة الشريفة في المسجد النبوي عبر تطبيق نُسك، باختيار موعد متاح. تحقّق في التطبيق من الضوابط الحالية لعدد مرات الحجز المسموح بها.",
+  "q_en": "How do I book a visit to the Rawdah?",
+  "a_en": "Rawdah visits at the Prophet's Mosque are booked through the Nusuk app by choosing an available slot. Check the app for the current rules on how often you can book.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": false,
+  "tags": [
+   "الروضة",
+   "المسجد النبوي",
+   "حجز",
+   "rawdah",
+   "rawda",
+   "booking"
+  ]
+ },
+ {
+  "id": "nu-04",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "هل أحتاج تصريحاً للصلاة في المسجد الحرام؟",
+  "a_ar": "لا، الصلاة في المسجد الحرام لا تحتاج تصريحاً في الوضع المعتاد. التصريح مطلوب لأداء العمرة ولزيارة الروضة الشريفة.",
+  "q_en": "Do I need a permit to pray at the Grand Mosque?",
+  "a_en": "No. Praying at the Grand Mosque does not normally need a permit. Permits are needed for Umrah and for visiting the Rawdah.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": false,
+  "tags": [
+   "صلاة",
+   "المسجد الحرام",
+   "prayer",
+   "pray"
+  ]
+ },
+ {
+  "id": "nu-05",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "لا أجد موعداً متاحاً للعمرة في نُسك، ماذا أفعل؟",
+  "a_ar": "جرّب أوقاتاً أخرى خاصة بعد منتصف الليل وفي الصباح الباكر، وأعد المحاولة لاحقاً لأن مواعيد جديدة تُفتح باستمرار. وإن استمرت المشكلة أرسل لنا رقم الحجز وسيساعدك فريقنا.",
+  "q_en": "I can't find an available Umrah slot on Nusuk. What should I do?",
+  "a_en": "Try other times, especially after midnight and early morning, and check again later because new slots open regularly. If it continues, send us your booking number and our team will help.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": false,
+  "tags": [
+   "موعد",
+   "متاح",
+   "مشكلة",
+   "slot",
+   "available",
+   "no slots"
+  ]
+ },
+ {
+  "id": "nu-06",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "ما هي بطاقة نُسك؟",
+  "a_ar": "بطاقة نُسك تُصدر لحجاج بيت الله، وتحمل بيانات الحاج والجهة المسؤولة عنه، وتُستخدم للدخول إلى المشاعر والتنقل خلال الحج. احتفظ بها معك دائماً.",
+  "q_en": "What is the Nusuk card?",
+  "a_en": "The Nusuk card is issued to Hajj pilgrims. It carries the pilgrim's details and the company responsible for them, and is used to enter the holy sites and move around during Hajj. Keep it with you at all times.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "بطاقة نسك",
+   "الحج",
+   "nusuk card",
+   "hajj card"
+  ]
+ },
+ {
+  "id": "nu-07",
+  "category": "nusuk",
+  "type": "official",
+  "q_ar": "ما الفرق بين «رفيق» ومساعد نُسك الذكي؟",
+  "a_ar": "مساعد نُسك الذكي خدمة حكومية مجانية تجيب عن أسئلة المناسك العامة. أما «رفيق» فهو مساعد شركتك: يعرف حجزك وفندقك ومواعيد الباصات وسياسة الشركة، ويحوّلك إلى موظف عند الحاجة.",
+  "q_en": "How is Rafeeq different from Nusuk AI?",
+  "a_en": "Nusuk AI is a free government service that answers general questions about the rites. Rafeeq is your company's assistant: it knows your booking, hotel, bus times and company policy, and passes you to a staff member when needed.",
+  "source": "https://haj.gov.sa/en/Media-Center/Ministry-News/2026/Ministry-of-Hajj-and-Umrah-Earns-AI-Ethics-Seal-for-Nusuk-AI-Service",
+  "needs_review": false,
+  "tags": [
+   "نسك",
+   "رفيق",
+   "الفرق",
+   "nusuk ai",
+   "rafeeq",
+   "difference"
+  ]
+ },
+ {
+  "id": "vi-01",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "ما التأشيرات التي تسمح بأداء العمرة؟",
+  "a_ar": "يمكن أداء العمرة بتأشيرة العمرة، وبالتأشيرة السياحية خارج موسم الحج، وبعض أنواع تأشيرات الزيارة والعبور حسب الأنظمة الحالية. تحقق من نوع تأشيرتك قبل حجز تصريح العمرة.",
+  "q_en": "Which visas allow me to perform Umrah?",
+  "a_en": "Umrah can be performed on an Umrah visa, on a tourist visa outside the Hajj season, and on some visit and transit visas under current rules. Check your visa type before booking an Umrah permit.",
+  "source": "https://saudipedia.com/en/article/1305/religion/hajj-and-umrah/nusuk-platform",
+  "needs_review": true,
+  "tags": [
+   "تاشيرة",
+   "سياحية",
+   "عبور",
+   "visa",
+   "tourist",
+   "transit"
+  ]
+ },
+ {
+  "id": "vi-02",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "هل يسمح لي بتأشيرة العمرة بزيارة مدن أخرى؟",
+  "a_ar": "نعم، يُسمح لحامل تأشيرة العمرة بالتنقل بين مدن المملكة خلال مدة صلاحيتها وفق الأنظمة الحالية.",
+  "q_en": "Can I visit other cities on an Umrah visa?",
+  "a_en": "Yes. Umrah visa holders may travel between Saudi cities during the visa's validity under current rules.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "مدن",
+   "تنقل",
+   "الرياض",
+   "جدة",
+   "cities",
+   "travel"
+  ]
+ },
+ {
+  "id": "vi-03",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "هل أستطيع الحج بالتأشيرة السياحية أو تأشيرة العمرة؟",
+  "a_ar": "لا. الحج يتطلب تأشيرة حج أو تصريح حج نظامي. والحج دون تصريح مخالفة تترتب عليها غرامات وترحيل.",
+  "q_en": "Can I perform Hajj on a tourist or Umrah visa?",
+  "a_en": "No. Hajj requires a Hajj visa or an official Hajj permit. Performing Hajj without a permit is a violation that carries fines and deportation.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "حج",
+   "سياحية",
+   "بدون تصريح",
+   "hajj",
+   "tourist visa"
+  ]
+ },
+ {
+  "id": "vi-04",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "ماذا يحدث لو تأخرت عن موعد مغادرتي؟",
+  "a_ar": "البقاء بعد انتهاء صلاحية التأشيرة مخالفة نظامية تترتب عليها عقوبات، والشركة ملزمة بالإبلاغ عن المتخلفين. إن واجهت ظرفاً طارئاً تواصل معنا فوراً قبل انتهاء التأشيرة لنساعدك في الحل النظامي.",
+  "q_en": "What happens if I stay past my departure date?",
+  "a_en": "Staying after your visa expires is a legal violation with penalties, and the company must report overstays. If you have an emergency, contact us right away, before your visa expires, so we can help you resolve it legally.",
+  "source": "https://tribune.com.pk/story/2538457/saudi-arabia-to-impose-heavy-fine-on-firms-failing-to-report-pilgrims-overstaying?amp=1",
+  "needs_review": false,
+  "tags": [
+   "تخلف",
+   "تاخر",
+   "مغادرة",
+   "overstay",
+   "late",
+   "departure"
+  ]
+ },
+ {
+  "id": "vi-05",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "هل تستطيع المرأة أداء العمرة دون محرم؟",
+  "a_ar": "تسمح الأنظمة السعودية الحالية للمرأة بأداء العمرة دون محرم. أما الحكم الشرعي ففيه تفصيل بين العلماء، ويمكنك سؤال جهة الإفتاء في بلدك.",
+  "q_en": "Can a woman perform Umrah without a mahram?",
+  "a_en": "Current Saudi regulations allow women to perform Umrah without a mahram. Scholars differ on the religious ruling, so you may ask the fatwa authority in your country.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "محرم",
+   "المراة",
+   "mahram",
+   "woman alone"
+  ]
+ },
+ {
+  "id": "vi-06",
+  "category": "visa",
+  "type": "official",
+  "q_ar": "كم يجب أن تكون صلاحية جوازي؟",
+  "a_ar": "يُشترط عادةً أن يكون الجواز صالحاً لستة أشهر على الأقل من تاريخ الدخول. تحقق من الشرط المحدث عند التقديم على التأشيرة.",
+  "q_en": "How long must my passport be valid?",
+  "a_en": "Your passport usually needs at least six months' validity from the date of entry. Check the current requirement when you apply for the visa.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "جواز",
+   "صلاحية",
+   "passport",
+   "validity"
+  ]
+ },
+ {
+  "id": "he-01",
+  "category": "health",
+  "type": "official",
+  "q_ar": "ما اللقاحات المطلوبة للعمرة والحج؟",
+  "a_ar": "لقاح الحمى الشوكية الرباعي (ACWY) مطلوب، مع شهادة تثبت أخذه قبل السفر بالمدة المحددة. وقد تُطلب لقاحات أخرى حسب بلدك. راجع اشتراطات وزارة الصحة السعودية المحدّثة لكل موسم.",
+  "q_en": "Which vaccines are required for Umrah and Hajj?",
+  "a_en": "The quadrivalent meningitis vaccine (ACWY) is required, with a certificate showing it was given within the required period before travel. Other vaccines may be required depending on your country. Check the Saudi Ministry of Health's updated requirements each season.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "لقاح",
+   "تطعيم",
+   "الحمى الشوكية",
+   "vaccine",
+   "meningitis",
+   "vaccination",
+   "vaccines",
+   "تطعيمات",
+   "لقاحات",
+   "vaccinations"
+  ]
+ },
+ {
+  "id": "he-02",
+  "category": "health",
+  "type": "official",
+  "q_ar": "كيف أحمي نفسي من الحرارة؟",
+  "a_ar": "اشرب الماء بانتظام، واستخدم المظلة، وتجنب الخروج وقت الظهيرة قدر الإمكان، واختر أوقات الطواف في الليل أو الفجر. إن شعرت بدوخة أو صداع شديد فاطلب المساعدة فوراً.",
+  "q_en": "How do I protect myself from the heat?",
+  "a_en": "Drink water regularly, use an umbrella, avoid going out at midday where possible, and choose night or dawn for tawaf. If you feel dizzy or have a severe headache, ask for help immediately.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "حرارة",
+   "حر",
+   "شمس",
+   "ماء",
+   "heat",
+   "sun",
+   "hot"
+  ]
+ },
+ {
+  "id": "he-03",
+  "category": "health",
+  "type": "guardrail",
+  "q_ar": "حالة طبية طارئة!",
+  "a_ar": "اتصل فوراً بالرقم 997 للإسعاف أو 911 للطوارئ الموحد في مكة والمدينة. أبلغ أقرب رجل أمن أو مشرف. وأنا الآن أحوّل بلاغك إلى موظف الشركة المناوب.",
+  "q_en": "Medical emergency!",
+  "a_en": "Call 997 for an ambulance or the unified emergency number 911 in Makkah and Madinah right away. Tell the nearest security officer or supervisor. I am now passing your report to the company's on-duty staff member.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "طوارئ",
+   "اسعاف",
+   "مريض",
+   "emergency",
+   "ambulance",
+   "sick",
+   "help"
+  ]
+ },
+ {
+  "id": "he-04",
+  "category": "health",
+  "type": "official",
+  "q_ar": "أحمل أدوية معي، هل أحتاج شيئاً؟",
+  "a_ar": "احمل الأدوية في عبوتها الأصلية مع وصفة طبية، خاصة الأدوية الخاضعة للرقابة. خذ كمية تكفي مدة الرحلة واحتفظ بها في حقيبة اليد.",
+  "q_en": "I am carrying medicines. Do I need anything?",
+  "a_en": "Carry medicines in their original packaging with a prescription, especially controlled medicines. Bring enough for the whole trip and keep them in your hand luggage.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "دواء",
+   "ادوية",
+   "وصفة",
+   "medicine",
+   "medication",
+   "prescription"
+  ]
+ },
+ {
+  "id": "md-01",
+  "category": "madinah",
+  "type": "fiqh",
+  "q_ar": "هل زيارة المدينة جزء من العمرة؟",
+  "a_ar": "لا، زيارة المسجد النبوي ليست من أعمال العمرة ولا شرطاً لها، لكنها مستحبة في أي وقت، قبل العمرة أو بعدها.",
+  "q_en": "Is visiting Madinah part of Umrah?",
+  "a_en": "No. Visiting the Prophet's Mosque is not part of Umrah or a condition for it, but it is recommended at any time, before or after Umrah.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "المدينة",
+   "زيارة",
+   "madinah",
+   "visit"
+  ]
+ },
+ {
+  "id": "md-02",
+  "category": "madinah",
+  "type": "fiqh",
+  "q_ar": "ما فضل الصلاة في مسجد قباء؟",
+  "a_ar": "ورد في الحديث أن من تطهّر في بيته ثم أتى مسجد قباء فصلى فيه كان له كأجر عمرة. ويمكن ترتيب زيارته ضمن برنامج المجموعة في المدينة.",
+  "q_en": "What is the virtue of praying at Quba Mosque?",
+  "a_en": "A hadith states that whoever purifies himself at home and then prays at Quba Mosque receives a reward like that of an Umrah. A visit can be arranged as part of the group's Madinah programme.",
+  "source": "https://risala.prh.gov.sa/storage/contents/428/en_fatawahajj.pdf",
+  "needs_review": true,
+  "tags": [
+   "قباء",
+   "مسجد",
+   "quba"
+  ]
+ },
+ {
+  "id": "md-03",
+  "category": "madinah",
+  "type": "official",
+  "q_ar": "كيف أنتقل بين مكة والمدينة؟",
+  "a_ar": "أسرع وسيلة قطار الحرمين السريع، وتستغرق الرحلة نحو ساعتين ونصف. وتوفر الشركة أيضاً نقلاً بالحافلات ضمن البرنامج. اسأل عن موعد حافلة مجموعتك.",
+  "q_en": "How do I travel between Makkah and Madinah?",
+  "a_en": "The fastest option is the Haramain high-speed train, which takes about two and a half hours. The company also provides bus transport as part of the programme. Ask about your group's bus time.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "قطار",
+   "الحرمين",
+   "تنقل",
+   "train",
+   "haramain",
+   "travel"
+  ]
+ },
+ {
+  "id": "co-01",
+  "category": "company",
+  "type": "company",
+  "q_ar": "متى موعد الباص؟ ومن أين ينطلق؟",
+  "a_ar": "حسب حجزك رقم {booking_id}: باص مجموعتك {group_name} ينطلق الساعة {bus_time} من {bus_point}. رقم المشرف: {supervisor_phone}.",
+  "q_en": "When is the bus and where does it leave from?",
+  "a_en": "For booking {booking_id}: your group {group_name} bus leaves at {bus_time} from {bus_point}. Supervisor's number: {supervisor_phone}.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "باص",
+   "حافلة",
+   "موعد",
+   "bus",
+   "transport",
+   "pickup"
+  ]
+ },
+ {
+  "id": "co-02",
+  "category": "company",
+  "type": "company",
+  "q_ar": "كم يبعد الفندق عن الحرم؟",
+  "a_ar": "فندقك {hotel_name} يبعد عن الحرم نحو {hotel_distance} مشياً. مواعيد الدخول {checkin_time} والخروج {checkout_time}.",
+  "q_en": "How far is the hotel from the Haram?",
+  "a_en": "Your hotel {hotel_name} is about {hotel_distance} on foot from the Haram. Check-in is at {checkin_time} and check-out at {checkout_time}.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "فندق",
+   "مسافة",
+   "الحرم",
+   "hotel",
+   "distance"
+  ]
+ },
+ {
+  "id": "co-03",
+  "category": "company",
+  "type": "company",
+  "q_ar": "أريد تغيير موعد رحلتي.",
+  "a_ar": "يمكن تغيير الموعد حسب سياسة الشركة: {change_policy}. أرسل لي التاريخ الجديد المطلوب وسأرفع طلبك لموظف الحجوزات مع رقم حجزك {booking_id}.",
+  "q_en": "I want to change my trip date.",
+  "a_en": "Date changes follow company policy: {change_policy}. Send me the new date you want and I will pass your request with booking {booking_id} to the reservations team.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "تغيير",
+   "موعد",
+   "تعديل",
+   "change",
+   "reschedule",
+   "date"
+  ]
+ },
+ {
+  "id": "co-04",
+  "category": "company",
+  "type": "company",
+  "q_ar": "ما سياسة الاسترجاع؟",
+  "a_ar": "سياسة الاسترجاع في الشركة: {refund_policy}. إن رغبت في تقديم طلب استرجاع سأفتح لك تذكرة ويتواصل معك موظف خلال {sla}.",
+  "q_en": "What is the refund policy?",
+  "a_en": "The company's refund policy: {refund_policy}. If you want to request a refund, I will open a ticket and a staff member will contact you within {sla}.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "استرجاع",
+   "استرداد",
+   "الغاء",
+   "refund",
+   "cancel",
+   "cancellation",
+   "استرجع",
+   "ارجاع",
+   "فلوسي",
+   "فلوس",
+   "ارجع",
+   "money back"
+  ]
+ },
+ {
+  "id": "co-05",
+  "category": "company",
+  "type": "guardrail",
+  "q_ar": "تهت عن مجموعتي / فقدت أحد أفراد المجموعة!",
+  "a_ar": "لا تقلق. اتصل بمشرف مجموعتك على الرقم {supervisor_phone}، وتوجّه إلى أقرب نقطة إرشاد أو رجل أمن في الحرم. وإن كان المفقود طفلاً أو كبير سن فاتصل بالرقم 911. أنا الآن أنبّه الموظف المناوب.",
+  "q_en": "I got separated from my group / someone in our group is missing!",
+  "a_en": "Don't worry. Call your group supervisor on {supervisor_phone} and go to the nearest guidance point or security officer in the Haram. If the missing person is a child or elderly, call 911. I am alerting the on-duty staff member now.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "تايه",
+   "مفقود",
+   "ضايع",
+   "lost",
+   "missing",
+   "separated"
+  ]
+ },
+ {
+  "id": "co-06",
+  "category": "company",
+  "type": "official",
+  "q_ar": "هل أستطيع حمل ماء زمزم في الطائرة؟",
+  "a_ar": "تسمح أغلب شركات الطيران بعبوة زمزم معتمدة سعة 5 لترات لكل مسافر، تُشترى من نقاط البيع الرسمية. تحقّق من سياسة شركة الطيران الخاصة برحلتك.",
+  "q_en": "Can I take Zamzam water on the plane?",
+  "a_en": "Most airlines allow one approved 5-litre Zamzam container per passenger, bought from official outlets. Check your airline's policy for your flight.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": true,
+  "tags": [
+   "زمزم",
+   "ماء",
+   "طائرة",
+   "zamzam",
+   "water",
+   "luggage"
+  ]
+ },
+ {
+  "id": "co-07",
+  "category": "company",
+  "type": "company",
+  "q_ar": "أريد التحدث مع موظف.",
+  "a_ar": "بكل سرور. أحوّلك الآن إلى أحد موظفي {company_name}. أوقات العمل {working_hours}، وخارجها يتواصل معك الموظف المناوب خلال {sla}. وقد أرسلت له ملخص محادثتنا حتى لا تعيد شرح طلبك.",
+  "q_en": "I want to speak to a person.",
+  "a_en": "Of course. I am passing you to a member of the {company_name} team now. Working hours are {working_hours}; outside them the on-duty staff member will contact you within {sla}. I have sent them a summary of our conversation so you don't have to repeat yourself.",
+  "source": "company-data",
+  "needs_review": false,
+  "tags": [
+   "موظف",
+   "انسان",
+   "تواصل",
+   "اكلم",
+   "human",
+   "agent",
+   "staff",
+   "person"
+  ]
+ },
+ {
+  "id": "hj-01",
+  "category": "hajj",
+  "type": "official",
+  "q_ar": "كيف يسجّل المواطن والمقيم للحج؟",
+  "a_ar": "يكون تسجيل حجاج الداخل عبر منصة نُسك أو تطبيقها، باختيار إحدى الشركات المعتمدة والباقة المناسبة، وفق المواعيد التي تعلنها وزارة الحج والعمرة.",
+  "q_en": "How do Saudi citizens and residents register for Hajj?",
+  "a_en": "Domestic pilgrims register through the Nusuk platform or app by choosing an approved company and package, according to the dates announced by the Ministry of Hajj and Umrah.",
+  "source": "https://saudigazette.com.sa/article/661111",
+  "needs_review": true,
+  "tags": [
+   "تسجيل",
+   "الحج",
+   "حجاج الداخل",
+   "register",
+   "hajj",
+   "domestic"
+  ]
+ },
+ {
+  "id": "hj-02",
+  "category": "hajj",
+  "type": "official",
+  "q_ar": "ما عقوبة الحج بدون تصريح؟",
+  "a_ar": "الحج دون تصريح مخالف للأنظمة، وتترتب عليه غرامات مالية وترحيل للمقيمين المخالفين ومنع من الدخول لمدة محددة، وعقوبات على من ينقل المخالفين أو يؤويهم.",
+  "q_en": "What is the penalty for performing Hajj without a permit?",
+  "a_en": "Performing Hajj without a permit violates the regulations. It carries fines, deportation of violating residents with an entry ban for a set period, and penalties for anyone who transports or shelters violators.",
+  "source": "https://www.haj.gov.sa",
+  "needs_review": false,
+  "tags": [
+   "بدون تصريح",
+   "عقوبة",
+   "غرامة",
+   "penalty",
+   "without permit",
+   "fine"
+  ]
+ },
+ {
+  "id": "gr-01",
+  "category": "guardrail",
+  "type": "guardrail",
+  "q_ar": "أريد فتوى في مسألة خاصة.",
+  "a_ar": "«رفيق» لا يُصدر فتاوى. أستطيع أن أنقل لك ما ورد في المصادر الرسمية المعتمدة، أما المسائل الخاصة فسأحوّلك إلى موظف الشركة ليرشدك إلى جهة الإفتاء المعتمدة.",
+  "q_en": "I need a fatwa on a personal matter.",
+  "a_en": "Rafeeq does not issue fatwas. I can share what the approved official sources say. For personal matters, I will pass you to a staff member who will direct you to an approved fatwa authority.",
+  "source": "policy",
+  "needs_review": false,
+  "tags": [
+   "فتوى",
+   "فتوي",
+   "مساله خاصه",
+   "حكم خاص",
+   "fatwa",
+   "personal ruling"
+  ]
+ }
+]
