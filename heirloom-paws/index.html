@@ -1,0 +1,554 @@
+<title>Heirloom Paws</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Your pet, painted like royalty. A museum-style digital portrait delivered to your inbox in 24 hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400;1,6..96,500&family=Manrope:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one cinematic WebGL stage (a gilded frame floating in moving oil paint) bleeds into a velvet page; below it, editorial bands on a 1200px column alternate full-width type with a portrait gallery drawn by the same painter as the hero. */
+:root{
+  color-scheme:dark;
+  --velvet:#140A0D;      /* page ground, deep oxblood velvet */
+  --velvet-2:#1E1014;    /* raised bands */
+  --velvet-3:#2A161C;    /* inputs, chips */
+  --line:rgba(246,233,210,.13);
+  --line-2:rgba(246,233,210,.26);
+  --parchment:#F6E9D2;   /* text */
+  --dust:#B7A58C;        /* secondary text */
+  --gilt:#D9A94A;        /* gold leaf */
+  --gilt-2:#F2D18A;
+  --ruby:#C2364B;        /* urgency, used once */
+  --f-display:"Bodoni Moda",Didot,"Times New Roman",serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"DM Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--velvet)}
+body{margin:0;background:var(--velvet);color:var(--parchment);font:16.5px/1.65 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--velvet)}
+::selection{background:var(--gilt);color:var(--velvet)}
+a{color:var(--gilt-2)}
+:focus-visible{outline:2px solid var(--gilt);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.015em}
+p{margin:0}
+.wrap{max-width:1200px;margin-inline:auto}
+.bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.bleed>.wrap{padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.eyebrow{font:500 11.5px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gilt)}
+.btn{display:inline-flex;align-items:center;gap:12px;border-radius:999px;padding:15px 26px;font:600 15px var(--f-body);text-decoration:none;cursor:pointer;border:1px solid var(--line-2);color:var(--parchment);background:transparent;transition:background .3s var(--ease),color .3s,border-color .3s}
+.btn:hover{border-color:var(--parchment)}
+.btn.gold{background:linear-gradient(180deg,var(--gilt-2),var(--gilt));color:#22140A;border-color:transparent;box-shadow:0 10px 30px -10px rgba(217,169,74,.6)}
+.btn.gold:hover{filter:brightness(1.06)}
+.btn .arr{transition:transform .3s var(--ease)}
+.btn:hover .arr{transform:translateX(4px)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* header */
+.top{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;z-index:20;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+.top.solid{background:rgba(20,10,13,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;padding-block:16px;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.logo{font:italic 500 24px var(--f-display);color:var(--parchment);text-decoration:none;letter-spacing:-.01em}
+.logo b{font-style:normal;font-weight:600;color:var(--gilt)}
+.top nav{display:flex;gap:28px;margin-inline-start:auto}
+.top nav a{color:var(--dust);text-decoration:none;font-size:14px}
+.top nav a:hover{color:var(--parchment)}
+.top .btn{padding:10px 18px;font-size:14px}
+@media (max-width:860px){.top nav{display:none}.top .btn{margin-inline-start:auto}.top .long{display:none}}
+
+/* ===== hero stage ===== */
+.stage{position:relative;height:max(720px,100svh);isolation:isolate;overflow:hidden}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1}
+.stage-fallback{position:absolute;inset:0;z-index:-2;background:radial-gradient(50% 45% at 68% 48%,rgba(217,169,74,.25),transparent 70%),radial-gradient(80% 70% at 20% 80%,rgba(120,20,40,.5),transparent 70%),var(--velvet);transition:opacity 1s}
+.stage::after{content:"";position:absolute;inset:auto 0 0;height:28%;background:linear-gradient(to top,var(--velvet),transparent);pointer-events:none}
+.stage-ui{position:relative;z-index:2;height:100%;display:grid;grid-template-rows:1fr auto;padding-block:110px 34px;pointer-events:none}
+.stage-ui a,.stage-ui button{pointer-events:auto}
+.hero-copy{align-self:center;max-width:620px}
+.hero-copy h1{font-size:clamp(52px,8.4vw,128px);line-height:.92;margin-top:22px}
+.hero-copy h1 i{font-style:italic;color:var(--gilt-2)}
+.hero-copy h1 .l{display:block;overflow:hidden;padding-bottom:.08em}
+.hero-copy h1 .l>span{display:inline-block;animation:rise 1.2s var(--ease) both}
+.hero-copy h1 .l:nth-child(2)>span{animation-delay:.1s}
+.hero-copy h1 .l:nth-child(3)>span{animation-delay:.2s}
+@keyframes rise{from{transform:translateY(108%)}to{transform:none}}
+.hero-copy p{margin-top:26px;font-size:18px;color:#DCCBB0;max-width:40ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.stage-foot{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;border-top:1px solid var(--line);padding-top:16px;font:400 12px var(--f-mono);letter-spacing:.08em;color:var(--dust);text-transform:uppercase}
+.stage-foot .now{color:var(--parchment)}
+.stage-foot .now em{font-style:normal;color:var(--gilt-2)}
+.stage-foot .cue{margin-inline-start:auto}
+@media (max-width:860px){
+  .stage{height:auto;min-height:max(1060px,100svh)}
+  .stage-ui{padding-top:96px;grid-template-rows:auto 1fr auto;height:auto;min-height:max(1060px,100svh)}
+  .hero-copy{align-self:start}
+  .hero-copy h1{font-size:clamp(46px,13vw,72px)}
+  .hero-copy p{font-size:16px}
+  .stage-foot .cue{display:none}
+  .stage-foot{grid-row:3;align-self:end}
+}
+
+/* ===== countdown band ===== */
+.deadline{border-block:1px solid var(--line);background:linear-gradient(90deg,rgba(194,54,75,.16),transparent 60%)}
+.deadline .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:16px 36px;padding-block:22px}
+.deadline .lbl{font:600 15px var(--f-body)}
+.deadline .lbl span{color:var(--ruby);font:500 11px var(--f-mono);letter-spacing:.16em;display:block;margin-bottom:2px}
+.clock{display:flex;gap:22px;font-family:var(--f-mono)}
+.clock div{display:grid;text-align:center}
+.clock b{font:400 34px/1 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--parchment)}
+.clock small{font-size:10.5px;letter-spacing:.14em;color:var(--dust);margin-top:6px}
+.deadline .btn{margin-inline-start:auto}
+@media (max-width:640px){.deadline .btn{margin-inline-start:0;width:100%;justify-content:center}}
+
+section{padding-block:120px}
+@media (max-width:640px){section{padding-block:80px}}
+.head{display:grid;gap:18px;margin-bottom:60px;max-width:820px}
+.head h2{font-size:clamp(40px,6vw,84px);line-height:1}
+.head h2 i{color:var(--gilt-2)}
+.head p{color:var(--dust);font-size:17.5px;max-width:54ch}
+
+/* ===== process ===== */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line-2);counter-reset:s}
+@media (max-width:860px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{padding:30px 32px 10px 0;display:grid;gap:12px;align-content:start;border-inline-end:1px solid var(--line)}
+.step:last-child{border-inline-end:0}
+@media (max-width:860px){.step{border-inline-end:0;border-bottom:1px solid var(--line);padding:26px 0}}
+.step .n{font:400 13px var(--f-mono);color:var(--gilt)}
+.step h3{font-size:34px;line-height:1.05}
+.step p{color:var(--dust);font-size:15.5px;max-width:34ch}
+.step .t{font:400 12px var(--f-mono);color:var(--parchment);letter-spacing:.06em}
+
+/* ===== gallery ===== */
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:960px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.gallery{grid-template-columns:minmax(0,1fr)}}
+.card{display:grid;gap:14px;min-width:0}
+.frame{position:relative;padding:14px;border-radius:4px;background:
+  linear-gradient(135deg,#6E4A16,#F2D18A 22%,#A87A2C 45%,#F7DE9E 62%,#7A5418 85%,#D9A94A);box-shadow:0 30px 60px -30px rgba(0,0,0,.9),inset 0 0 0 1px rgba(0,0,0,.4)}
+.frame::before{content:"";position:absolute;inset:8px;border:1px solid rgba(60,36,8,.55);pointer-events:none}
+.frame canvas{display:block;width:100%;aspect-ratio:4/5;height:auto;box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.card h3{font-size:26px}
+.card .meta{display:flex;justify-content:space-between;gap:10px;color:var(--dust);font-size:14px}
+.card .meta span:last-child{font-family:var(--f-mono);font-size:12px;color:var(--gilt)}
+.gal-note{margin-top:30px;color:var(--dust);font-size:13.5px}
+
+/* ===== big statement ===== */
+.statement{border-block:1px solid var(--line);background:var(--velvet-2)}
+.statement .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:56px;align-items:end}
+@media (max-width:860px){.statement .wrap{grid-template-columns:minmax(0,1fr);gap:32px}}
+.statement blockquote{margin:0;font:400 clamp(34px,4.6vw,64px)/1.1 var(--f-display);letter-spacing:-.015em}
+.statement blockquote i{color:var(--gilt-2)}
+.facts{display:grid;gap:0;border-top:1px solid var(--line)}
+.facts div{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px}
+.facts b{font:400 15px var(--f-mono);color:var(--gilt-2)}
+
+/* ===== pricing ===== */
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:920px}
+@media (max-width:760px){.plans{grid-template-columns:minmax(0,1fr)}}
+.plan{border:1px solid var(--line-2);border-radius:6px;padding:34px;display:flex;flex-direction:column;gap:20px;background:var(--velvet);min-width:0}
+.plan.best{border-color:var(--gilt);background:linear-gradient(180deg,rgba(217,169,74,.12),transparent 55%),var(--velvet-2)}
+.plan-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.plan h3{font-size:30px}
+.tag{font:500 10.5px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#22140A;background:var(--gilt);padding:4px 10px;border-radius:999px}
+.price{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:20px}
+.price b{font:400 64px/1 var(--f-display)}
+.price s{color:var(--dust);font:400 18px var(--f-mono)}
+.plan ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;flex:1}
+.plan li{display:grid;grid-template-columns:20px 1fr;gap:8px;color:#DCCBB0;font-size:15.5px}
+.plan li::before{content:"✦";color:var(--gilt);font-size:12px;padding-top:4px}
+.plan .btn{justify-content:center}
+.co-note{margin-top:18px;color:var(--dust);font-size:13.5px;max-width:70ch}
+
+/* ===== faq ===== */
+.faq{max-width:880px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line);padding-block:22px}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font:400 24px var(--f-display)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:300 26px/1 var(--f-mono);color:var(--gilt);transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{color:var(--dust);margin-top:12px;max-width:66ch}
+
+/* ===== final cta + footer ===== */
+.final{text-align:center;padding-block:140px 120px}
+.final h2{font-size:clamp(48px,8vw,120px);line-height:.95}
+.final h2 i{color:var(--gilt-2)}
+.final p{color:var(--dust);margin:22px auto 34px;max-width:46ch;font-size:17px}
+footer{border-top:1px solid var(--line);padding-block:30px 40px;color:var(--dust);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.toast{position:fixed;inset-inline:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));margin-inline:auto;width:max-content;max-width:calc(100% - 32px);background:var(--parchment);color:var(--velvet);padding:11px 20px;border-radius:999px;font-size:14px;opacity:0;transform:translateY(10px);transition:.25s var(--ease);pointer-events:none;z-index:40}
+.toast.show{opacity:1;transform:none}
+.rv{transform:translateY(30px);transition:transform 1.1s var(--ease)}
+.rv.in{transform:none}
+</style>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="logo" href="#stage">Heirloom <b>Paws</b></a>
+    <nav aria-label="Sections"><a href="#how">How it works</a><a href="#styles">Styles</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+    <a class="btn gold" href="#pricing">Commission<span class="long"> a portrait</span></a>
+  </div>
+</header>
+
+<main>
+<section class="stage bleed" id="stage" style="padding:0">
+  <div class="stage-fallback" id="fallback" aria-hidden="true"></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="wrap stage-ui">
+    <div class="hero-copy">
+      <span class="eyebrow">Digital oil portraits · Delivered in 24 hours</span>
+      <h1><span class="l"><span>Your pet,</span></span><span class="l"><span><i>painted</i> like</span></span><span class="l"><span>royalty.</span></span></h1>
+      <p>Send one photo. Our studio turns it into a museum-style portrait, ready to print, frame or gift, in your inbox by tomorrow.</p>
+      <div class="hero-cta">
+        <a class="btn gold" href="#pricing">Commission a portrait <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn" href="#styles">See the styles</a>
+      </div>
+    </div>
+    <div class="stage-foot">
+      <span>Now painting · <span class="now" id="nowPainting">The Monarch</span></span>
+      <span>$1 of every portrait goes to a U.S. animal shelter</span>
+      <span class="cue" aria-hidden="true">Scroll ↓</span>
+    </div>
+  </div>
+</section>
+
+<div class="deadline bleed" id="deadline">
+  <div class="wrap">
+    <p class="lbl"><span>LAST-MINUTE GIFT</span>Too late to ship? A portrait still arrives before Christmas.</p>
+    <div class="clock" aria-label="Time left to order for Christmas delivery" id="clock">
+      <div><b id="cd-d">00</b><small>DAYS</small></div><div><b id="cd-h">00</b><small>HRS</small></div><div><b id="cd-m">00</b><small>MIN</small></div><div><b id="cd-s">00</b><small>SEC</small></div>
+    </div>
+    <a class="btn gold" href="#pricing">Order in time <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">The commission</span><h2>Three steps, <i>one</i> masterpiece.</h2></div>
+    <div class="steps">
+      <div class="step rv"><span class="n">I.</span><h3>Choose a role</h3><p>Monarch, Admiral, Astronaut or a quiet watercolor. Pick the character that fits their personality.</p><span class="t">1 MINUTE</span></div>
+      <div class="step rv"><span class="n">II.</span><h3>Send one photo</h3><p>A clear, well-lit photo with both eyes visible. After checkout you upload it in a simple form.</p><span class="t">2 MINUTES</span></div>
+      <div class="step rv"><span class="n">III.</span><h3>Unwrap it tomorrow</h3><p>A high-resolution file arrives by email within 24 hours, sized for prints up to 24 × 30 in.</p><span class="t">WITHIN 24 HOURS</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="styles" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">The collection</span><h2>Every pet has <i>a role</i> to play.</h2><p>Each portrait is painted from your photo, so the coat, markings and expression are theirs.</p></div>
+    <div class="gallery" id="gallery"></div>
+    <p class="gal-note">Gallery shows the style of each role, drawn as studio illustrations. Your portrait is painted from your own pet's photo.</p>
+  </div>
+</section>
+
+<section class="statement bleed" style="padding-block:110px">
+  <div class="wrap">
+    <blockquote>Most gifts are opened once. <i>This one</i> hangs on the wall for years.</blockquote>
+    <div class="facts">
+      <div><span>Delivery</span><b>24 h, by email</b></div>
+      <div><span>Print size</span><b>up to 24 × 30 in</b></div>
+      <div><span>Revisions</span><b>1 free</b></div>
+      <div><span>For shelters</span><b>$1 per portrait</b></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">Pricing</span><h2>Less than a <i>dinner out.</i></h2></div>
+    <div class="plans">
+      <div class="plan rv">
+        <div class="plan-h"><h3>Single Portrait</h3></div>
+        <div class="price"><b>$29</b></div>
+        <ul><li>One role of your choice</li><li>High-resolution file, print-ready</li><li>Delivered within 24 hours</li><li>One free revision</li></ul>
+        <a class="btn checkout" href="#pricing" data-plan="single">Commission for $29 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="plan best rv">
+        <div class="plan-h"><h3>The Royal Set</h3><span class="tag">Best gift</span></div>
+        <div class="price"><b>$44</b><s>$87</s></div>
+        <ul><li>Three roles of the same pet</li><li>Phone wallpaper versions</li><li>Printable gift card to wrap</li><li>Priority delivery</li></ul>
+        <a class="btn gold checkout" href="#pricing" data-plan="set">Commission the set <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <p class="co-note">Secure checkout. Sales tax is handled at checkout. Not happy after your free revision? You get a full refund.</p>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">Questions</span><h2>Before you <i>commission.</i></h2></div>
+    <div class="faq">
+      <details><summary>What kind of photo works best?</summary><p>A sharp photo in daylight, taken at their eye level, with both eyes and ears visible. Phone photos are perfect.</p></details>
+      <details><summary>Will it really look like my pet?</summary><p>Yes. We match the coat color, markings and face from your photo. If something is off, you get one free revision, and a full refund if you are still not happy.</p></details>
+      <details><summary>Is it a print or a file?</summary><p>A high-resolution digital file. Print it at home, at any local print shop, or order a canvas online. It is sized for prints up to 24 × 30 inches.</p></details>
+      <details><summary>Can I order for Christmas?</summary><p>Yes. Because nothing ships, a portrait ordered by the countdown deadline arrives before Christmas morning.</p></details>
+      <details><summary>Can you paint two pets together?</summary><p>Yes. Choose The Royal Set and add a note at checkout, and we will paint them side by side.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Give them <i>the portrait</i><br>they deserve.</h2>
+    <p>One photo today. A masterpiece in your inbox tomorrow.</p>
+    <a class="btn gold" href="#pricing">Commission a portrait <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Heirloom Paws · Digital portrait studio</span><span>Questions? Reply to your order email.</span></div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ===== Config: paste your Gumroad / Lemon Squeezy product links ===== */
+const CHECKOUT = { single:"", set:"" };
+/* Christmas cutoff: Dec 23, 11:59 pm Eastern (= Dec 24, 04:59 UTC) */
+const CUTOFF = Date.UTC(2026,11,24,4,59,0);
+
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.k); toast.k=setTimeout(()=>t.classList.remove("show"),2600)}
+document.querySelectorAll(".checkout").forEach(a=>{
+  const url=CHECKOUT[a.dataset.plan]; if(url){a.href=url; a.target="_blank"; a.rel="noopener"}
+  else a.addEventListener("click",e=>{e.preventDefault(); toast("Checkout opens soon. Add your product link in CHECKOUT.")});
+});
+
+/* header + reveals */
+addEventListener("scroll",()=>$("#top").classList.toggle("solid",scrollY>40),{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in"); io.unobserve(e.target)}}),{rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+/* countdown */
+function cd(){
+  let s=Math.max(0,Math.floor((CUTOFF-Date.now())/1000));
+  if(s===0){$("#deadline .lbl").lastChild.textContent="Christmas orders are closed. Portraits make a perfect gift any day."; $("#clock").hidden=true; return}
+  const d=Math.floor(s/86400); s%=86400; const h=Math.floor(s/3600); s%=3600; const m=Math.floor(s/60); s%=60;
+  [["#cd-d",d],["#cd-h",h],["#cd-m",m],["#cd-s",s]].forEach(([id,v])=>$(id).textContent=String(v).padStart(2,"0"));
+}
+cd(); setInterval(cd,1000);
+
+/* ===== The studio painter: draws a stylised pet portrait onto any 2D canvas ===== */
+const ROLES=[
+  {key:"monarch", name:"The Monarch", bg:["#5B1220","#2A0710"], robe:"#7A1426", trim:"ermine", hat:"crown", fur:"#C98A4B", furDark:"#8A5528", muzzle:"#EBC9A0", price:"$29"},
+  {key:"admiral", name:"The Admiral", bg:["#1B2B4A","#0B1324"], robe:"#16233F", trim:"gold", hat:"bicorne", fur:"#E8E1D3", furDark:"#9C9384", muzzle:"#FFF8EC", price:"$29"},
+  {key:"astronaut", name:"The Astronaut", bg:["#0E3B45","#05161B"], robe:"#E9EEF0", trim:"suit", hat:"helmet", fur:"#3A2A22", furDark:"#1E1511", muzzle:"#7A5A44", price:"$29"},
+  {key:"duchess", name:"The Duchess", bg:["#3E2A4F","#160E1E"], robe:"#5A3570", trim:"pearls", hat:"tiara", fur:"#F0E2C8", furDark:"#BCA27A", muzzle:"#FFF6E6", price:"$29"},
+  {key:"general", name:"The General", bg:["#2E3A26","#10150C"], robe:"#3B4A2C", trim:"medals", hat:"none", fur:"#B5651D", furDark:"#6E3A0E", muzzle:"#F2D3AE", price:"$29"},
+  {key:"watercolor", name:"The Watercolor", bg:["#F1E6D2","#D9C7A8"], robe:"#BFD3D6", trim:"none", hat:"flower", fur:"#9A9A9A", furDark:"#5F5F5F", muzzle:"#E7E2DA", price:"$29", light:true}
+];
+function rng(seed){return ()=>{seed=(seed*16807)%2147483647; return (seed-1)/2147483646}}
+function paintPortrait(c,role,{sketch=false}={}){
+  const x=c.getContext("2d"), W=c.width, H=c.height, R=rng(role.key.length*977+13);
+  x.save(); x.clearRect(0,0,W,H);
+  /* ground */
+  const g=x.createRadialGradient(W*.5,H*.38,W*.05,W*.5,H*.5,W*.85); g.addColorStop(0,role.bg[0]); g.addColorStop(1,role.bg[1]);
+  x.fillStyle=g; x.fillRect(0,0,W,H);
+  /* brush texture */
+  for(let i=0;i<260;i++){x.globalAlpha=.04+R()*.05; x.strokeStyle=R()<.5?"#000":(role.light?"#fff":"#F2D18A"); x.lineWidth=W*(.004+R()*.02);
+    x.beginPath(); const sx=R()*W, sy=R()*H; x.moveTo(sx,sy); x.quadraticCurveTo(sx+(R()-.5)*W*.2,sy+(R()-.5)*H*.1,sx+(R()-.5)*W*.3,sy+(R()-.5)*H*.15); x.stroke()}
+  x.globalAlpha=1;
+  const cx=W*.5, hy=H*.43, hr=W*.2;
+  /* robe / body */
+  x.fillStyle=role.robe; x.beginPath(); x.moveTo(W*.12,H); x.bezierCurveTo(W*.14,H*.72,W*.3,H*.64,cx,H*.64); x.bezierCurveTo(W*.7,H*.64,W*.86,H*.72,W*.88,H); x.closePath(); x.fill();
+  const sh=x.createLinearGradient(0,H*.64,0,H); sh.addColorStop(0,"rgba(255,255,255,.10)"); sh.addColorStop(1,"rgba(0,0,0,.45)"); x.fillStyle=sh; x.fill();
+  /* neck */
+  x.fillStyle=role.furDark; x.beginPath(); x.ellipse(cx,H*.62,W*.13,H*.07,0,0,Math.PI*2); x.fill();
+  /* trims */
+  if(role.trim==="ermine"){x.fillStyle="#F4EEE3"; x.beginPath(); x.ellipse(cx,H*.67,W*.3,H*.06,0,0,Math.PI*2); x.fill();
+    x.fillStyle="#111"; for(let i=0;i<9;i++){x.beginPath(); x.ellipse(W*.25+i*W*.0625,H*.665+(i%2)*H*.012,W*.007,H*.014,0,0,Math.PI*2); x.fill()}}
+  if(role.trim==="gold"){x.strokeStyle="#D9A94A"; x.lineWidth=W*.018; x.beginPath(); x.moveTo(W*.3,H*.7); x.lineTo(cx,H*.8); x.lineTo(W*.7,H*.7); x.stroke();
+    x.fillStyle="#D9A94A"; [[.24,.72],[.76,.72]].forEach(([a,b])=>{x.beginPath(); x.ellipse(W*a,H*b,W*.07,H*.022,0,0,Math.PI*2); x.fill()})}
+  if(role.trim==="suit"){x.fillStyle="#C9D1D4"; x.fillRect(W*.36,H*.74,W*.28,H*.1); x.fillStyle="#C2364B"; x.fillRect(W*.39,H*.765,W*.06,H*.03); x.fillStyle="#2E6FB7"; x.fillRect(W*.47,H*.765,W*.14,H*.03)}
+  if(role.trim==="pearls"){x.fillStyle="#F7F2EA"; for(let i=0;i<13;i++){const a=Math.PI*(.15+i*.7/12); x.beginPath(); x.arc(cx+Math.cos(a)*W*.17,H*.6+Math.sin(a)*H*.07,W*.013,0,Math.PI*2); x.fill()}}
+  if(role.trim==="medals"){[["#D9A94A",.38],["#C0C0C0",.44],["#C2364B",.62]].forEach(([col,a])=>{x.fillStyle="#1d2a14"; x.fillRect(W*a-W*.018,H*.74,W*.036,H*.03); x.fillStyle=col; x.beginPath(); x.arc(W*a,H*.79,W*.02,0,Math.PI*2); x.fill()})}
+  /* ears */
+  x.fillStyle=role.furDark;
+  [[-1],[1]].forEach(([s])=>{x.save(); x.translate(cx+s*hr*.82,hy+hr*.05); x.rotate(s*.32); x.beginPath(); x.ellipse(0,hr*.45,hr*.36,hr*.82,0,0,Math.PI*2); x.fill(); x.restore()});
+  /* head */
+  const hg=x.createRadialGradient(cx-hr*.3,hy-hr*.4,hr*.1,cx,hy,hr*1.15); hg.addColorStop(0,role.muzzle); hg.addColorStop(.35,role.fur); hg.addColorStop(1,role.furDark);
+  x.fillStyle=hg; x.beginPath(); x.ellipse(cx,hy,hr,hr*1.08,0,0,Math.PI*2); x.fill();
+  /* muzzle */
+  x.fillStyle=role.muzzle; x.beginPath(); x.ellipse(cx,hy+hr*.45,hr*.55,hr*.42,0,0,Math.PI*2); x.fill();
+  /* nose + mouth */
+  x.fillStyle="#1A1210"; x.beginPath(); x.moveTo(cx-hr*.2,hy+hr*.25); x.quadraticCurveTo(cx,hy+hr*.12,cx+hr*.2,hy+hr*.25); x.quadraticCurveTo(cx,hy+hr*.5,cx-hr*.2,hy+hr*.25); x.fill();
+  x.strokeStyle="#1A1210"; x.lineWidth=W*.006; x.beginPath(); x.moveTo(cx,hy+hr*.42); x.quadraticCurveTo(cx-hr*.15,hy+hr*.64,cx-hr*.3,hy+hr*.55); x.moveTo(cx,hy+hr*.42); x.quadraticCurveTo(cx+hr*.15,hy+hr*.64,cx+hr*.3,hy+hr*.55); x.stroke();
+  /* eyes */
+  [[-1],[1]].forEach(([s])=>{x.fillStyle="#140C08"; x.beginPath(); x.ellipse(cx+s*hr*.38,hy-hr*.12,hr*.12,hr*.14,0,0,Math.PI*2); x.fill();
+    x.fillStyle="rgba(255,255,255,.9)"; x.beginPath(); x.arc(cx+s*hr*.38-hr*.04,hy-hr*.17,hr*.04,0,Math.PI*2); x.fill()});
+  /* headwear */
+  if(role.hat==="crown"){x.fillStyle="#E2B44E"; x.strokeStyle="#7A5418"; x.lineWidth=W*.004; const y0=hy-hr*1.02, w=hr*1.1;
+    x.beginPath(); x.moveTo(cx-w/2,y0+hr*.28); x.lineTo(cx-w/2,y0-hr*.12); x.lineTo(cx-w/4,y0+hr*.08); x.lineTo(cx,y0-hr*.28); x.lineTo(cx+w/4,y0+hr*.08); x.lineTo(cx+w/2,y0-hr*.12); x.lineTo(cx+w/2,y0+hr*.28); x.closePath(); x.fill(); x.stroke();
+    [["#C2364B",0],["#2E6FB7",-w/4],["#2E9A6B",w/4]].forEach(([col,o])=>{x.fillStyle=col; x.beginPath(); x.arc(cx+o,y0+hr*.15,hr*.06,0,Math.PI*2); x.fill()})}
+  if(role.hat==="bicorne"){x.fillStyle="#0E0E12"; x.beginPath(); x.ellipse(cx,hy-hr*.95,hr*1.25,hr*.32,0,Math.PI,0); x.fill(); x.beginPath(); x.ellipse(cx,hy-hr*.95,hr*1.25,hr*.1,0,0,Math.PI); x.fill();
+    x.fillStyle="#D9A94A"; x.beginPath(); x.arc(cx,hy-hr*1.05,hr*.09,0,Math.PI*2); x.fill()}
+  if(role.hat==="helmet"){x.strokeStyle="rgba(230,240,245,.95)"; x.lineWidth=W*.022; x.beginPath(); x.arc(cx,hy+hr*.1,hr*1.45,0,Math.PI*2); x.stroke();
+    x.fillStyle="rgba(180,220,235,.08)"; x.fill(); x.strokeStyle="rgba(255,255,255,.55)"; x.lineWidth=W*.012; x.beginPath(); x.arc(cx,hy+hr*.1,hr*1.25,Math.PI*1.1,Math.PI*1.45); x.stroke()}
+  if(role.hat==="tiara"){x.strokeStyle="#EDE3D1"; x.lineWidth=W*.008; x.beginPath(); x.arc(cx,hy-hr*.55,hr*.55,Math.PI*1.15,Math.PI*1.85); x.stroke();
+    x.fillStyle="#BFE3F2"; [-.3,0,.3].forEach(o=>{x.beginPath(); x.arc(cx+o*hr,hy-hr*(o?1.0:1.12),hr*.07,0,Math.PI*2); x.fill()})}
+  if(role.hat==="flower"){[["#E58FA2",-.55],["#F2C46B",-.3]].forEach(([col,o])=>{x.fillStyle=col; for(let i=0;i<5;i++){const a=i/5*Math.PI*2; x.beginPath(); x.arc(cx+o*hr+Math.cos(a)*hr*.12,hy-hr*.85+Math.sin(a)*hr*.12,hr*.09,0,Math.PI*2); x.fill()}})}
+  /* varnish + vignette */
+  const v=x.createRadialGradient(cx,H*.45,W*.25,cx,H*.5,W*.85); v.addColorStop(0,"rgba(0,0,0,0)"); v.addColorStop(1,role.light?"rgba(90,70,40,.25)":"rgba(0,0,0,.55)"); x.fillStyle=v; x.fillRect(0,0,W,H);
+  if(role.light){x.globalCompositeOperation="multiply"; x.fillStyle="rgba(241,230,210,.35)"; x.fillRect(0,0,W,H); x.globalCompositeOperation="source-over"}
+  x.restore();
+}
+
+/* gallery */
+(function(){
+  const g=$("#gallery");
+  ROLES.forEach((r,i)=>{
+    const card=document.createElement("figure"); card.className="card rv"; card.style.margin="0"; card.style.transitionDelay=(i%3)*.08+"s";
+    const fr=document.createElement("div"); fr.className="frame"; const c=document.createElement("canvas"); c.width=480; c.height=600; c.setAttribute("role","img"); c.setAttribute("aria-label",r.name+" portrait style");
+    fr.append(c); paintPortrait(c,r);
+    const h=document.createElement("h3"); h.textContent=r.name;
+    const m=document.createElement("div"); m.className="meta"; m.innerHTML=`<span>${({monarch:"Ermine, crown and velvet",admiral:"Navy coat and gold braid",astronaut:"Helmet, flag and starlight",duchess:"Pearls, tiara and lilac",general:"Medals and field olive",watercolor:"Soft paper and flowers"})[r.key]}</span><span>${r.price}</span>`;
+    card.append(fr,h,m); g.append(card); io.observe(card);
+  });
+})();
+
+/* ===== 3D stage: a gilded frame floating in moving oil paint; the portrait inside paints itself from a pencil sketch ===== */
+function stage(){
+  if(!window.THREE) return;
+  const canvas=$("#gl"); let renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:"high-performance"})}catch(e){return}
+  if(!renderer.getContext()) return;
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=.82;
+  const scene=new THREE.Scene(); const camera=new THREE.PerspectiveCamera(32,1,.1,100); camera.position.set(0,0,12);
+
+  /* environment for the gold: a dark room with warm softboxes */
+  const pm=new THREE.PMREMGenerator(renderer); const env=new THREE.Scene(); env.background=new THREE.Color(0x0a0405);
+  const box=(c,w,h,p,r)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide})); m.position.set(...p); m.lookAt(0,0,0); if(r) m.rotation.z=r; env.add(m)};
+  box(0xb9894a,6,2,[0,5,4]); box(0x7a4a1c,3,6,[-6,0,3]); box(0x5a1020,4,6,[6,-1,2]); box(0xffe6b0,1.4,1.4,[3,3,6]); box(0x3a2410,8,2,[0,-5,3]);
+  scene.environment=pm.fromScene(env,.03).texture;
+
+  /* background: flowing oil paint (domain-warped noise) */
+  const bgU={uT:{value:0},uM:{value:new THREE.Vector2()},uA:{value:1}};
+  const bg=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({uniforms:bgU,depthTest:false,depthWrite:false,
+    vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=vec4(position.xy,0.,1.);}`,
+    fragmentShader:`varying vec2 vUv; uniform float uT,uA; uniform vec2 uM;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float n(vec2 p){vec2 i=floor(p),f=fract(p); f=f*f*(3.-2.*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+      float fbm(vec2 p){float v=0.,a=.5; for(int i=0;i<5;i++){v+=a*n(p); p*=2.03; a*=.5;} return v;}
+      void main(){ vec2 p=(vUv-.5)*vec2(uA,1.)*2.2; p+=uM*.15; float t=uT*.05;
+        vec2 q=vec2(fbm(p+t),fbm(p+vec2(5.2,1.3)-t));
+        vec2 r=vec2(fbm(p+3.*q+vec2(1.7,9.2)+t*1.3),fbm(p+3.*q+vec2(8.3,2.8)-t));
+        float f=fbm(p+3.5*r);
+        vec3 deep=vec3(.055,.02,.03), wine=vec3(.30,.05,.09), gold=vec3(.85,.62,.27);
+        vec3 col=mix(deep,wine,smoothstep(.2,.8,f));
+        col=mix(col,gold,pow(smoothstep(.55,.95,length(r)*f),2.2)*.55);
+        float streak=smoothstep(.48,.5,fract(f*9.+t))*smoothstep(.52,.5,fract(f*9.+t));
+        col+=gold*streak*.05;
+        float vig=smoothstep(1.5,.2,length((vUv-vec2(.62,.5))*vec2(uA,1.)));
+        col*=.35+.65*vig;
+        gl_FragColor=vec4(col,1.);} `}));
+  bg.renderOrder=-1; bg.frustumCulled=false; scene.add(bg);
+
+  /* gilded frame */
+  const group=new THREE.Group(); scene.add(group);
+  const IW=3.0, IH=3.75;
+  function rr(w,h,r){const s=new THREE.Shape(); s.moveTo(-w/2+r,-h/2); s.lineTo(w/2-r,-h/2); s.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r); s.lineTo(w/2,h/2-r); s.quadraticCurveTo(w/2,h/2,w/2-r,h/2); s.lineTo(-w/2+r,h/2); s.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r); s.lineTo(-w/2,-h/2+r); s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2); return s}
+  function moulding(ow,oh,iw,ih,depth,bev,z,mat){const s=rr(ow,oh,.08); const hole=new THREE.Path(); const hs=rr(iw,ih,.03); hole.setFromPoints(hs.getPoints(24)); s.holes.push(hole);
+    const geo=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:6,curveSegments:24}); geo.translate(0,0,z); const m=new THREE.Mesh(geo,mat); group.add(m); return m}
+  const gold=new THREE.MeshStandardMaterial({color:0xC9952F,metalness:1,roughness:.3,envMapIntensity:1});
+  const goldDark=new THREE.MeshStandardMaterial({color:0x8A5A18,metalness:1,roughness:.45,envMapIntensity:.8});
+  moulding(IW+1.25,IH+1.25,IW+.55,IH+.55,.22,.12,-.15,gold);
+  moulding(IW+.62,IH+.62,IW+.18,IH+.18,.16,.05,.02,goldDark);
+  moulding(IW+.22,IH+.22,IW+.02,IH+.02,.1,.025,.1,gold);
+  /* back board */
+  const back=new THREE.Mesh(new THREE.BoxGeometry(IW+1.3,IH+1.3,.12),new THREE.MeshStandardMaterial({color:0x2a1408,roughness:.9})); back.position.z=-.24; group.add(back);
+
+  /* the portrait: paint reveals over a pencil sketch, cycling through roles */
+  const PW=768, PH=960; const pc=[0,1].map(()=>{const c=document.createElement("canvas"); c.width=PW; c.height=PH; return c});
+  const texA=new THREE.CanvasTexture(pc[0]), texB=new THREE.CanvasTexture(pc[1]); [texA,texB].forEach(t=>{t.encoding=THREE.sRGBEncoding; t.anisotropy=4});
+  const pU={uA:{value:texA},uB:{value:texB},uP:{value:0},uX:{value:0},uT:{value:0}};
+  const portrait=new THREE.Mesh(new THREE.PlaneGeometry(IW,IH),new THREE.ShaderMaterial({uniforms:pU,
+    vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec2 vUv; uniform sampler2D uA,uB; uniform float uP,uX,uT;
+      float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+      float n(vec2 p){vec2 i=floor(p),f=fract(p); f=f*f*(3.-2.*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+      vec3 sketch(sampler2D t,vec2 uv){ vec2 e=vec2(1./768.,1./960.)*1.6;
+        float l=dot(texture2D(t,uv).rgb,vec3(.3,.59,.11));
+        float gx=dot(texture2D(t,uv+vec2(e.x,0.)).rgb-texture2D(t,uv-vec2(e.x,0.)).rgb,vec3(.33));
+        float gy=dot(texture2D(t,uv+vec2(0.,e.y)).rgb-texture2D(t,uv-vec2(0.,e.y)).rgb,vec3(.33));
+        float edge=clamp(length(vec2(gx,gy))*6.,0.,1.);
+        float hatch=step(.5,fract((uv.x+uv.y)*140.))*(1.-l)*.25;
+        vec3 paper=vec3(.93,.89,.80)-n(uv*300.)*.05;
+        return paper*(1.-edge*.85)-hatch; }
+      void main(){
+        float k=n(vUv*vec2(5.,7.))*.35+n(vUv*40.)*.08;
+        float sweep=(1.-vUv.y)*.55+vUv.x*.25;
+        float m=smoothstep(uP-.05,uP+.05,sweep*.85+k);
+        vec3 paintA=texture2D(uA,vUv).rgb; vec3 sk=mix(sketch(uA,vUv),sketch(uB,vUv),uX);
+        vec3 paintSel=mix(paintA,texture2D(uB,vUv).rgb,uX);
+        vec3 col=mix(paintSel,sk,m);
+        float wet=smoothstep(.06,0.,abs(sweep*.85+k-uP))*.25; col+=vec3(.95,.8,.5)*wet;
+        gl_FragColor=vec4(col,1.);} `}));
+  portrait.position.z=-.08; group.add(portrait);
+  /* glass sheen */
+  const sheen=new THREE.Mesh(new THREE.PlaneGeometry(IW,IH),new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uS:{value:0}},
+    vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec2 vUv; uniform float uS; void main(){ float d=abs(vUv.x+vUv.y*.6-uS); float a=smoothstep(.12,0.,d)*.12; gl_FragColor=vec4(vec3(1.,.95,.85),a);} `}));
+  sheen.position.z=-.06; group.add(sheen);
+
+  /* gold dust */
+  const D=reduce?120:700, dg=new THREE.BufferGeometry(), dp=new Float32Array(D*3), ds=new Float32Array(D);
+  for(let i=0;i<D;i++){dp[i*3]=(Math.random()-.5)*16; dp[i*3+1]=(Math.random()-.5)*10; dp[i*3+2]=(Math.random()-.2)*6; ds[i]=Math.random()}
+  dg.setAttribute("position",new THREE.BufferAttribute(dp,3)); dg.setAttribute("s",new THREE.BufferAttribute(ds,1));
+  const dU={uT:{value:0},uPR:{value:renderer.getPixelRatio()}};
+  scene.add(new THREE.Points(dg,new THREE.ShaderMaterial({uniforms:dU,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+    vertexShader:`attribute float s; uniform float uT,uPR; varying float vA; void main(){ vec3 p=position; p.y+=mod(uT*.12*(.3+s)+s*10.,10.)-5.; p.x+=sin(uT*.3+s*20.)*.3;
+      vec4 mv=modelViewMatrix*vec4(p,1.); gl_Position=projectionMatrix*mv; gl_PointSize=uPR*(2.+s*4.)*(10./-mv.z); vA=(.3+.7*sin(uT*2.+s*30.)*.5+.5)*.7;}`,
+    fragmentShader:`varying float vA; void main(){ float l=length(gl_PointCoord-.5); if(l>.5) discard; gl_FragColor=vec4(vec3(1.,.8,.45)*smoothstep(.5,0.,l),vA*smoothstep(.5,0.,l));}`})));
+
+  /* lights for glints */
+  scene.add(new THREE.AmbientLight(0x3a1a12,.6));
+  const key=new THREE.PointLight(0xffd59a,2.2,30); key.position.set(3,3,6); scene.add(key);
+  const rim=new THREE.PointLight(0xff5a6e,1.2,30); rim.position.set(-5,-2,3); scene.add(rim);
+
+  /* layout + interaction */
+  let mx=0,my=0,sx=0,sy=0,scrollP=0,visible=true,wide=true,mobScale=.6,mobY=-1.5;
+  addEventListener("pointermove",e=>{mx=e.clientX/innerWidth-.5; my=e.clientY/innerHeight-.5},{passive:true});
+  addEventListener("scroll",()=>{scrollP=Math.min(1.2,scrollY/innerHeight)},{passive:true});
+  new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(canvas);
+  function resize(){const w=canvas.clientWidth,h=canvas.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); bgU.uA.value=w/h; wide=w>860;
+    group.scale.setScalar(wide?Math.min(.86,.86*(w/h)/1.6):.74);
+    if(!wide){const cr=canvas.getBoundingClientRect(), cp=document.querySelector(".hero-copy").getBoundingClientRect(), ft=document.querySelector(".stage-foot").getBoundingClientRect();
+      const y0=cp.bottom-cr.top+28, y1=ft.top-cr.top-20, Vh=2*12*Math.tan(16*Math.PI/180);
+      mobScale=Math.max(.35,Math.min((y1-y0)/h*Vh/5.2,(Vh*camera.aspect*.9)/4.4)); mobY=(.5-((y0+y1)/2)/h)*Vh; group.scale.setScalar(mobScale)}}
+  addEventListener("resize",resize); resize();
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(resize);
+
+  /* role cycle */
+  let idx=0; const now=$("#nowPainting");
+  paintPortrait(pc[0],ROLES[0]); paintPortrait(pc[1],ROLES[1]); texA.needsUpdate=texB.needsUpdate=true;
+  const CYCLE=7.5;
+  let lastCycle=-1;
+  const clock=new THREE.Clock(); let t=reduce?3.5:0;
+  function frame(){
+    requestAnimationFrame(frame); if(!visible) return;
+    const dt=Math.min(clock.getDelta(),.05); if(!reduce) t+=dt;
+    bgU.uT.value=t; dU.uT.value=t; pU.uT.value=t;
+    const cyc=Math.floor(t/CYCLE), ph=(t%CYCLE)/CYCLE;
+    if(cyc!==lastCycle){ lastCycle=cyc; idx=cyc%ROLES.length;
+      paintPortrait(pc[0],ROLES[idx]); paintPortrait(pc[1],ROLES[(idx+1)%ROLES.length]); texA.needsUpdate=texB.needsUpdate=true;
+      now.textContent=ROLES[idx].name; }
+    /* 0-.1 sketch, .1-.55 paint sweeps in, .55-.85 hold, .85-1 crossfade sketch to next */
+    const paint=Math.min(1,Math.max(0,(ph-.1)/.45));
+    const fade=Math.min(1,Math.max(0,(ph-.85)/.15));
+    pU.uP.value=ph<.85? (-.25+paint*1.6) : (1.35-fade*1.6);
+    pU.uX.value=ph<.85?0:Math.min(1,Math.max(0,(fade-.5)*2));
+    sheen.material.uniforms.uS.value=((t*.18)%1)*3-1;
+    sx+=(mx-sx)*.05; sy+=(my-sy)*.05;
+    const baseX=wide?2.45:0, baseY=wide?-.15:mobY;
+    group.position.set(baseX, baseY+Math.sin(t*.6)*.08+scrollP*2.2, 0);
+    group.rotation.set(sy*.35+Math.sin(t*.4)*.03 - scrollP*.25, (wide?-.28:-.1)+sx*.55+Math.sin(t*.3)*.04, Math.sin(t*.5)*.015);
+    bgU.uM.value.set(sx,sy);
+    key.position.set(3+sx*6,3-sy*5,6);
+    renderer.render(scene,camera);
+  }
+  frame();
+  $("#fallback").style.opacity="0";
+}
+stage();
+</script>
