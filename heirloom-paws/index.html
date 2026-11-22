@@ -1,10 +1,10 @@
 <title>Heirloom Paws</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Your pet, painted as royalty. Tap once, see your own pet as an oil painting in seconds, then commission the portrait.">
+<meta name="description" content="Your pet as royalty, in a classic oil-painting style. Tap once for a free preview in seconds, then order the AI-assisted portrait.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400;1,6..96,500&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
-<link rel="preload" as="image" href="img/monarch.webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Instrument+Sans:wght@400;600&family=DM+Mono:wght@500&display=swap">
+<link rel="preload" as="image" href="img/monarch.webp" fetchpriority="high">
 <style>
 /* Layout: mobile-first funnel for TikTok traffic. First screen = one tilted hero frame cycling portraits over a salon-wall collage, with a one-tap upload. The upload triggers a full-screen Unveiling (brush reveal, frame drop, gold leaf, nameplate), then the Studio (role try-on, package, review, pay). Dark single-theme by design. */
 :root{
@@ -203,6 +203,7 @@ section{padding-block:110px}
 .final p{color:var(--dust);margin:20px auto 32px;max-width:40ch;font-size:17px}
 footer{border-top:1px solid var(--line);padding-block:30px 130px;color:var(--dust);font-size:13px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.legal{display:flex;flex-wrap:wrap;gap:6px 18px}.legal a,.legal button{color:var(--dust);background:none;border:0;padding:6px 0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
 /* ===== UNVEILING ===== */
 .unveil{position:fixed;inset:0;z-index:55;background:radial-gradient(70% 60% at 50% 40%,#3a0e17,#0b0506 75%);display:grid;place-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:auto}
@@ -340,12 +341,12 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
     <div class="hero-copy">
       <span class="eyebrow" id="heroEyebrow">The royal portrait studio for pets</span>
       <h1 id="heroH1">Your pet, painted <i>as royalty.</i></h1>
-      <p class="sub" id="heroSub">Tap once and see your own pet as an oil painting. Free, in seconds.</p>
+      <p class="sub" id="heroSub">Tap once and see your own pet in an oil-painting style. Free, in seconds.</p>
       <label class="btn gold upl desk-cta"><input type="file" class="file-in" aria-label="Upload a photo of your pet"><span id="heroCta">Tap to paint my pet, free</span><span class="arr" aria-hidden="true">→</span></label>
-      <span class="small desk-cta">10 SECONDS · YOUR PHOTO STAYS ON YOUR DEVICE</span>
+      <span class="small desk-cta">10 SECONDS · THE PREVIEW STAYS ON YOUR DEVICE</span>
       <p class="inapp" hidden>Upload not opening? Tap ⋯ at the top, then "Open in browser".</p>
     </div>
-    <div class="stage" aria-hidden="true">
+    <div class="stage">
       <div class="fr hframe" id="hframe"><div class="cv" id="heroCv"></div></div>
       <span class="plate"><small id="heroRole">THE MONARCH</small>Sir Biscuit</span>
       <span class="stamp">FREE<br>PREVIEW</span>
@@ -355,11 +356,11 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
 
 <div class="thumbbar" id="thumbbar">
   <label class="btn gold upl"><input type="file" class="file-in" aria-label="Upload a photo of your pet"><span id="thumbCta">Tap to paint my pet, free</span><span class="arr" aria-hidden="true">→</span></label>
-  <small>10 SECONDS · PHOTO STAYS ON YOUR PHONE</small>
+  <small>10 SECONDS · PREVIEW STAYS ON YOUR PHONE</small>
 </div>
 
 <div class="ticker bleed" aria-hidden="true"><div class="ttrack" id="ticker"></div></div>
-<div class="eta bleed"><div class="wrap"><span>Order now → in your inbox by <b id="etaTime">tomorrow</b></span><span class="xmas" id="xmas"></span></div></div>
+<div class="eta bleed"><div class="wrap"><span>Send your photo now → typically in your inbox by <b id="etaTime">tomorrow</b></span><span class="xmas" id="xmas"></span></div></div>
 
 <section id="collection">
   <div class="wrap">
@@ -378,7 +379,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
       <div class="rc"><em>THE PHONE</em><b>Wallpaper version</b><span>Sized for your lock screen.</span></div>
       <div class="rc"><em>THE GIFT</em><b>Printable gift card</b><span>Wrap it, or hand it over on the day.</span></div>
     </div>
-    <p class="founder"><span><b>A note from the studio:</b> every portrait is checked by a person before it is sent. If it doesn't feel like your pet, we redo it, and if you're still not happy you get every cent back.</span></p>
+    <p class="founder"><span><b>How it's made:</b> portraits are digital, created with AI image tools in a classic oil-painting style, and checked by a person before they're sent. If it doesn't feel like your pet, we repaint it free. Still not right? Full refund.</span></p>
   </div>
 </section>
 
@@ -391,7 +392,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
 
 <section class="guar bleed" style="padding-block:84px">
   <div class="wrap">
-    <div class="seal-big"><span><b>100%</b>Love it or<br>it's free</span></div>
+    <div class="seal-big"><span><b>14</b>days of<br>free repaints</span></div>
     <div><h2>The Royal Approval Guarantee.</h2><p>If your portrait doesn't make you smile, we repaint it free, as many times as it takes within 14 days. Still not right? Full refund.</p></div>
   </div>
 </section>
@@ -400,11 +401,11 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
   <div class="wrap">
     <div class="head"><span class="eyebrow">Questions</span><h2>Before you <i>commission.</i></h2></div>
     <div class="faq">
-      <details><summary>Is the free preview the final portrait?</summary><p>No. The preview paints your own photo so you can see your pet's colours in oil. The studio then paints the full costume and scene of the role you choose.</p></details>
+      <details><summary>Is the free preview the final portrait?</summary><p>No. The preview is an on-device paint effect on your own photo, so you can see your pet's colours in an oil style. Your final portrait is created separately with AI image tools, in the costume and scene of the role you choose, and checked by a person.</p></details>
       <details><summary>How do I pay?</summary><p>Secure checkout with PayPal or a debit or credit card. You don't need a PayPal account to pay by card.</p></details>
-      <details><summary>When do I send my pet's photo?</summary><p>Right after payment, your receipt has a link to upload the photo. The photo you used for the preview never leaves your device.</p></details>
-      <details><summary>Will it really look like my pet?</summary><p>Yes. We match the coat, markings and face. Free repaints for 14 days, and a full refund if it's still not right.</p></details>
-      <details><summary>Can I order for Christmas?</summary><p>Yes. Nothing ships, so an order placed by December 23 arrives before Christmas morning.</p></details>
+      <details><summary>When do I send my pet's photo?</summary><p>Right after payment, your receipt has a link to upload the photo securely. Delivery times start once we have your photo. The photo you used for the free preview never leaves your device.</p></details>
+      <details><summary>Will it really look like my pet?</summary><p>We aim to match the coat, markings and face from your photo, and we repaint it free for 14 days if we miss. Still not right? Full refund.</p></details>
+      <details><summary>Can I order for Christmas?</summary><p>Yes. Nothing ships. Order and send your photo by December 23 (December 22 for the Classic package) and your portrait arrives before Christmas morning.</p></details><details><summary>Is it hand-painted?</summary><p>No. Portraits are digital artworks made with AI image tools in a classic oil-painting style, then checked and finished by a person. You receive high-resolution files to print or share.</p></details>
     </div>
   </div>
 </section>
@@ -417,12 +418,12 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
   </div>
 </section>
 </main>
-<footer><div class="wrap"><span>© 2026 Heirloom Paws · Digital portrait studio</span><span>Royal Approval Guarantee · Free repaints for 14 days</span></div></footer>
+<footer><div class="wrap"><span>© 2026 Heirloom Paws · AI-assisted digital portraits, checked by a person</span><nav class="legal" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="refunds.html">Refunds &amp; repaints</a><a href="terms.html#contact">Contact</a><button type="button" id="privChoices">Your Privacy Choices</button></nav></div></footer>
 
 <!-- Unveiling -->
 <div class="unveil" id="unveil" role="dialog" aria-modal="true" aria-label="Your pet's portrait">
   <div class="uv-in">
-    <span class="uv-status" id="uvStatus">The studio is painting…</span>
+    <span class="uv-status" id="uvStatus" tabindex="-1" role="status">The studio is painting…</span>
     <div class="fr uv-frame" id="uvFrame"><div class="cv"><canvas id="uvCanvas"></canvas></div></div>
     <span class="plate uv-plate" id="uvPlate"><small id="uvRole">THE MONARCH</small><span id="uvName">&nbsp;</span></span>
     <div class="uv-ask" id="uvAsk">
@@ -464,7 +465,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
 </div>
 
 <div class="modal" id="exitModal" role="dialog" aria-modal="true" aria-labelledby="exTitle">
-  <div class="mcard"><img src="img/duchess.webp" alt="">
+  <div class="mcard"><img src="img/duchess-320.webp" alt="" loading="lazy">
     <div class="mb"><span class="eyebrow">Before you go</span><h3 id="exTitle">See your pet painted, free.</h3><p id="exText">It takes 10 seconds. You don't pay anything to see it.</p><div class="code" id="exCode" hidden></div><button class="btn gold" type="button" id="exGo">Show me <span class="arr" aria-hidden="true">→</span></button></div>
     <button class="x" type="button" id="exClose" aria-label="Close">✕</button>
   </div>
@@ -493,9 +494,9 @@ const ROLES = [
   {key:"santa",name:"Santa Paws",cat:"Holiday"}
 ];
 const TIERS = [
-  {key:"classic",name:"Classic",price:29,each:"1 portrait",items:["1 portrait in your chosen role","Print-ready file + phone wallpaper","In your inbox within 24 hours","1 free revision"],hours:24},
-  {key:"royal",name:"Royal",price:49,each:"3 portraits · $16 each",pop:true,items:["3 portraits in 3 roles","Engraved name plaque on each","Priority: within 12 hours","Printable gift card"],hours:12},
-  {key:"heirloom",name:"Heirloom",price:79,each:"6 portraits · $13 each",items:["6 portraits, any roles or your own idea","Up to 2 pets together","Express: within 6 hours","Everything in Royal"],hours:6}
+  {key:"classic",name:"Classic",price:29,each:"1 portrait",items:["1 portrait in your chosen role","Print-ready file + phone wallpaper","Within 24 hours of your photo","Free repaints for 14 days"],hours:24},
+  {key:"royal",name:"Royal",price:49,each:"3 portraits · $16 each",pop:true,items:["3 portraits in 3 roles","Engraved name plaque on each","Within 12 hours of your photo","Printable gift card"],hours:12},
+  {key:"heirloom",name:"Heirloom",price:79,each:"6 portraits · $13 each",items:["6 portraits, any roles or your own idea","Up to 2 pets together","Within 6 hours of your photo","Everything in Royal"],hours:6}
 ];
 const BUMP = {price:9, label:"Printable Christmas card of the portrait", sub:"Folded A5 card with their portrait and your message."};
 const img=k=>`img/${k}.webp`;
@@ -509,7 +510,8 @@ const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
 /* ===== TikTok pixel (loads only when an ID is set) ===== */
 function track(ev,props){ try{ window.ttq&&ttq.track(ev,props||{}) }catch(e){} }
-if(TIKTOK_PIXEL_ID){ !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=d.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=d.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq"); }
+let NOSHARE=false; try{NOSHARE=navigator.globalPrivacyControl===true||localStorage.getItem("hp-noshare")==="1"}catch(e){}
+if(TIKTOK_PIXEL_ID&&!NOSHARE){ !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=d.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=d.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq"); }
 
 /* ===== state (+ photo kept in IndexedDB so returning visitors find their preview) ===== */
 let S={step:0,role:"monarch",custom:"",tier:"royal",pet:"Dog",name:"",bump:false,offer:false,ordered:false};
@@ -533,12 +535,12 @@ const AVAILABLE=new Set(ROLES.map(r=>r.key));
 function personaliseHero(){
   if(AD.role&&AD.role!=="custom"){ const r=roleOf(AD.role), pet=/cat/i.test(Q.get("pet")||"")?"cat":"dog";
     $("#heroH1").innerHTML=`Your ${pet} as <i>${esc(r.name.replace(/^The /,""))}.</i>`;
-    $("#heroSub").textContent="Tap once to see your own pet as an oil painting, free. Then we paint them in this role.";
+    $("#heroSub").textContent="Tap once to see your own pet in an oil-painting style, free. Then we create their portrait in this role.";
     ["#heroCta","#thumbCta"].forEach(s=>$(s).textContent=`Paint my pet as ${r.name.replace(/^The /,"")}`); }
 }
 const HERO_SET=(AD.role&&AD.role!=="custom")?[AD.role,"monarch","duchess"]:["monarch","duchess","knight","santa","admiral"];
 (function heroCycle(){
-  const cv=$("#heroCv"); HERO_SET.forEach((k,i)=>{const im=document.createElement("img"); im.src=img(k); im.alt=""; im.style.opacity=i?0:1; im.dataset.k=k; cv.append(im)});
+  const cv=$("#heroCv"); HERO_SET.forEach((k,i)=>{const im=document.createElement("img"); im.alt=i?"":`Pet portrait in an oil-painting style as ${roleOf(k).name}`; if(i){ im.loading="lazy"; im.decoding="async" } else im.fetchPriority="high"; im.src=img(k); im.style.opacity=i?0:1; im.dataset.k=k; cv.append(im)});
   let i=0; $("#heroRole").textContent=roleOf(HERO_SET[0]).name.toUpperCase();
   if(HERO_SET.length>1&&!reduce) setInterval(()=>{const ims=cv.querySelectorAll("img"); ims[i].style.opacity=0; i=(i+1)%ims.length; ims[i].style.opacity=1; $("#heroRole").textContent=roleOf(ims[i].dataset.k).name.toUpperCase()},2600);
 })();
@@ -557,7 +559,7 @@ function buildWall(){
     while(y<H){ const w=colW*(.72+R()*.26), oval=R()<.12, h=oval?w*1.25:w*(1.15+R()*.25);
       const f=document.createElement("div"); f.className="fr "+kinds[n%kinds.length]+(oval?" oval":"");
       f.style.cssText=`left:${c*colW+(colW-w)/2}px;top:${y}px;width:${w}px;height:${h}px;--b:${7+R()*8}px;--r:${(R()-.5)*2.6}deg;--lit:${.78+R()*.22};--sd:${(R()*6).toFixed(2)}s`;
-      const im=document.createElement("img"); im.src=img(keys[k%keys.length]); im.alt=""; f.append(im); layers[n%3].append(f); k+=3; y+=h+18+R()*22; n++ } }
+      const im=document.createElement("img"); im.src=`img/${keys[k%keys.length]}-320.webp`; im.alt=""; im.decoding="async"; if(y>H*.55) im.loading="lazy"; f.append(im); layers[n%3].append(f); k+=3; y+=h+18+R()*22; n++ } }
 }
 let px=0,py=0,tx=0,ty=0;
 addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5},{passive:true});
@@ -571,7 +573,7 @@ function eta(){ const h=tierOf(S.tier).hours, d=new Date(Date.now()+h*3600e3);
   const day=d.toDateString()===new Date().toDateString()?"today":d.toLocaleDateString("en-US",{weekday:"short"});
   $("#etaTime").textContent=`${day} ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`;
   const left=CUTOFF-Date.now(), x=$("#xmas");
-  if(left<=0) x.textContent=""; else if(left<14*864e5){ const dd=Math.floor(left/864e5), hh=Math.floor(left%864e5/36e5); x.textContent=`Christmas orders close in ${dd}d ${hh}h` } else x.textContent="Christmas-safe: order by Dec 23, arrives before Dec 25" }
+  if(left<=0) x.textContent=""; else if(left<14*864e5){ const dd=Math.floor(left/864e5), hh=Math.floor(left%864e5/36e5); x.textContent=`Christmas orders close in ${dd}d ${hh}h` } else x.textContent="Christmas-safe: order and send your photo by Dec 23" }
 eta(); setInterval(eta,30000);
 
 /* ===== collection collage ===== */
@@ -590,9 +592,9 @@ $("#cats").addEventListener("click",e=>{const b=e.target.closest("[data-cat]"); 
 $("#collage").addEventListener("click",e=>{const b=e.target.closest("[data-role]"); if(!b) return; S.role=b.dataset.role; save(); buzz(8); openStudio(1)});
 
 /* tiers */
-$("#tiers").innerHTML=TIERS.map(t=>`<div class="tier ${t.pop?"pop":""}" data-tier="${t.key}" role="button" tabindex="0">${t.pop?'<span class="tag">MOST CHOSEN AS A GIFT</span>':""}<h3>${t.name}</h3><div class="pr"><b>$${t.price}</b><em>${t.each.toUpperCase()}</em></div><ul>${t.items.map(i=>`<li>${i}</li>`).join("")}</ul><span class="btn ${t.pop?"gold":""}">Choose ${t.name}</span></div>`).join("");
+$("#tiers").innerHTML=TIERS.map(t=>`<div class="tier ${t.pop?"pop":""}" data-tier="${t.key}" role="button" tabindex="0">${t.pop?'<span class="tag">BEST VALUE</span>':""}<h3>${t.name}</h3><div class="pr"><b>$${t.price}</b><em>${t.each.toUpperCase()}</em></div><ul>${t.items.map(i=>`<li>${i}</li>`).join("")}</ul><span class="btn ${t.pop?"gold":""}">Choose ${t.name}</span></div>`).join("");
 $("#tiers").addEventListener("click",e=>{const t=e.target.closest("[data-tier]"); if(!t) return; S.tier=t.dataset.tier; save(); eta(); openStudio(PHOTO?2:1)});
-$("#tiers").addEventListener("keydown",e=>{if(e.key==="Enter"){const t=e.target.closest("[data-tier]"); if(t) t.click()}});
+$("#tiers").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){const t=e.target.closest("[data-tier]"); if(t){e.preventDefault(); t.click()}}});
 
 /* ===== oil-painting preview (GPU Kuwahara, runs on the visitor's device) ===== */
 function paintify(srcImg){
@@ -662,9 +664,14 @@ function goldLeaf(){
     requestAnimationFrame(f) })(t0);
 }
 
+/* ===== dialog focus: remember the opener, make the page behind inert ===== */
+let LAST_FOCUS=null;
+function modalOn(el,focusSel){ if(!LAST_FOCUS) LAST_FOCUS=document.activeElement; $("main").inert=true; $("header").inert=true; $("#thumbbar").inert=true; setTimeout(()=>{const f=el.querySelector(focusSel); f&&f.focus({preventScroll:true})},60) }
+function modalOff(){ const any=$$(".studio.open,.unveil.open,.modal.open,.shareov.open").length; if(any) return; $("main").inert=false; $("header").inert=false; $("#thumbbar").inert=false; if(LAST_FOCUS&&LAST_FOCUS.focus) LAST_FOCUS.focus({preventScroll:true}); LAST_FOCUS=null }
+
 /* ===== the Unveiling ===== */
-function openUnveil(){ $("#unveil").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"unveil"},"") }
-function closeUnveil(){ $("#unveil").classList.remove("open"); if(!$("#studio").classList.contains("open")) document.body.classList.remove("locked") }
+function openUnveil(){ $("#unveil").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"unveil"},""); modalOn($("#unveil"),"#uvStatus") }
+function closeUnveil(){ $("#unveil").classList.remove("open"); if(!$("#studio").classList.contains("open")) document.body.classList.remove("locked"); modalOff() }
 async function handleFile(file){
   if(!file) return;
   if(file.type&&!file.type.startsWith("image/")){ toast("Please choose a photo."); return }
@@ -718,13 +725,13 @@ async function shareCard(){
   x.fillStyle="#B7A58C"; x.font="500 30px 'DM Mono', monospace"; x.fillText(`Try yours free · ${SITE}`,W/2,H-140);
   c.toBlob(async blob=>{ const file=new File([blob],`${(S.name||"my-pet").replace(/\W+/g,"-")}-portrait.png`,{type:"image/png"});
     try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"My pet, painted like royalty"}); track("Share"); return } }catch(e){ if(e&&e.name==="AbortError") return }
-    $("#shareImg").src=URL.createObjectURL(blob); $("#shareOv").classList.add("open") },"image/png");
+    $("#shareImg").src=URL.createObjectURL(blob); $("#shareOv").classList.add("open"); modalOn($("#shareOv"),"#shareClose") },"image/png");
 }
-$("#shareClose").addEventListener("click",()=>$("#shareOv").classList.remove("open"));
+$("#shareClose").addEventListener("click",()=>{ $("#shareOv").classList.remove("open"); modalOff() });
 
 /* ===== Studio ===== */
-function openStudio(step){ S.step=step; save(); $("#studio").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"studio",step},""); renderStep(); track("ViewContent",{content_id:S.role}) }
-function closeStudio(silent){ if(!$("#studio").classList.contains("open")) return; $("#studio").classList.remove("open"); if(!$("#unveil").classList.contains("open")) document.body.classList.remove("locked"); save(); if(!silent&&!S.ordered) setTimeout(()=>maybeOffer(),350) }
+function openStudio(step){ S.step=step; save(); $("#studio").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"studio",step},""); renderStep(); modalOn($("#studio"),"#stTitle"); track("ViewContent",{content_id:S.role}) }
+function closeStudio(silent){ if(!$("#studio").classList.contains("open")) return; $("#studio").classList.remove("open"); if(!$("#unveil").classList.contains("open")) document.body.classList.remove("locked"); save(); modalOff(); if(!silent&&!S.ordered) setTimeout(()=>maybeOffer(),350) }
 $$("[data-open]").forEach(b=>b.addEventListener("click",()=>openStudio(PHOTO?Math.max(1,S.step||1):1)));
 $("#stClose").addEventListener("click",()=>closeStudio());
 $("#stBack").addEventListener("click",()=>history.back());
@@ -747,8 +754,8 @@ function renderStep(){
   const next=$("#stNext"), R=$("#stRight"); R.className="st-right panel"; void R.offsetWidth;
   if(step===1){
     next.innerHTML='Choose a package <span class="arr">→</span>';
-    R.innerHTML=`<span class="eyebrow">Step 1 · The role</span><h2 id="stTitle" style="margin-top:12px">Who were they in a past life?</h2><p class="lead">${PHOTO?"Tap a role to try it on.":"Tap a role to see it. Upload a photo anytime for your free preview."}</p>
-      <div class="rgrid" role="radiogroup" aria-label="Portrait role">${ROLES.map(x=>`<button type="button" class="rcard" role="radio" aria-checked="${S.role===x.key}" data-r="${x.key}"><img src="${img(x.key)}" alt=""><span>${x.name.replace(/^The /,"")}</span></button>`).join("")}<button type="button" class="rcard custom" role="radio" aria-checked="${S.role==="custom"}" data-r="custom">Your own<br>idea</button></div>
+    R.innerHTML=`<span class="eyebrow">Step 1 · The role</span><h2 id="stTitle" tabindex="-1" style="margin-top:12px;outline:none">Who were they in a past life?</h2><p class="lead">${PHOTO?"Tap a role to try it on.":"Tap a role to see it. Upload a photo anytime for your free preview."}</p>
+      <div class="rgrid" role="radiogroup" aria-label="Portrait role">${ROLES.map(x=>`<button type="button" class="rcard" role="radio" aria-checked="${S.role===x.key}" data-r="${x.key}"><img src="img/${x.key}-320.webp" alt="" loading="lazy" decoding="async"><span>${x.name.replace(/^The /,"")}</span></button>`).join("")}<button type="button" class="rcard custom" role="radio" aria-checked="${S.role==="custom"}" data-r="custom">Your own<br>idea</button></div>
       <div style="display:grid;gap:8px;margin-top:14px" id="customBox" ${S.role==="custom"?"":"hidden"}><label class="lbl2" for="customIn">Describe the role</label><textarea class="inp" id="customIn" maxlength="160" placeholder="e.g. A 1920s jazz singer with a pearl microphone">${esc(S.custom)}</textarea></div>
       ${PHOTO?"":`<label class="btn upl" style="margin-top:18px"><input type="file" class="file-in" ${isInApp?"":'accept="image/*"'} aria-label="Upload a photo">Upload a photo for my free preview</label>`}`;
     R.querySelector(".rgrid").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b) return; S.role=b.dataset.r; save(); buzz(8); renderStep();
@@ -759,8 +766,8 @@ function renderStep(){
   }
   if(step===2){
     next.innerHTML='Continue <span class="arr">→</span>';
-    R.innerHTML=`<span class="eyebrow">Step 2 · Package</span><h2 id="stTitle" style="margin-top:12px">How many masterpieces?</h2><p class="lead">Three roles make a gallery wall, or three gifts.</p>
-      <div class="opts" role="radiogroup" aria-label="Package">${TIERS.map(x=>`<button type="button" class="opt" role="radio" aria-checked="${S.tier===x.key}" data-t="${x.key}">${x.pop?'<span class="tag">MOST CHOSEN</span>':""}<span class="rd"></span><span><b>${x.name}</b><p>${x.items.slice(0,3).join(" · ")}</p></span><span class="pr">$${x.price}<small>${x.each}</small></span></button>`).join("")}</div>
+    R.innerHTML=`<span class="eyebrow">Step 2 · Package</span><h2 id="stTitle" tabindex="-1" style="margin-top:12px;outline:none">How many masterpieces?</h2><p class="lead">Three roles make a gallery wall, or three gifts.</p>
+      <div class="opts" role="radiogroup" aria-label="Package">${TIERS.map(x=>`<button type="button" class="opt" role="radio" aria-checked="${S.tier===x.key}" data-t="${x.key}">${x.pop?'<span class="tag">BEST VALUE</span>':""}<span class="rd"></span><span><b>${x.name}</b><p>${x.items.slice(0,3).join(" · ")}</p></span><span class="pr">$${x.price}<small>${x.each}</small></span></button>`).join("")}</div>
       ${S.tier==="classic"?`<button type="button" class="bump" id="stepUp" style="width:100%;text-align:start"><span style="flex:1"><b>+$20 → 3 roles instead of 1</b><span>Most gifts need more than one.</span></span><em>Royal</em></button>`:""}
       <div style="display:grid;gap:10px;margin-top:24px"><span class="lbl2">Your pet</span><div class="seg" role="radiogroup" aria-label="Pet type">${["Dog","Cat","Two pets","Other"].map(p=>`<button type="button" role="radio" aria-checked="${S.pet===p}" data-p="${p}">${p}</button>`).join("")}</div></div>
       <div style="display:grid;gap:8px;margin-top:20px"><label class="lbl2" for="nameIn">Their royal name, for the plaque</label><input class="inp" style="text-align:start" id="nameIn" maxlength="22" placeholder="e.g. Sir Biscuit" value="${esc(S.name)}" autocomplete="off"></div>`;
@@ -772,7 +779,7 @@ function renderStep(){
   if(step===3){
     next.innerHTML=`Pay $${total()} securely <span class="arr">→</span>`;
     const h=t.hours, d=new Date(Date.now()+h*3600e3);
-    R.innerHTML=`<span class="eyebrow">Step 3 · Review</span><h2 id="stTitle" style="margin-top:12px">Your commission.</h2><p class="lead">In your inbox by ${d.toLocaleDateString("en-US",{weekday:"long"})} ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}.</p>
+    R.innerHTML=`<span class="eyebrow">Step 3 · Review</span><h2 id="stTitle" tabindex="-1" style="margin-top:12px;outline:none">Your commission.</h2><p class="lead">Typically in your inbox by ${d.toLocaleDateString("en-US",{weekday:"long"})} ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}, if you send your photo now.</p>
       <div class="review">
         <div class="rrow"><span>Package</span><b>${t.name} · ${t.items[0]}</b></div>
         <div class="rrow"><span>Role</span><b>${S.role==="custom"?esc(S.custom||"Your own idea"):r.name}</b></div>
@@ -806,14 +813,19 @@ let offered=false; try{offered=sessionStorage.getItem("hp-offer")==="1"}catch(e)
 function maybeOffer(){
   if(offered||S.ordered) return; offered=true; try{sessionStorage.setItem("hp-offer","1")}catch(e){}
   if(OFFER.code&&RETURNING){ $("#exTitle").textContent=`Welcome back: ${OFFER.label}.`; $("#exText").textContent="Enter this code at checkout."; $("#exCode").hidden=false; $("#exCode").textContent=OFFER.code; $("#exGo").innerHTML='Use my offer <span class="arr">→</span>' }
-  else if(PHOTO){ $("#exTitle").textContent=`${S.name||"Your pet"}'s preview is saved.`; $("#exText").textContent="Pick a role and they'll be hanging in your gallery tomorrow."; $("#exGo").innerHTML='Finish my portrait <span class="arr">→</span>' }
-  $("#exitModal").classList.add("open");
+  else if(PHOTO){ $("#exTitle").textContent=`${S.name||"Your pet"}'s preview is saved.`; $("#exText").textContent="Pick a role and their portrait is typically ready within a day."; $("#exGo").innerHTML='Finish my portrait <span class="arr">→</span>' }
+  $("#exitModal").classList.add("open"); modalOn($("#exitModal"),"#exGo");
 }
-function closeOffer(){ $("#exitModal").classList.remove("open") }
+function closeOffer(){ $("#exitModal").classList.remove("open"); modalOff() }
 $("#exClose").addEventListener("click",closeOffer);
 $("#exitModal").addEventListener("click",e=>{ if(e.target.id==="exitModal") closeOffer() });
 $("#exGo").addEventListener("click",()=>{ if(OFFER.code&&RETURNING) S.offer=true; closeOffer(); if(PHOTO) openStudio(Math.max(1,S.step||1)); else document.querySelector(".hero .file-in").click() });
 document.addEventListener("mouseout",e=>{ if(!e.relatedTarget&&e.clientY<8&&scrollY>200&&!$("#studio").classList.contains("open")) maybeOffer() });
+
+/* ===== Your Privacy Choices: opt out of ad tracking (Global Privacy Control is honoured automatically) ===== */
+$("#privChoices").addEventListener("click",()=>{ let off=false; try{ off=localStorage.getItem("hp-noshare")==="1" }catch(e){}
+  try{ localStorage.setItem("hp-noshare",off?"0":"1") }catch(e){}
+  toast(off?"Ad measurement turned back on.":"Done. We won't share your activity with ad partners on this device.") });
 
 /* ===== returning visitors ===== */
 let RETURNING=false;
@@ -822,6 +834,6 @@ idb.get("photo").then(p=>{ if(!p) return; PHOTO=p; RETURNING=true;
   b.querySelector("button").addEventListener("click",()=>{b.remove(); openStudio(Math.max(1,S.step||1))}); document.body.append(b); setTimeout(()=>b.remove(),12000) });
 
 /* ===== boot ===== */
-personaliseHero(); buildWall(); buildCollection(); track("ViewContent",{content_id:S.role});
+personaliseHero(); (window.requestIdleCallback||setTimeout)(buildWall,{timeout:600}); buildCollection(); track("ViewContent",{content_id:S.role});
 addEventListener("resize",()=>{clearTimeout(buildWall.t); buildWall.t=setTimeout(buildWall,250)});
 </script>
