@@ -68,7 +68,8 @@ button{font:inherit;color:inherit}
 .top nav{display:flex;gap:28px;margin-inline-start:auto}
 .top nav a{color:var(--dust);text-decoration:none;font-size:14px}
 .top nav a:hover{color:var(--parchment)}
-.top .btn{padding:10px 18px;font-size:14px}
+.top .btn{padding:13px 20px;font-size:14px}
+@media (max-width:380px){.top .logo{font-size:19px}.top .btn{padding:12px 14px;font-size:13px}}
 @media (max-width:860px){.top nav{display:none}.top .btn{margin-inline-start:auto}}
 
 /* ===== hero ===== */
@@ -87,6 +88,7 @@ button{font:inherit;color:inherit}
 .hero .small{font:500 12px var(--f-mono);letter-spacing:.06em;color:var(--dust)}
 .upl{position:relative;overflow:hidden}
 .upl input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.upl:focus-within{outline:2px solid var(--gilt);outline-offset:3px}
 .inapp{font-size:13px;color:var(--gilt-2);border:1px dashed var(--gilt);border-radius:10px;padding:10px 12px;max-width:36ch}
 .stage{position:relative;justify-self:center;width:min(100%,420px);perspective:900px}
 .hframe{--b:20px;transform:rotate(-3deg);transition:transform .6s var(--ease)}
@@ -137,7 +139,7 @@ section{padding-block:110px}
 
 /* collection collage */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
-.chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:9px 16px;font:500 14px var(--f-body);cursor:pointer;color:var(--dust);transition:.2s}
+.chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:12px 18px;font:500 14px var(--f-body);cursor:pointer;color:var(--dust);transition:.2s}
 .chip[aria-pressed="true"]{background:var(--parchment);color:var(--velvet);border-color:var(--parchment)}
 .chip small{font-family:var(--f-mono);opacity:.7;margin-inline-start:6px}
 .collage{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:120px;grid-auto-flow:dense;gap:26px 22px;padding:10px}
@@ -191,7 +193,8 @@ section{padding-block:110px}
 .guar h2{font-size:clamp(30px,4vw,50px);line-height:1.08}
 .guar p{color:var(--dust);margin-top:10px;max-width:60ch}
 .faq{max-width:860px;border-top:1px solid var(--line)}
-.faq details{border-bottom:1px solid var(--line);padding-block:20px}
+.faq details{border-bottom:1px solid var(--line);padding-block:8px}
+.faq summary{padding-block:12px}
 .faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font:400 22px var(--f-display)}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";font:300 26px/1 var(--f-mono);color:var(--gilt);transition:transform .3s var(--ease)}
@@ -218,8 +221,13 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 .uv-frame canvas{position:absolute;inset:0;width:100%;height:100%}
 .uv-plate{transform:translateY(16px);opacity:0;transition:transform .5s var(--ease),opacity .5s}
 .uv-plate.up{transform:none;opacity:1}
-.uv-ask{display:grid;gap:10px;width:100%;opacity:0;transform:translateY(10px);transition:.5s var(--ease)}
-.uv-ask.show{opacity:1;transform:none}
+.uv-ask{display:grid;gap:10px;width:100%;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(10px);transition:.5s var(--ease)}
+.uv-ask.show{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.unveil:not(.open) .uv-ask,.unveil:not(.open) .uv-close{visibility:hidden!important;pointer-events:none!important}
+.uv-close{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px}
+.uv-again{font-size:14px;color:var(--dust);text-decoration:underline;text-underline-offset:3px;position:relative;cursor:pointer;justify-self:center;padding:10px}
+.uv-again input{position:absolute;inset:0;opacity:0;font-size:0;cursor:pointer}
+@media (orientation:landscape) and (max-height:500px){.uv-in{grid-template-columns:auto 1fr;align-items:center;width:min(100%,760px)}.uv-frame{width:min(36vh,220px)}.uv-status,.uv-plate{grid-column:1}.uv-ask{grid-column:2;grid-row:1 / span 3}}
 .uv-ask label{font:400 22px var(--f-display);text-align:center;font-style:italic}
 .inp{width:100%;background:var(--velvet-3);border:1px solid var(--line-2);color:var(--parchment);border-radius:12px;padding:14px 16px;font:16px var(--f-body);text-align:center}
 .inp:focus{outline:none;border-color:var(--gilt)}
@@ -244,8 +252,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 .prog i::after{content:"";position:absolute;inset:0;background:var(--gilt);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
 .prog i.done::after{transform:none}
 .st-step{font:500 11px var(--f-mono);color:var(--dust);letter-spacing:.1em;white-space:nowrap}
-.x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line-2);background:transparent;cursor:pointer;font-size:18px;display:grid;place-items:center;flex:none}
+.x{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2);background:transparent;cursor:pointer;font-size:18px;display:grid;place-items:center;flex:none}
 @media (max-width:620px){.st-step,.st-top .logo{display:none}}
+@media (max-width:420px){.st-foot .sum span{display:none}.st-foot .btn{padding:14px 16px;font-size:15px}.back{padding:13px 14px}}
+@media (max-width:900px){.studio.compact .pv{width:38vw;max-width:170px;--b:9px}.studio.compact .pv-note{display:none}.studio.compact .st-left{grid-template-columns:auto 1fr;align-items:center;justify-items:start;gap:12px}.studio.compact .st-left .plate{min-width:0}}
+@media (orientation:landscape) and (max-height:500px){.thumbbar{padding-block:6px}.thumbbar small{display:none}.thumbbar .btn{padding:11px 20px}}
 .st-body{overflow:auto;padding:24px max(16px,env(safe-area-inset-left,0px))}
 .st-grid{max-width:1160px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:44px;align-items:start}
 @media (max-width:900px){.st-grid{grid-template-columns:minmax(0,1fr);gap:22px}}
@@ -301,7 +312,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
 .mini{border:1px solid var(--line-2);background:transparent;color:var(--parchment);border-radius:999px;padding:8px 14px;font:600 13px var(--f-body);cursor:pointer;justify-self:start}
 .assure{display:flex;flex-wrap:wrap;gap:6px 16px;font:500 11.5px var(--f-mono);color:var(--dust);letter-spacing:.04em;margin-top:12px}
 .st-foot{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--velvet-2)}
-.st-foot .sum{flex:1;min-width:0;font:400 13px var(--f-mono);color:var(--dust);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-foot .sum{flex:1;min-width:56px;font:400 13px var(--f-mono);color:var(--dust);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .st-foot .sum b{color:var(--parchment);font:400 20px var(--f-display);margin-inline-end:10px}
 .st-foot .btn{padding:14px 22px}
 .back{background:none;border:1px solid var(--line-2);border-radius:999px;padding:13px 18px;cursor:pointer}
@@ -330,7 +341,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
   <div class="wrap">
     <a class="logo" href="#hero">Heirloom <b>Paws</b></a>
     <nav aria-label="Sections"><a href="#collection">Collection</a><a href="#receive">What you get</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
-    <button class="btn gold" type="button" data-open="1">Paint my pet</button>
+    <label class="btn gold upl"><input type="file" class="file-in" aria-label="Upload a photo of your pet">Paint my pet</label>
   </div>
 </header>
 
@@ -422,6 +433,7 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
 
 <!-- Unveiling -->
 <div class="unveil" id="unveil" role="dialog" aria-modal="true" aria-label="Your pet's portrait">
+  <button class="x uv-close" type="button" id="uvClose" aria-label="Close">✕</button>
   <div class="uv-in">
     <span class="uv-status" id="uvStatus" tabindex="-1" role="status">The studio is painting…</span>
     <div class="fr uv-frame" id="uvFrame"><div class="cv"><canvas id="uvCanvas"></canvas></div></div>
@@ -433,11 +445,12 @@ textarea.inp{min-height:84px;resize:vertical;text-align:start}
         <button class="btn" type="button" id="uvShare">Save</button>
         <button class="btn gold" type="button" id="uvNext">Now choose their role <span class="arr" aria-hidden="true">→</span></button>
       </div>
+      <label class="uv-again"><input type="file" class="file-in" aria-label="Try another photo">Try another photo</label>
     </div>
   </div>
 </div>
 <canvas id="leaf" aria-hidden="true"></canvas>
-<div class="shareov" id="shareOv" role="dialog" aria-modal="true" aria-label="Save your portrait"><div class="in"><img id="shareImg" alt="Your pet's portrait card"><p>Press and hold the image to save it, then share it on TikTok.</p><button class="btn" type="button" id="shareClose">Close</button></div></div>
+<div class="shareov" id="shareOv" role="dialog" aria-modal="true" aria-label="Save your portrait"><div class="in"><img id="shareImg" alt="Your pet's portrait card"><p id="shareHint">Press and hold the image to save it, then share it on TikTok.</p><a class="btn gold" id="shareDl" download="pet-portrait.png" href="#">Download image</a><button class="btn" type="button" id="shareClose">Close</button></div></div>
 
 <!-- Studio -->
 <div class="studio" id="studio" role="dialog" aria-modal="true" aria-labelledby="stTitle">
@@ -481,6 +494,8 @@ const OFFER = { code:"", label:"10% off" };
 /* TikTok Pixel ID. Works on your own hosting; the claude.ai preview blocks outside scripts. */
 const TIKTOK_PIXEL_ID = "";
 const SITE = "heirloompaws";
+/* Shown to shoppers only while checkout links are empty. */
+const CONTACT_EMAIL = "";
 const CUTOFF = Date.UTC(2026,11,24,4,59,0); /* Dec 23, 11:59 pm Eastern */
 /* ========================================== */
 
@@ -530,15 +545,17 @@ if(AD.tier&&TIERS.some(t=>t.key===AD.tier)){S.tier=AD.tier}
 const isInApp=/musical_ly|BytedanceWebview|TikTok|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
 if(isInApp){ $$(".file-in").forEach(i=>i.removeAttribute("accept")); $$(".inapp").forEach(p=>p.hidden=false) } else $$(".file-in").forEach(i=>i.setAttribute("accept","image/*"));
 
+const AD_ROLE_OK=!!AD.role&&ROLES.some(r=>r.key===AD.role);
+if(AD.role&&!AD_ROLE_OK&&AD.role!=="custom") S.role="monarch";
 /* ===== hero ===== */
 const AVAILABLE=new Set(ROLES.map(r=>r.key));
 function personaliseHero(){
-  if(AD.role&&AD.role!=="custom"){ const r=roleOf(AD.role), pet=/cat/i.test(Q.get("pet")||"")?"cat":"dog";
-    $("#heroH1").innerHTML=`Your ${pet} as <i>${esc(r.name.replace(/^The /,""))}.</i>`;
+  if(AD_ROLE_OK){ const r=roleOf(AD.role), pq=Q.get("pet")||"", pet=/cat/i.test(pq)?"cat":/dog/i.test(pq)?"dog":"pet", nm=r.name.replace(/^The /,"the ");
+    $("#heroH1").innerHTML=`Your ${pet} as <i>${esc(nm)}.</i>`;
     $("#heroSub").textContent="Tap once to see your own pet in an oil-painting style, free. Then we create their portrait in this role.";
     ["#heroCta","#thumbCta"].forEach(s=>$(s).textContent=`Paint my pet as ${r.name.replace(/^The /,"")}`); }
 }
-const HERO_SET=(AD.role&&AD.role!=="custom")?[AD.role,"monarch","duchess"]:["monarch","duchess","knight","santa","admiral"];
+const HERO_SET=AD_ROLE_OK?[AD.role,"monarch","duchess"]:["monarch","duchess","knight","santa","admiral"];
 (function heroCycle(){
   const cv=$("#heroCv"); HERO_SET.forEach((k,i)=>{const im=document.createElement("img"); im.alt=i?"":`Pet portrait in an oil-painting style as ${roleOf(k).name}`; if(i){ im.loading="lazy"; im.decoding="async" } else im.fetchPriority="high"; im.src=img(k); im.style.opacity=i?0:1; im.dataset.k=k; cv.append(im)});
   let i=0; $("#heroRole").textContent=roleOf(HERO_SET[0]).name.toUpperCase();
@@ -670,15 +687,23 @@ function modalOn(el,focusSel){ if(!LAST_FOCUS) LAST_FOCUS=document.activeElement
 function modalOff(){ const any=$$(".studio.open,.unveil.open,.modal.open,.shareov.open").length; if(any) return; $("main").inert=false; $("header").inert=false; $("#thumbbar").inert=false; if(LAST_FOCUS&&LAST_FOCUS.focus) LAST_FOCUS.focus({preventScroll:true}); LAST_FOCUS=null }
 
 /* ===== the Unveiling ===== */
-function openUnveil(){ $("#unveil").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"unveil"},""); modalOn($("#unveil"),"#uvStatus") }
-function closeUnveil(){ $("#unveil").classList.remove("open"); if(!$("#studio").classList.contains("open")) document.body.classList.remove("locked"); modalOff() }
+let HD=0, SKIPPOP=0;
+function hPush(st){ history.pushState(st,""); HD++ }
+function hReplace(st){ history.replaceState(st,"") }
+function hBack(){ if(HD>0){ const n=HD; HD=0; SKIPPOP++; history.go(-n) } }
+let RUN=0;
+function openUnveil(){ $("#unveil").classList.add("open"); document.body.classList.add("locked"); if(!HD) hPush({hp:"overlay"}); modalOn($("#unveil"),"#uvStatus") }
+function closeUnveil(keepHistory){ RUN++; $("#unveil").classList.remove("open"); if(!$("#studio").classList.contains("open")) document.body.classList.remove("locked"); modalOff() }
 async function handleFile(file){
   if(!file) return;
+  if($("#unveil").classList.contains("open")&&!$("#uvAsk").classList.contains("show")) return;
+  const my=++RUN;
   if(file.type&&!file.type.startsWith("image/")){ toast("Please choose a photo."); return }
   audioInit();
   const url=URL.createObjectURL(file); let im;
   try{ im=await loadImg(url) }catch(e){ toast("That photo couldn't be opened. Try a JPG or PNG."); return }
-  closeStudio(true); openUnveil();
+  if(my!==RUN) return;
+  closeStudio(true,true); openUnveil(); RUN=my;
   const fr=$("#uvFrame"), cv=$("#uvCanvas"), st=$("#uvStatus"), plate=$("#uvPlate"), ask=$("#uvAsk");
   fr.classList.remove("dropin"); plate.classList.remove("up"); ask.classList.remove("show"); st.textContent="The studio is painting…";
   $("#uvRole").textContent=(S.role==="custom"?"Your own idea":roleOf(S.role).name).toUpperCase(); $("#uvName").textContent=S.name||" "; $("#uvNameIn").value=S.name;
@@ -694,17 +719,20 @@ async function handleFile(file){
   const W=cv.width, H=cv.height, strokes=Array.from({length:42},(_,i)=>{const y=(i/42)*H+Math.random()*H/30; return {y,x0:-W*.1,x1:W*1.1,w:H/12+Math.random()*H/16,wob:Math.random()*6}});
   const mask=document.createElement("canvas"); mask.width=W; mask.height=H; const mx=mask.getContext("2d"); mx.lineCap="round"; mx.strokeStyle="#000";
   const T0=performance.now()+700, DUR=reduce?10:1500;
-  await new Promise(done=>{ (function f(now){ const k=Math.min(1,Math.max(0,(now-T0)/DUR));
+  await new Promise(done=>{ (function f(now){ if(my!==RUN) return done(); const k=Math.min(1,Math.max(0,(now-T0)/DUR));
       strokes.forEach((s,i)=>{const local=Math.min(1,Math.max(0,k*1.6-i/42*.6)); if(local<=0) return; mx.lineWidth=s.w; mx.beginPath(); mx.moveTo(s.x0,s.y); const xe=s.x0+(s.x1-s.x0)*local; mx.quadraticCurveTo((s.x0+xe)/2,s.y+Math.sin(s.wob)*H/30,xe,s.y+Math.cos(s.wob)*H/40); mx.stroke()});
       x.save(); x.filter="blur(14px) saturate(.4)"; x.drawImage(P.raw,0,0); x.restore();
       const tmp=document.createElement("canvas"); tmp.width=W; tmp.height=H; const tx2=tmp.getContext("2d"); tx2.drawImage(P.paint,0,0); tx2.globalCompositeOperation="destination-in"; tx2.drawImage(mask,0,0); x.drawImage(tmp,0,0);
       if(k<1) requestAnimationFrame(f); else { x.drawImage(P.paint,0,0); done() } })(performance.now()) });
+  if(my!==RUN) return;
   st.textContent="Here they are."; ting(); goldLeaf(); buzz(30);
   plate.classList.add("up");
   setTimeout(()=>{ ask.classList.add("show"); if(!S.name) $("#uvNameIn").focus({preventScroll:true}) },500);
 }
 $("#uvNameIn").addEventListener("input",e=>{S.name=e.target.value.trim(); save(); $("#uvName").textContent=S.name||" "});
-$("#uvNext").addEventListener("click",()=>{ closeUnveil(); openStudio(AD.role?2:1) });
+$("#uvNext").addEventListener("click",()=>{ closeUnveil(true); openStudio(AD_ROLE_OK?2:1,true); if(S.role==="custom") setTimeout(()=>{const c=$("#customIn"); c&&c.focus()},120) });
+$("#uvNameIn").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); $("#uvNext").click() } });
+$("#uvClose").addEventListener("click",()=>{ closeUnveil(true); hBack() });
 $("#uvShare").addEventListener("click",shareCard);
 $$(".file-in").forEach(i=>i.addEventListener("change",()=>{ handleFile(i.files[0]); i.value="" }));
 
@@ -720,37 +748,39 @@ async function shareCard(){
   const pi=await loadImg(PHOTO.paint); x.drawImage(pi,fx,fy,fw,fh);
   const pw=520, ph=110, ppx=(W-pw)/2, ppy=fy+fh+b+40; const pg=x.createLinearGradient(0,ppy,0,ppy+ph); pg.addColorStop(0,"#F2D18A"); pg.addColorStop(.55,"#B8892F"); pg.addColorStop(1,"#8F6420"); x.fillStyle=pg; x.fillRect(ppx,ppy,pw,ph);
   x.fillStyle="#2A1806"; x.textAlign="center"; x.font="500 22px 'DM Mono', monospace"; x.fillText((S.role==="custom"?"YOUR OWN IDEA":roleOf(S.role).name.toUpperCase()).split("").join(" "),W/2,ppy+38);
-  x.font="600 44px 'Bodoni Moda', Georgia, serif"; x.fillText((S.name||"My pet").toUpperCase(),W/2,ppy+88);
+  { const nm=(S.name||"My pet").toUpperCase(); let fs=44; do{ x.font=`600 ${fs}px 'Bodoni Moda', Georgia, serif`; fs-=2 }while(x.measureText(nm).width>pw-40&&fs>20); x.fillText(nm,W/2,ppy+88) }
   x.fillStyle="#F2D18A"; x.font="italic 500 64px 'Bodoni Moda', Georgia, serif"; x.fillText("Painted like royalty.",W/2,200);
   x.fillStyle="#B7A58C"; x.font="500 30px 'DM Mono', monospace"; x.fillText(`Try yours free · ${SITE}`,W/2,H-140);
   c.toBlob(async blob=>{ const file=new File([blob],`${(S.name||"my-pet").replace(/\W+/g,"-")}-portrait.png`,{type:"image/png"});
     try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"My pet, painted like royalty"}); track("Share"); return } }catch(e){ if(e&&e.name==="AbortError") return }
-    $("#shareImg").src=URL.createObjectURL(blob); $("#shareOv").classList.add("open"); modalOn($("#shareOv"),"#shareClose") },"image/png");
+    const u=URL.createObjectURL(blob); $("#shareImg").src=u; $("#shareDl").href=u; $("#shareHint").textContent=matchMedia("(pointer:coarse)").matches?"Press and hold the image to save it, then share it on TikTok.":"Download the image, then share it on TikTok or Instagram."; $("#shareOv").classList.add("open"); modalOn($("#shareOv"),"#shareClose") },"image/png");
 }
 $("#shareClose").addEventListener("click",()=>{ $("#shareOv").classList.remove("open"); modalOff() });
 
 /* ===== Studio ===== */
-function openStudio(step){ S.step=step; save(); $("#studio").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"studio",step},""); renderStep(); modalOn($("#studio"),"#stTitle"); track("ViewContent",{content_id:S.role}) }
-function closeStudio(silent){ if(!$("#studio").classList.contains("open")) return; $("#studio").classList.remove("open"); if(!$("#unveil").classList.contains("open")) document.body.classList.remove("locked"); save(); modalOff(); if(!silent&&!S.ordered) setTimeout(()=>maybeOffer(),350) }
+function openStudio(step,fromUnveil){ S.step=step; save(); $("#studio").classList.add("open"); document.body.classList.add("locked"); if(fromUnveil&&HD) hReplace({hp:"studio",step}); else hPush({hp:"studio",step}); renderStep(); modalOn($("#studio"),"#stTitle"); track("ViewContent",{content_id:S.role}) }
+function closeStudio(silent,keepHistory){ if(!$("#studio").classList.contains("open")) return; $("#studio").classList.remove("open"); if(!$("#unveil").classList.contains("open")) document.body.classList.remove("locked"); save(); modalOff(); if(!keepHistory) hBack() }
 $$("[data-open]").forEach(b=>b.addEventListener("click",()=>openStudio(PHOTO?Math.max(1,S.step||1):1)));
 $("#stClose").addEventListener("click",()=>closeStudio());
-$("#stBack").addEventListener("click",()=>history.back());
-addEventListener("popstate",()=>{ if($("#shareOv").classList.contains("open")){ $("#shareOv").classList.remove("open"); return }
-  if($("#unveil").classList.contains("open")){ closeUnveil(); return }
-  if($("#studio").classList.contains("open")){ if(S.step>1){ S.step--; save(); renderStep() } else closeStudio() } });
-$("#stNext").addEventListener("click",()=>{ if(S.step<4){ S.step++; save(); history.pushState({hp:"studio",step:S.step},""); renderStep(); $("#stBody").scrollTop=0; if(S.step===3) track("AddToCart",{value:total(),currency:"USD",content_id:S.tier}) } else checkout() });
-addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("#exitModal").classList.contains("open")) closeOffer(); else if($("#studio").classList.contains("open")) closeStudio() }});
+$("#stBack").addEventListener("click",()=>{ if(S.step>1){ S.step--; save(); hReplace({hp:"studio",step:S.step}); renderStep() } else closeStudio() });
+addEventListener("popstate",()=>{ if(SKIPPOP){ SKIPPOP--; return } HD=Math.max(0,HD-1);
+  if($("#exitModal").classList.contains("open")) closeOffer();
+  if($("#shareOv").classList.contains("open")){ $("#shareOv").classList.remove("open"); modalOff() }
+  if($("#unveil").classList.contains("open")){ closeUnveil(true); return }
+  if($("#studio").classList.contains("open")){ closeStudio(true,true); if(!S.ordered) setTimeout(()=>maybeOffer(),300) } });
+$("#stNext").addEventListener("click",()=>{ if(S.step<3){ S.step++; save(); hReplace({hp:"studio",step:S.step}); renderStep(); $("#stBody").scrollTop=0; clearTimeout(toast.k); $("#toast").classList.remove("show"); if(S.step===3) track("AddToCart",{value:total(),currency:"USD",content_id:S.tier}) } else checkout() });
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("#exitModal").classList.contains("open")) closeOffer(); else if($("#shareOv").classList.contains("open")) $("#shareClose").click(); else if($("#unveil").classList.contains("open")) $("#uvClose").click(); else if($("#studio").classList.contains("open")) closeStudio() }});
 function total(){ return tierOf(S.tier).price+(S.bump?BUMP.price:0) }
 function renderStep(){
   /* steps: 1 role, 2 package+name, 3 extras+review, 4 pay confirm */
-  const r=roleOf(S.role), t=tierOf(S.tier), step=Math.max(1,Math.min(4,S.step||1)); S.step=step;
+  const r=roleOf(S.role), t=tierOf(S.tier), step=Math.max(1,Math.min(3,S.step||1)); S.step=step; $("#studio").classList.toggle("compact",step<3);
   $$(".prog i").forEach((i,k)=>i.classList.toggle("done",k<step));
   $("#stCount").textContent=`STEP ${step} OF 4`;
   $("#pvMain").src=img(S.role==="custom"?"monarch":S.role);
   if(PHOTO){ $("#pvCameo").hidden=false; $("#pvCameoImg").src=PHOTO.paint; $("#pvNote").textContent=`Studio sample · ${S.name||"your pet"} in the corner` } else { $("#pvCameo").hidden=true; $("#pvNote").textContent="Studio sample" }
   $("#plRole").textContent=(S.role==="custom"?(S.custom||"Your own idea"):r.name).toUpperCase();
   $("#plName").textContent=(S.name||"Your pet's name").toUpperCase();
-  $("#stSum").innerHTML=`<b>$${total()}</b>${t.name} · ${S.role==="custom"?"Custom role":r.name}${S.name?" · "+esc(S.name):""}`;
+  $("#stSum").innerHTML=`<b>$${total()}</b><span>${t.name} · ${S.role==="custom"?"Custom role":r.name}${S.name?" · "+esc(S.name):""}</span>`;
   const next=$("#stNext"), R=$("#stRight"); R.className="st-right panel"; void R.offsetWidth;
   if(step===1){
     next.innerHTML='Choose a package <span class="arr">→</span>';
@@ -758,7 +788,7 @@ function renderStep(){
       <div class="rgrid" role="radiogroup" aria-label="Portrait role">${ROLES.map(x=>`<button type="button" class="rcard" role="radio" aria-checked="${S.role===x.key}" data-r="${x.key}"><img src="img/${x.key}-320.webp" alt="" loading="lazy" decoding="async"><span>${x.name.replace(/^The /,"")}</span></button>`).join("")}<button type="button" class="rcard custom" role="radio" aria-checked="${S.role==="custom"}" data-r="custom">Your own<br>idea</button></div>
       <div style="display:grid;gap:8px;margin-top:14px" id="customBox" ${S.role==="custom"?"":"hidden"}><label class="lbl2" for="customIn">Describe the role</label><textarea class="inp" id="customIn" maxlength="160" placeholder="e.g. A 1920s jazz singer with a pearl microphone">${esc(S.custom)}</textarea></div>
       ${PHOTO?"":`<label class="btn upl" style="margin-top:18px"><input type="file" class="file-in" ${isInApp?"":'accept="image/*"'} aria-label="Upload a photo">Upload a photo for my free preview</label>`}`;
-    R.querySelector(".rgrid").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b) return; S.role=b.dataset.r; save(); buzz(8); renderStep();
+    R.querySelector(".rgrid").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b) return; S.role=b.dataset.r; save(); buzz(8); renderStep(); { const f=$(`#stRight [data-r="${S.role}"]`); f&&f.focus({preventScroll:true}) }
       const nb=R.querySelector(`[data-r="${S.role}"]`); if(nb){ nb.insertAdjacentHTML("beforeend",'<svg class="ring" viewBox="0 0 100 125" preserveAspectRatio="none"><rect x="2" y="2" width="96" height="121" rx="6"/></svg>') }
       if(S.role==="custom") setTimeout(()=>$("#customIn").focus(),50)});
     const ci=$("#customIn"); if(ci) ci.addEventListener("input",()=>{S.custom=ci.value.trim(); save(); $("#plRole").textContent=(S.custom||"Your own idea").toUpperCase()});
@@ -789,9 +819,8 @@ function renderStep(){
       </div>
       <label class="bump"><input type="checkbox" id="bumpIn" ${S.bump?"checked":""}><span style="flex:1"><b>${BUMP.label}</b><span>${BUMP.sub}</span></span><em>+$${BUMP.price}</em></label>
       <div class="assure"><span>✓ FREE REPAINTS FOR 14 DAYS</span><span>✓ FULL REFUND GUARANTEE</span><span>✓ CARD OR PAYPAL</span></div>`;
-    $("#bumpIn").addEventListener("change",e=>{S.bump=e.target.checked; save(); renderStep()});
+    $("#bumpIn").addEventListener("change",e=>{S.bump=e.target.checked; save(); renderStep(); $("#bumpIn").focus({preventScroll:true})});
   }
-  if(step===4){ S.step=3; renderStep(); checkout() }
 }
 function orderText(){ const r=roleOf(S.role), t=tierOf(S.tier);
   return `Package: ${t.name}${S.bump?" + Christmas card":""}\nRole: ${S.role==="custom"?"Custom: "+(S.custom||"(I'll describe it)"):r.name}\nPet: ${S.pet}\nName for plaque: ${S.name||"-"}` }
@@ -800,7 +829,7 @@ function checkout(){
   track("InitiateCheckout",{value:total(),currency:"USD",content_id:key});
   if(!url){
     const R=$("#stRight"); if(!R.querySelector(".otext")) R.insertAdjacentHTML("beforeend",`<div class="otext"><span class="lbl2">Your order</span><pre>${esc(orderText())}</pre></div>`);
-    toast("Checkout isn't connected yet. Add your payment links in CHECKOUT."); return }
+    toast(CONTACT_EMAIL?`Checkout opens soon. Email this order to ${CONTACT_EMAIL} to reserve your portrait.`:"Checkout opens soon. Your preview and choices are saved on this device."); return }
   if(S.offer&&OFFER.code) toast(`Enter code ${OFFER.code} at checkout.`);
   const p=new URLSearchParams(); if(AD.ttclid) p.set("ttclid",AD.ttclid); AD.utm.forEach(([k,v])=>p.set(k,v));
   try{ navigator.clipboard&&navigator.clipboard.writeText(orderText()).catch(()=>{}) }catch(e){}
@@ -819,7 +848,7 @@ function maybeOffer(){
 function closeOffer(){ $("#exitModal").classList.remove("open"); modalOff() }
 $("#exClose").addEventListener("click",closeOffer);
 $("#exitModal").addEventListener("click",e=>{ if(e.target.id==="exitModal") closeOffer() });
-$("#exGo").addEventListener("click",()=>{ if(OFFER.code&&RETURNING) S.offer=true; closeOffer(); if(PHOTO) openStudio(Math.max(1,S.step||1)); else document.querySelector(".hero .file-in").click() });
+$("#exGo").addEventListener("click",()=>{ if(OFFER.code&&RETURNING) S.offer=true; closeOffer(); if(PHOTO) openStudio(Math.max(1,S.step||1)); else { const v=$$(".file-in").find(i=>i.closest("label")&&i.closest("label").offsetParent); v&&v.click() } });
 document.addEventListener("mouseout",e=>{ if(!e.relatedTarget&&e.clientY<8&&scrollY>200&&!$("#studio").classList.contains("open")) maybeOffer() });
 
 /* ===== Your Privacy Choices: opt out of ad tracking (Global Privacy Control is honoured automatically) ===== */
