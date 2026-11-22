@@ -1,20 +1,21 @@
 <title>Heirloom Paws</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Your pet, painted like royalty. See a free oil-painting preview of your own pet in seconds, then commission the portrait.">
+<meta name="description" content="Your pet, painted as royalty. Tap once, see your own pet as an oil painting in seconds, then commission the portrait.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400;1,6..96,500&family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400;1,6..96,500&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="preload" as="image" href="img/monarch.webp">
 <style>
-/* Layout: a Victorian "salon hang" collage wall opens the page (dozens of frames edge to edge, parallax by depth); every call to action opens the Studio, a full-screen four-step commission flow that ends at checkout. Dark single-theme by design. */
+/* Layout: mobile-first funnel for TikTok traffic. First screen = one tilted hero frame cycling portraits over a salon-wall collage, with a one-tap upload. The upload triggers a full-screen Unveiling (brush reveal, frame drop, gold leaf, nameplate), then the Studio (role try-on, package, review, pay). Dark single-theme by design. */
 :root{
   color-scheme:dark;
   --velvet:#120A0C; --velvet-2:#1C0F13; --velvet-3:#29161C; --wall:#3A0E17;
   --line:rgba(246,233,210,.13); --line-2:rgba(246,233,210,.26);
   --parchment:#F6E9D2; --dust:#B7A58C; --gilt:#D9A94A; --gilt-2:#F2D18A; --ruby:#C2364B; --ok:#8FD3A8;
   --f-display:"Bodoni Moda",Didot,"Times New Roman",serif;
-  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"DM Mono",ui-monospace,Menlo,monospace;
-  --ease:cubic-bezier(.2,.7,.1,1);
+  --ease:cubic-bezier(.2,.7,.1,1); --bounce:cubic-bezier(.34,1.56,.64,1);
   --gold:linear-gradient(135deg,#5E3E10,#F2D18A 18%,#A87A2C 38%,#F7DE9E 58%,#7A5418 80%,#D9A94A);
   --wood:linear-gradient(135deg,#2B1408,#6B3A1A 30%,#3A1C0C 60%,#7A4520 85%,#2B1408);
   --silver:linear-gradient(135deg,#4A4640,#E8E2D4 22%,#8E877A 45%,#F4EFE4 62%,#6A645A 85%,#BDB5A6);
@@ -22,39 +23,47 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--velvet)}
-body{margin:0;background:var(--velvet);color:var(--parchment);font:16.5px/1.65 var(--f-body);
+body{margin:0;background:var(--velvet);color:var(--parchment);font:16px/1.6 var(--f-body);letter-spacing:-.005em;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
 body.locked{overflow:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--velvet)}
 ::selection{background:var(--gilt);color:var(--velvet)}
 a{color:var(--gilt-2)}
 :focus-visible{outline:2px solid var(--gilt);outline-offset:3px;border-radius:4px}
-h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em;font-optical-sizing:auto}
 p{margin:0}
 img{max-width:100%;display:block}
 button{font:inherit;color:inherit}
 .wrap{max-width:1200px;margin-inline:auto}
 .bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
 .bleed>.wrap{padding-inline:max(16px,env(safe-area-inset-left,0px))}
-.eyebrow{font:500 11.5px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gilt)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;border-radius:999px;padding:16px 28px;font:700 15.5px var(--f-body);text-decoration:none;cursor:pointer;border:1px solid var(--line-2);color:var(--parchment);background:transparent;transition:background .3s var(--ease),border-color .3s,filter .3s,transform .2s}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gilt)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;border-radius:999px;padding:17px 28px;font:600 16px var(--f-body);text-decoration:none;cursor:pointer;border:1px solid var(--line-2);color:var(--parchment);background:transparent;transition:background .3s var(--ease),border-color .3s,filter .3s,transform .09s}
 .btn:hover{border-color:var(--parchment)}
-.btn:active{transform:translateY(1px)}
+.btn:active{transform:scale(.97)}
 .btn.gold{background:linear-gradient(180deg,var(--gilt-2),var(--gilt));color:#22140A;border-color:transparent;box-shadow:0 12px 34px -10px rgba(217,169,74,.65)}
 .btn.gold:hover{filter:brightness(1.07)}
 .btn[disabled]{opacity:.4;pointer-events:none}
 .btn .arr{transition:transform .3s var(--ease)}
 .btn:hover .arr{transform:translateX(4px)}
-.pulse{animation:pulse 2.4s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 12px 34px -10px rgba(217,169,74,.65),0 0 0 0 rgba(242,209,138,.45)}60%{box-shadow:0 12px 34px -10px rgba(217,169,74,.65),0 0 0 14px rgba(242,209,138,0)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.plate{display:inline-block;min-width:180px;max-width:92%;text-align:center;padding:9px 22px;background:linear-gradient(180deg,#F2D18A,#B8892F 55%,#8F6420);color:#2A1806;border-radius:3px;box-shadow:0 8px 20px -8px #000,inset 0 1px 0 rgba(255,255,255,.5);font:600 14px var(--f-display);letter-spacing:.16em;text-transform:uppercase;font-variant:small-caps;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 rgba(255,255,255,.4),0 -1px 0 rgba(0,0,0,.35)}
+.plate small{display:block;font:500 9px var(--f-mono);letter-spacing:.22em;opacity:.75;text-shadow:none}
+
+/* frames */
+.fr{position:relative;padding:var(--b,12px);background:var(--gold);box-shadow:0 26px 40px -18px rgba(0,0,0,.95),0 6px 10px -4px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.45);overflow:hidden}
+.fr::before{content:"";position:absolute;inset:calc(var(--b,12px)*.45);border:1px solid rgba(40,24,6,.6);pointer-events:none;z-index:2}
+.fr::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,240,200,.28) 50%,transparent 60%);background-size:300% 100%;background-position:150% 0;animation:sheen 7s var(--ease) infinite;animation-delay:var(--sd,0s)}
+@keyframes sheen{0%,78%{background-position:150% 0}100%{background-position:-60% 0}}
+.fr img{width:100%;height:100%;object-fit:cover}
+.fr.wood{background:var(--wood)} .fr.silver{background:var(--silver)}
+.fr.oval,.fr.oval img,.fr.oval::before{border-radius:50%}
 
 /* header */
-.top{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;z-index:20;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
-.top{background:linear-gradient(rgba(12,4,6,.88),rgba(12,4,6,0))}
-.top.solid{background:rgba(18,10,12,.84);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
-.top .wrap{display:flex;align-items:center;gap:24px;padding-block:14px;padding-inline:max(16px,env(safe-area-inset-left,0px))}
-.logo{font:italic 500 24px var(--f-display);color:var(--parchment);text-decoration:none}
+.top{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;z-index:20;background:linear-gradient(rgba(12,4,6,.85),rgba(12,4,6,0));transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+.top.solid{background:rgba(18,10,12,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;padding-block:12px;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.logo{font:italic 500 23px var(--f-display);color:var(--parchment);text-decoration:none}
 .logo b{font-style:normal;font-weight:600;color:var(--gilt)}
 .top nav{display:flex;gap:28px;margin-inline-start:auto}
 .top nav a{color:var(--dust);text-decoration:none;font-size:14px}
@@ -62,118 +71,111 @@ button{font:inherit;color:inherit}
 .top .btn{padding:10px 18px;font-size:14px}
 @media (max-width:860px){.top nav{display:none}.top .btn{margin-inline-start:auto}}
 
-/* ===== salon wall collage ===== */
-.salon{position:relative;height:max(760px,100svh);overflow:hidden;isolation:isolate;background:
-  radial-gradient(70% 55% at 50% 0%,rgba(255,190,120,.18),transparent 70%),
-  repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 6px),
-  linear-gradient(180deg,#4A1220,var(--wall) 40%,#22070D)}
-.wall{position:absolute;inset:-12% -14%;pointer-events:none}
+/* ===== hero ===== */
+.hero{position:relative;min-height:max(720px,100svh);overflow:hidden;isolation:isolate;background:
+  radial-gradient(70% 55% at 50% 0%,rgba(255,190,120,.2),transparent 70%),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 6px),linear-gradient(180deg,#4A1220,var(--wall) 40%,#22070D)}
+.wall{position:absolute;inset:-10% -12%;pointer-events:none;z-index:-1}
 .layer{position:absolute;inset:0;will-change:transform}
-.fr{position:absolute;padding:var(--b,12px);background:var(--gold);box-shadow:0 26px 40px -18px rgba(0,0,0,.95),0 6px 10px -4px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.45);transform:rotate(var(--r,0deg))}
-.fr::before{content:"";position:absolute;inset:calc(var(--b,12px)*.45);border:1px solid rgba(40,24,6,.6);pointer-events:none}
-.fr img{width:100%;height:100%;object-fit:cover;filter:brightness(var(--lit,.9)) saturate(.95)}
-.fr.wood{background:var(--wood)} .fr.silver{background:var(--silver)}
-.fr.oval{border-radius:50%} .fr.oval img{border-radius:50%} .fr.oval::before{border-radius:50%}
-.salon::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
-  radial-gradient(48% 46% at 50% 52%,rgba(12,4,6,.92) 0%,rgba(12,4,6,.75) 45%,rgba(12,4,6,.15) 75%,transparent 100%),
-  linear-gradient(to top,var(--velvet) 0%,transparent 22%)}
-.salon-ui{position:relative;z-index:2;height:100%;display:grid;place-items:center;text-align:center;padding-block:110px 60px}
-.salon-ui .inner{max-width:760px;display:grid;justify-items:center;gap:22px}
-.salon h1{font-size:clamp(50px,8.4vw,128px);line-height:.92}
-.salon h1 i{color:var(--gilt-2)}
-.salon h1 .l{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.04em}
-.salon h1 .l>span{display:inline-block;animation:rise 1.2s var(--ease) both}
-.salon h1 .l:nth-child(2)>span{animation-delay:.12s}
-@keyframes rise{from{transform:translateY(108%)}to{transform:none}}
-.salon .sub{font-size:clamp(16px,1.5vw,19px);color:#E2D2B8;max-width:46ch}
-.salon .sub b{color:var(--parchment)}
-.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;font:500 12px var(--f-mono);letter-spacing:.06em;color:var(--dust);text-transform:uppercase}
-.trust-row span::before{content:"✦ ";color:var(--gilt)}
-@media (max-width:700px){.salon{height:auto;min-height:max(760px,100svh)}.salon-ui{padding-top:120px}}
+.wall .fr{position:absolute;transform:rotate(var(--r,0deg))}
+.wall .fr img{filter:brightness(var(--lit,.9))}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60% 55% at 50% 48%,rgba(12,4,6,.78),rgba(12,4,6,.45) 60%,rgba(12,4,6,.1) 100%),linear-gradient(to top,var(--velvet) 0%,transparent 26%)}
+.hero-grid{min-height:max(720px,100svh);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:48px;align-items:center;padding-block:96px 48px}
+.hero-copy{display:grid;gap:22px;justify-items:start}
+.hero h1{font-size:clamp(46px,7vw,108px);line-height:.95}
+.hero h1 i{color:var(--gilt-2);font-style:italic}
+.hero .sub{font-size:18px;color:#E6D7BE;max-width:34ch}
+.hero .small{font:500 12px var(--f-mono);letter-spacing:.06em;color:var(--dust)}
+.upl{position:relative;overflow:hidden}
+.upl input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.inapp{font-size:13px;color:var(--gilt-2);border:1px dashed var(--gilt);border-radius:10px;padding:10px 12px;max-width:36ch}
+.stage{position:relative;justify-self:center;width:min(100%,420px);perspective:900px}
+.hframe{--b:20px;transform:rotate(-3deg);transition:transform .6s var(--ease)}
+.hframe .cv{position:relative;aspect-ratio:4/5;overflow:hidden;background:#000}
+.hframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 1s ease}
+.stage .plate{position:absolute;left:50%;bottom:-18px;transform:translateX(-50%) rotate(-3deg);z-index:4}
+.stage .stamp{position:absolute;top:-14px;right:-10px;z-index:5;width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d4475b,#8e1a2c 70%);color:#F6E9D2;display:grid;place-items:center;text-align:center;font:600 10px/1.15 var(--f-mono);letter-spacing:.08em;transform:rotate(12deg);box-shadow:0 10px 20px -6px rgba(0,0,0,.7),inset 0 0 0 3px rgba(255,255,255,.12)}
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:26px;padding-block:78px 120px;align-content:start;text-align:center}
+  .hero-copy{justify-items:center;order:2}
+  .stage{order:1;width:62vw;max-width:300px;margin-top:8px}
+  .hframe{--b:14px}
+  .hero h1{font-size:clamp(42px,12.5vw,64px)}
+  .hero .sub{font-size:16px}
+  .hero .desk-cta{display:none}
+}
+@media (min-width:861px){.hero .mob-cta{display:none}}
+@media (min-width:861px){.hero::after{background:linear-gradient(90deg,rgba(12,4,6,.9) 0%,rgba(12,4,6,.72) 38%,rgba(12,4,6,.2) 62%,transparent 80%),linear-gradient(to top,var(--velvet) 0%,transparent 26%)}}
+.thumbbar{position:fixed;inset:auto 0 0;z-index:19;padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(12,4,6,.95) 30%)}
+.thumbbar .btn{width:100%}
+.thumbbar small{display:block;text-align:center;font:500 11px var(--f-mono);color:var(--dust);margin-top:6px;letter-spacing:.06em}
+@media (min-width:861px){.thumbbar{display:none}}
 
-/* ticker */
-.ticker{border-block:1px solid var(--line);overflow:hidden;padding-block:16px;background:var(--velvet-2)}
-.ttrack{display:flex;gap:40px;width:max-content;animation:mq 50s linear infinite}
+/* return banner */
+.back-banner{position:fixed;z-index:21;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:var(--velvet-2);border:1px solid var(--gilt);border-radius:999px;padding:6px 6px 6px 8px;box-shadow:0 20px 40px -14px #000;max-width:calc(100% - 32px);animation:drop .6s var(--bounce)}
+.back-banner img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gilt)}
+.back-banner span{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back-banner button{flex:none;border:0;border-radius:999px;background:var(--gilt);color:#22140A;font-weight:700;padding:8px 14px;cursor:pointer}
+@keyframes drop{from{transform:translate(-50%,-30px);opacity:0}}
+
+/* ticker + delivery strip */
+.ticker{border-block:1px solid var(--line);overflow:hidden;padding-block:14px;background:var(--velvet-2)}
+.ttrack{display:flex;gap:40px;width:max-content;animation:mq 55s linear infinite}
 @keyframes mq{to{transform:translateX(-50%)}}
-.ttrack span{font:italic 400 22px var(--f-display);white-space:nowrap;color:var(--dust);display:flex;align-items:center;gap:40px}
-.ttrack span::after{content:"✦";font-style:normal;font-size:12px;color:var(--gilt)}
+.ttrack span{font:italic 400 21px var(--f-display);white-space:nowrap;color:var(--dust);display:flex;align-items:center;gap:40px}
+.ttrack span::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--gilt)}
+.eta{border-bottom:1px solid var(--line)}
+.eta .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 30px;padding-block:16px;font-size:15px;color:var(--dust);text-align:center}
+.eta b{color:var(--parchment);font-weight:600}
+.eta .xmas{color:var(--gilt-2)}
 
-/* deadline */
-.deadline{border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(194,54,75,.2),transparent 60%)}
-.deadline .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:14px 34px;padding-block:20px}
-.deadline .lbl{font:600 15px var(--f-body)}
-.deadline .lbl span{color:var(--ruby);font:500 11px var(--f-mono);letter-spacing:.16em;display:block;margin-bottom:2px}
-.clock{display:flex;gap:20px}
-.clock div{display:grid;text-align:center}
-.clock b{font:400 30px/1 var(--f-mono);font-variant-numeric:tabular-nums}
-.clock small{font:400 10px var(--f-mono);letter-spacing:.14em;color:var(--dust);margin-top:5px}
-.deadline .btn{margin-inline-start:auto;padding:12px 22px}
-@media (max-width:640px){.deadline .btn{margin-inline-start:0;width:100%}}
-
-section{padding-block:120px}
-@media (max-width:640px){section{padding-block:80px}}
-.head{display:grid;gap:18px;margin-bottom:48px;max-width:820px}
-.head h2{font-size:clamp(40px,6vw,84px);line-height:1}
+section{padding-block:110px}
+@media (max-width:640px){section{padding-block:76px}}
+.head{display:grid;gap:14px;margin-bottom:44px;max-width:780px}
+.head h2{font-size:clamp(38px,6vw,80px);line-height:1}
 .head h2 i{color:var(--gilt-2)}
-.head p{color:var(--dust);font-size:17.5px;max-width:56ch}
-
-/* preview teaser */
-.teaser .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:60px;align-items:center}
-@media (max-width:900px){.teaser .wrap{grid-template-columns:minmax(0,1fr);gap:40px}}
-.ba{position:relative;width:min(100%,460px);justify-self:center;padding:20px;background:var(--gold);box-shadow:0 50px 90px -30px #000}
-.ba .canvas{position:relative;aspect-ratio:4/5;overflow:hidden;background:#000}
-.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ba .photo{filter:saturate(.55) contrast(.9) brightness(1.05);clip-path:inset(0 calc(100% - var(--x,50%)) 0 0)}
-.ba .handle{position:absolute;top:0;bottom:0;left:var(--x,50%);width:2px;background:var(--gilt-2);transform:translateX(-1px)}
-.ba .handle::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--gilt-2);color:#22140A;display:grid;place-items:center;font-size:18px;box-shadow:0 6px 16px rgba(0,0,0,.5)}
-.ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
-.ba .tagL,.ba .tagR{position:absolute;top:12px;font:500 10.5px var(--f-mono);letter-spacing:.14em;background:rgba(0,0,0,.6);padding:4px 9px;border-radius:999px}
-.ba .tagL{left:12px} .ba .tagR{right:12px;color:var(--gilt-2)}
-.teaser ul{list-style:none;margin:28px 0 34px;padding:0;display:grid;gap:14px}
-.teaser li{display:grid;grid-template-columns:34px 1fr;gap:12px;font-size:16px;color:#DCCBB0}
-.teaser li b{font:500 12px var(--f-mono);color:var(--gilt);padding-top:3px}
-.note{font-size:13px;color:var(--dust)}
+.head p{color:var(--dust);font-size:17px;max-width:50ch}
 
 /* collection collage */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
 .chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:9px 16px;font:500 14px var(--f-body);cursor:pointer;color:var(--dust);transition:.2s}
 .chip[aria-pressed="true"]{background:var(--parchment);color:var(--velvet);border-color:var(--parchment)}
 .chip small{font-family:var(--f-mono);opacity:.7;margin-inline-start:6px}
-.collage{columns:4 220px;column-gap:22px}
-.piece{break-inside:avoid;margin:0 0 22px;position:relative;cursor:pointer;display:block;width:100%;text-align:start;background:none;border:0;padding:0}
-.piece .fr{position:relative;transform:none;--b:11px}
-.piece .fr img{aspect-ratio:var(--ar,4/5);height:auto;transition:transform 1s var(--ease),filter .4s}
-.piece .fr{overflow:hidden}
-.piece:hover .fr img{transform:scale(1.07);filter:brightness(1.05)}
-.piece .cap{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;gap:8px}
-.piece h3{font-size:21px}
-.piece .cat{font:500 11px var(--f-mono);letter-spacing:.08em;color:var(--dust);text-transform:uppercase}
-.piece .go{position:absolute;inset:auto 18px 54px 18px;opacity:0;transform:translateY(8px);transition:.35s var(--ease);background:rgba(18,10,12,.85);backdrop-filter:blur(6px);border:1px solid var(--line-2);border-radius:999px;padding:10px;text-align:center;font:700 13.5px var(--f-body)}
-.piece:hover .go,.piece:focus-visible .go{opacity:1;transform:none}
-.dream{break-inside:avoid;margin:0 0 22px;border:1px dashed var(--gilt);border-radius:4px;padding:30px 24px;display:grid;gap:14px;background:rgba(217,169,74,.05);cursor:pointer;text-align:start;width:100%}
-.dream h3{font-size:30px;line-height:1.05}
-.dream p{color:var(--dust);font-size:15px}
-.dream span{font:700 14px var(--f-body);color:var(--gilt-2)}
+.collage{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:120px;grid-auto-flow:dense;gap:26px 22px;padding:10px}
+@media (max-width:900px){.collage{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:96px;gap:20px 14px}}
+@media (max-width:560px){.collage{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:110px;gap:22px 14px}}
+.piece{position:relative;grid-column:span 2;grid-row:span 3;cursor:pointer;background:none;border:0;padding:0;transform:rotate(var(--r,0deg));transition:transform .4s var(--ease);perspective:800px}
+.piece.big{grid-column:span 2;grid-row:span 4} .piece.wide{grid-column:span 3;grid-row:span 4}
+@media (max-width:560px){.piece,.piece.big{grid-column:span 1;grid-row:span 2}.piece.wide{grid-column:span 2;grid-row:span 3}}
+.piece .fr{height:100%;--b:11px;transition:transform .4s var(--ease),box-shadow .4s}
+.piece:hover .fr,.piece:focus-visible .fr{transform:translateY(-6px) scale(1.02);box-shadow:0 40px 60px -20px #000}
+.piece .label{position:absolute;z-index:5;left:10%;bottom:-14px;background:#EFE2C6;color:#2A1806;font:italic 500 17px var(--f-display);padding:6px 16px 7px;clip-path:polygon(2% 8%,98% 0,100% 88%,4% 100%,0 50%);box-shadow:0 6px 12px -4px rgba(0,0,0,.6);transform:rotate(-2deg);white-space:nowrap}
+.piece .seal{position:absolute;z-index:6;top:-12px;right:-8px;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d4475b,#8e1a2c 70%);display:grid;place-items:center;font:600 8.5px/1.1 var(--f-mono);letter-spacing:.06em;color:#F6E9D2;text-align:center;transform:rotate(10deg)}
+.dream{grid-column:span 2;grid-row:span 3;border:1.5px dashed var(--gilt);border-radius:4px;padding:24px;display:grid;align-content:center;gap:12px;background:rgba(217,169,74,.06);cursor:pointer;text-align:start;transform:rotate(1.5deg)}
+@media (max-width:560px){.dream{grid-column:span 2;grid-row:span 2}}
+.dream h3{font-size:28px;line-height:1.05;font-style:italic}
+.dream p{color:var(--dust);font-size:14.5px}
+.dream span{font-weight:700;color:var(--gilt-2)}
 
-/* steps + tiers */
-.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2)}
-@media (max-width:860px){.steps{grid-template-columns:minmax(0,1fr)}}
-.step{padding:30px 32px 10px 0;display:grid;gap:10px;align-content:start;border-inline-end:1px solid var(--line)}
-.step:last-child{border-inline-end:0}
-@media (max-width:860px){.step{border-inline-end:0;border-bottom:1px solid var(--line);padding:24px 0}}
-.step .n{font:400 13px var(--f-mono);color:var(--gilt)}
-.step h3{font-size:32px;line-height:1.05}
-.step p{color:var(--dust);font-size:15.5px;max-width:34ch}
+/* receive strip */
+.receive{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.receive{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rc{border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:8px;background:var(--velvet-2)}
+.rc b{font:400 22px var(--f-display)}
+.rc span{color:var(--dust);font-size:14px}
+.rc em{font:normal 500 11px var(--f-mono);color:var(--gilt);letter-spacing:.08em}
+.founder{margin-top:28px;display:flex;gap:16px;align-items:flex-start;max-width:680px;color:var(--dust);font-size:15px}
+.founder b{color:var(--parchment);font-weight:600}
+
+/* tiers */
 .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
 @media (max-width:960px){.tiers{grid-template-columns:minmax(0,1fr)}}
-.tier{position:relative;border:1px solid var(--line-2);border-radius:10px;padding:30px;display:flex;flex-direction:column;gap:16px;background:var(--velvet);text-align:start;min-width:0;cursor:pointer;transition:border-color .25s,background .25s,transform .25s var(--ease)}
+.tier{position:relative;border:1px solid var(--line-2);border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px;background:var(--velvet);text-align:start;cursor:pointer;transition:border-color .25s,transform .25s var(--ease)}
 .tier:hover{transform:translateY(-3px)}
 .tier.pop{border-color:var(--gilt);background:linear-gradient(180deg,rgba(217,169,74,.13),transparent 55%),var(--velvet-2)}
 .tier .tag{position:absolute;top:-11px;left:24px;font:500 10.5px var(--f-mono);letter-spacing:.14em;background:var(--gilt);color:#22140A;padding:4px 10px;border-radius:999px}
-.tier h3{font-size:28px}
-.tier .pr{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:16px}
-.tier .pr b{font:400 56px/1 var(--f-display)}
-.tier .pr s{color:var(--dust);font:400 16px var(--f-mono)}
+.tier h3{font-size:28px;font-style:italic}
+.tier .pr{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.tier .pr b{font:400 54px/1 var(--f-display)}
 .tier .pr em{font:normal 500 12px var(--f-mono);color:var(--ok)}
 .tier ul{margin:0;padding:0;list-style:none;display:grid;gap:9px;flex:1}
 .tier li{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:15px;color:#DCCBB0}
@@ -183,228 +185,214 @@ section{padding-block:120px}
 /* guarantee + faq */
 .guar{border-block:1px solid var(--line);background:var(--velvet-2)}
 .guar .wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:40px;align-items:center}
-@media (max-width:760px){.guar .wrap{grid-template-columns:minmax(0,1fr);gap:24px}}
-.seal{width:150px;height:150px;border-radius:50%;background:var(--gold);display:grid;place-items:center;text-align:center;color:#2A1806;box-shadow:0 20px 40px -14px #000;font:600 13px/1.2 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:18px}
-.seal b{display:block;font:400 34px/1 var(--f-display)}
-.guar h2{font-size:clamp(32px,4vw,52px);line-height:1.08}
-.guar p{color:var(--dust);margin-top:12px;max-width:62ch}
-.faq{max-width:880px;border-top:1px solid var(--line)}
+@media (max-width:760px){.guar .wrap{grid-template-columns:minmax(0,1fr);gap:22px;justify-items:start}}
+.seal-big{width:140px;height:140px;border-radius:50%;background:var(--gold);display:grid;place-items:center;text-align:center;color:#2A1806;box-shadow:0 20px 40px -14px #000;font:600 12px/1.2 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:18px}
+.seal-big b{display:block;font:400 32px/1 var(--f-display)}
+.guar h2{font-size:clamp(30px,4vw,50px);line-height:1.08}
+.guar p{color:var(--dust);margin-top:10px;max-width:60ch}
+.faq{max-width:860px;border-top:1px solid var(--line)}
 .faq details{border-bottom:1px solid var(--line);padding-block:20px}
-.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font:400 23px var(--f-display)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font:400 22px var(--f-display)}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";font:300 26px/1 var(--f-mono);color:var(--gilt);transition:transform .3s var(--ease)}
 .faq details[open] summary::after{transform:rotate(45deg)}
-.faq p{color:var(--dust);margin-top:12px;max-width:66ch}
-.final{text-align:center;padding-block:140px 120px}
-.final h2{font-size:clamp(48px,8vw,120px);line-height:.95}
+.faq p{color:var(--dust);margin-top:12px;max-width:64ch}
+.final{text-align:center;padding-block:130px 120px}
+.final h2{font-size:clamp(46px,8vw,116px);line-height:.95}
 .final h2 i{color:var(--gilt-2)}
-.final p{color:var(--dust);margin:22px auto 34px;max-width:46ch;font-size:17px}
-footer{border-top:1px solid var(--line);padding-block:30px 110px;color:var(--dust);font-size:13px}
+.final p{color:var(--dust);margin:20px auto 32px;max-width:40ch;font-size:17px}
+footer{border-top:1px solid var(--line);padding-block:30px 130px;color:var(--dust);font-size:13px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 
-/* sticky cta */
-.dock{position:fixed;inset-inline:0;bottom:0;z-index:18;background:rgba(28,15,19,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line-2);transform:translateY(110%);transition:transform .45s var(--ease);padding-bottom:env(safe-area-inset-bottom,0px)}
-.dock.show{transform:none}
-.dock .wrap{display:flex;align-items:center;gap:14px;padding-block:12px;padding-inline:max(16px,env(safe-area-inset-left,0px))}
-.dock .di{flex:1;min-width:0;line-height:1.3}
-.dock .di b{display:block;font:400 18px var(--f-display)}
-.dock .di span{font:400 12px var(--f-mono);color:var(--dust)}
-.dock .btn{padding:12px 20px}
+/* ===== UNVEILING ===== */
+.unveil{position:fixed;inset:0;z-index:55;background:radial-gradient(70% 60% at 50% 40%,#3a0e17,#0b0506 75%);display:grid;place-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:auto}
+.unveil.open{opacity:1;visibility:visible}
+.unveil.shake{animation:shake .12s linear 2}
+@keyframes shake{25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}}
+.uv-in{display:grid;justify-items:center;gap:16px;width:min(100%,420px)}
+.uv-status{font:500 11.5px var(--f-mono);letter-spacing:.18em;color:var(--gilt);text-transform:uppercase;min-height:1.4em}
+.uv-frame{--b:18px;width:min(78vw,360px);transform:translateY(-120vh) rotate(-4deg)}
+.uv-frame.dropin{transition:transform .65s var(--bounce);transform:rotate(-1.5deg)}
+.uv-frame .cv{position:relative;aspect-ratio:4/5;overflow:hidden;background:#000}
+.uv-frame canvas{position:absolute;inset:0;width:100%;height:100%}
+.uv-plate{transform:translateY(16px);opacity:0;transition:transform .5s var(--ease),opacity .5s}
+.uv-plate.up{transform:none;opacity:1}
+.uv-ask{display:grid;gap:10px;width:100%;opacity:0;transform:translateY(10px);transition:.5s var(--ease)}
+.uv-ask.show{opacity:1;transform:none}
+.uv-ask label{font:400 22px var(--f-display);text-align:center;font-style:italic}
+.inp{width:100%;background:var(--velvet-3);border:1px solid var(--line-2);color:var(--parchment);border-radius:12px;padding:14px 16px;font:16px var(--f-body);text-align:center}
+.inp:focus{outline:none;border-color:var(--gilt)}
+.uv-acts{display:grid;grid-template-columns:auto 1fr;gap:10px}
+.uv-acts .btn{padding:15px 18px}
+#leaf{position:fixed;inset:0;z-index:56;pointer-events:none;width:100%;height:100%}
 
-/* ===== STUDIO (full-screen commission flow) ===== */
-.studio{position:fixed;inset:0;z-index:50;background:var(--velvet);display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;
-  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* share overlay */
+.shareov{position:fixed;inset:0;z-index:58;background:rgba(8,4,5,.92);display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:.3s}
+.shareov.open{opacity:1;visibility:visible}
+.shareov .in{display:grid;gap:12px;justify-items:center;max-width:360px}
+.shareov img{max-height:70vh;width:auto;border-radius:8px;box-shadow:0 30px 60px -20px #000}
+.shareov p{color:var(--dust);font-size:14px;text-align:center}
+
+/* ===== STUDIO ===== */
+.studio{position:fixed;inset:0;z-index:50;background:var(--velvet);display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .studio.open{opacity:1;visibility:visible}
-.st-top{display:flex;align-items:center;gap:18px;padding:14px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.st-top{display:flex;align-items:center;gap:16px;padding:12px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
 .st-top .logo{font-size:20px}
-.prog{flex:1;display:flex;gap:6px;max-width:560px;margin-inline:auto}
+.prog{flex:1;display:flex;gap:6px;max-width:520px;margin-inline:auto}
 .prog i{flex:1;height:4px;border-radius:4px;background:var(--line-2);position:relative;overflow:hidden}
 .prog i::after{content:"";position:absolute;inset:0;background:var(--gilt);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
 .prog i.done::after{transform:none}
-.st-step{font:500 11.5px var(--f-mono);color:var(--dust);letter-spacing:.1em;white-space:nowrap}
-@media (max-width:620px){.st-step,.st-top .logo{display:none}.st-top{gap:12px}}
+.st-step{font:500 11px var(--f-mono);color:var(--dust);letter-spacing:.1em;white-space:nowrap}
 .x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line-2);background:transparent;cursor:pointer;font-size:18px;display:grid;place-items:center;flex:none}
-.st-body{overflow:auto;padding:28px max(16px,env(safe-area-inset-left,0px)) 28px}
-.st-grid{max-width:1180px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:start}
-@media (max-width:900px){.st-grid{grid-template-columns:minmax(0,1fr);gap:24px}}
+@media (max-width:620px){.st-step,.st-top .logo{display:none}}
+.st-body{overflow:auto;padding:24px max(16px,env(safe-area-inset-left,0px))}
+.st-grid{max-width:1160px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:44px;align-items:start}
+@media (max-width:900px){.st-grid{grid-template-columns:minmax(0,1fr);gap:22px}}
 .st-left{position:sticky;top:0;display:grid;gap:14px;justify-items:center}
 @media (max-width:900px){.st-left{position:static}}
-.pv{position:relative;width:min(100%,400px);padding:20px;background:var(--gold);box-shadow:0 44px 80px -30px #000}
-@media (max-width:900px){.pv{width:min(72%,300px);padding:14px}}
-.pv::before{content:"";position:absolute;inset:10px;border:2px solid rgba(60,36,8,.5);pointer-events:none;z-index:3}
+.pv{--b:20px;width:min(100%,380px)}
+@media (max-width:900px){.pv{width:min(64%,270px);--b:13px}}
 .pv .cv{position:relative;aspect-ratio:4/5;overflow:hidden;background:#140a06}
-.pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pv .raw{z-index:2;-webkit-mask-image:linear-gradient(100deg,#000 40%,transparent 60%);mask-image:linear-gradient(100deg,#000 40%,transparent 60%);-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-position:0% 0;mask-position:0% 0}
-.pv .raw.go{transition:-webkit-mask-position 2.4s var(--ease),mask-position 2.4s var(--ease);-webkit-mask-position:100% 0;mask-position:100% 0}
-.pv .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--dust);font-size:14px;background:repeating-linear-gradient(45deg,#1e120c 0 10px,#1a0f0a 10px 20px)}
-.pv .badge{position:absolute;z-index:4;left:50%;bottom:-16px;transform:translateX(-50%);white-space:nowrap;font:500 10.5px var(--f-mono);letter-spacing:.12em;background:var(--velvet);border:1px solid var(--gilt);color:var(--gilt-2);padding:5px 12px;border-radius:999px}
-.plate{min-width:190px;max-width:90%;text-align:center;padding:9px 20px;margin-top:12px;background:linear-gradient(180deg,#F2D18A,#B8892F 55%,#8F6420);color:#2A1806;border-radius:3px;box-shadow:0 8px 20px -8px #000,inset 0 1px 0 rgba(255,255,255,.5);font:600 14px var(--f-display);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.plate small{display:block;font:500 9px var(--f-mono);letter-spacing:.2em;opacity:.7}
-.rolemini{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--dust)}
-.rolemini img{width:44px;height:55px;object-fit:cover;border:3px solid #B8892F}
-.st-right h2{font-size:clamp(32px,4vw,52px);line-height:1.05}
-.st-right .lead{color:var(--dust);margin:10px 0 24px;max-width:52ch}
-.drop{position:relative;border:1.5px dashed var(--gilt);border-radius:14px;padding:38px 22px;text-align:center;display:grid;gap:10px;justify-items:center;background:rgba(217,169,74,.05);transition:background .2s}
-.drop.over{background:rgba(217,169,74,.14)}
-.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.drop b{font:400 24px var(--f-display)}
-.drop span{color:var(--dust);font-size:14px}
-.drop .ic{width:54px;height:54px;border-radius:50%;background:var(--gilt);display:grid;place-items:center;color:#22140A;font-size:24px}
-.tips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
-@media (max-width:520px){.tips{grid-template-columns:minmax(0,1fr)}}
-.tips div{border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;color:var(--dust)}
-.tips b{display:block;color:var(--parchment);font-size:13.5px;margin-bottom:2px}
-.skip{background:none;border:0;color:var(--dust);text-decoration:underline;text-underline-offset:3px;cursor:pointer;margin-top:14px;font-size:14px}
+.pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+.pv .cameo{position:absolute;z-index:4;right:8px;bottom:8px;width:34%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid #E2B44E;box-shadow:0 8px 16px rgba(0,0,0,.6)}
+.pv .cameo img{position:static;width:100%;height:100%;object-fit:cover}
+.pv-note{font:500 10.5px var(--f-mono);letter-spacing:.1em;color:var(--dust);text-transform:uppercase;text-align:center}
+.st-right h2{font-size:clamp(30px,4vw,50px);line-height:1.05}
+.st-right .lead{color:var(--dust);margin:10px 0 22px;max-width:50ch}
 .rgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 @media (max-width:620px){.rgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}}
 .rcard{position:relative;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;background:#000;padding:0;transition:border-color .2s,transform .2s}
-.rcard:hover{transform:translateY(-2px)}
 .rcard img{aspect-ratio:4/5;object-fit:cover;width:100%;filter:saturate(.8) brightness(.82);transition:filter .3s}
 .rcard span{position:absolute;inset:auto 0 0;padding:18px 6px 7px;background:linear-gradient(transparent,rgba(0,0,0,.88));font:500 11.5px var(--f-mono);text-align:center}
 .rcard[aria-checked="true"]{border-color:var(--gilt)}
 .rcard[aria-checked="true"] img,.rcard:hover img{filter:none}
 .rcard[aria-checked="true"]::after{content:"✓";position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--gilt);color:#22140A;display:grid;place-items:center;font-size:13px;font-weight:700}
 .rcard.custom{display:grid;place-items:center;border:1.5px dashed var(--gilt);aspect-ratio:4/5;background:rgba(217,169,74,.06);color:var(--gilt-2);font:700 13px var(--f-body);text-align:center;padding:10px}
-.customin{margin-top:14px;display:grid;gap:8px}
-.inp{width:100%;background:var(--velvet-3);border:1px solid var(--line);color:var(--parchment);border-radius:12px;padding:14px 16px;font:16px var(--f-body)}
-.inp:focus{outline:none;border-color:var(--gilt)}
-textarea.inp{min-height:84px;resize:vertical}
-.lbl2{font:500 11.5px var(--f-mono);letter-spacing:.12em;color:var(--dust);text-transform:uppercase}
+textarea.inp{min-height:84px;resize:vertical;text-align:start}
+.lbl2{font:500 11px var(--f-mono);letter-spacing:.12em;color:var(--dust);text-transform:uppercase}
 .opts{display:grid;gap:12px}
 .opt{position:relative;border:1px solid var(--line-2);border-radius:12px;padding:18px 20px;cursor:pointer;display:grid;grid-template-columns:22px 1fr auto;gap:14px;align-items:start;text-align:start;background:transparent;width:100%;transition:border-color .2s,background .2s}
 .opt[aria-checked="true"]{border-color:var(--gilt);background:rgba(217,169,74,.08)}
 .opt .rd{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line-2);margin-top:3px;display:grid;place-items:center}
 .opt[aria-checked="true"] .rd{border-color:var(--gilt)}
 .opt[aria-checked="true"] .rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--gilt)}
-.opt b{font:400 22px var(--f-display);display:block}
+.opt b{font:italic 400 22px var(--f-display);display:block}
 .opt p{color:var(--dust);font-size:14px;margin-top:2px}
 .opt .pr{font:400 22px var(--f-mono);text-align:end}
-.opt .pr s{display:block;font-size:13px;color:var(--dust)}
+.opt .pr small{display:block;font-size:11.5px;color:var(--ok)}
 .opt .tag{position:absolute;top:-10px;right:18px;font:500 10px var(--f-mono);letter-spacing:.14em;background:var(--gilt);color:#22140A;padding:3px 9px;border-radius:999px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:10px 18px;cursor:pointer;font-size:14.5px}
 .seg button[aria-checked="true"]{background:var(--parchment);color:var(--velvet);border-color:var(--parchment)}
+.bump{display:flex;gap:14px;align-items:flex-start;border:1.5px dashed var(--gilt);border-radius:12px;padding:16px;background:rgba(217,169,74,.06);cursor:pointer;margin-top:16px}
+.bump input{width:20px;height:20px;accent-color:var(--gilt);margin-top:2px;flex:none}
+.bump b{display:block;font-weight:600}
+.bump span{color:var(--dust);font-size:14px}
+.bump em{font:normal 500 15px var(--f-mono);color:var(--gilt-2);margin-inline-start:auto;flex:none}
 .review{display:grid;gap:8px;border:1px solid var(--line);border-radius:14px;padding:20px}
 .rrow{display:flex;justify-content:space-between;gap:14px;font-size:15px;color:var(--dust)}
 .rrow b{color:var(--parchment);font-weight:500;text-align:end}
 .rtotal{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
 .rtotal span{font:500 12px var(--f-mono);letter-spacing:.14em;color:var(--dust)}
 .rtotal b{font:400 46px/1 var(--f-display)}
-.next{margin-top:18px;display:grid;gap:10px;font-size:14px;color:var(--dust)}
-.next div{display:grid;grid-template-columns:26px 1fr;gap:10px}
-.next b{font:500 12px var(--f-mono);color:var(--gilt)}
-.st-foot{display:flex;align-items:center;gap:12px;padding:14px max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--velvet-2)}
+.otext{margin-top:14px;display:grid;gap:8px}
+.otext pre{margin:0;white-space:pre-wrap;font:13.5px/1.7 var(--f-body);background:var(--velvet-3);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--dust)}
+.mini{border:1px solid var(--line-2);background:transparent;color:var(--parchment);border-radius:999px;padding:8px 14px;font:600 13px var(--f-body);cursor:pointer;justify-self:start}
+.assure{display:flex;flex-wrap:wrap;gap:6px 16px;font:500 11.5px var(--f-mono);color:var(--dust);letter-spacing:.04em;margin-top:12px}
+.st-foot{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--velvet-2)}
 .st-foot .sum{flex:1;min-width:0;font:400 13px var(--f-mono);color:var(--dust);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .st-foot .sum b{color:var(--parchment);font:400 20px var(--f-display);margin-inline-end:10px}
-.st-foot .btn{padding:14px 24px}
+.st-foot .btn{padding:14px 22px}
 .back{background:none;border:1px solid var(--line-2);border-radius:999px;padding:13px 18px;cursor:pointer}
 .panel{animation:fadeIn .45s var(--ease)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.ring{position:absolute;inset:-4px;pointer-events:none}
+.ring rect{fill:none;stroke:var(--gilt-2);stroke-width:3;stroke-dasharray:400;stroke-dashoffset:400;animation:draw .35s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
 
-/* exit offer */
-.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px;background:rgba(8,4,5,.78);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:.3s}
+/* exit modal */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px;background:rgba(8,4,5,.8);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:.3s}
 .modal.open{opacity:1;visibility:visible}
-.mcard{position:relative;max-width:520px;width:100%;background:var(--velvet-2);border:1px solid var(--gilt);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:170px 1fr}
-@media (max-width:540px){.mcard{grid-template-columns:1fr}.mcard img{display:none}}
-.mcard img{width:100%;height:100%;object-fit:cover}
-.mcard .mb{padding:28px 24px;display:grid;gap:12px}
-.mcard h3{font-size:30px;line-height:1.05}
+.mcard{position:relative;max-width:500px;width:100%;background:var(--velvet-2);border:1px solid var(--gilt);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:160px 1fr}
+@media (max-width:540px){.mcard{grid-template-columns:1fr}.mcard>img{display:none}}
+.mcard>img{width:100%;height:100%;object-fit:cover}
+.mcard .mb{padding:26px 22px;display:grid;gap:12px}
+.mcard h3{font-size:28px;line-height:1.05}
 .mcard p{color:var(--dust);font-size:14.5px}
 .mcard .code{font:500 15px var(--f-mono);border:1px dashed var(--gilt);border-radius:8px;padding:8px 12px;text-align:center;color:var(--gilt-2)}
 .mcard .x{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.4)}
-.toast{position:fixed;inset-inline:0;bottom:calc(92px + env(safe-area-inset-bottom,0px));margin-inline:auto;width:max-content;max-width:calc(100% - 32px);background:var(--parchment);color:var(--velvet);padding:11px 20px;border-radius:999px;font-size:14px;opacity:0;transform:translateY(10px);transition:.25s var(--ease);pointer-events:none;z-index:70}
+.toast{position:fixed;inset-inline:0;bottom:calc(100px + env(safe-area-inset-bottom,0px));margin-inline:auto;width:max-content;max-width:calc(100% - 32px);background:var(--parchment);color:var(--velvet);padding:11px 20px;border-radius:999px;font-size:14px;opacity:0;transform:translateY(10px);transition:.25s var(--ease);pointer-events:none;z-index:70}
 .toast.show{opacity:1;transform:none}
-.rv{transform:translateY(28px);transition:transform 1.1s var(--ease)}
-.rv.in{transform:none}
 </style>
 
 <header class="top" id="top">
   <div class="wrap">
-    <a class="logo" href="#salon">Heirloom <b>Paws</b></a>
-    <nav aria-label="Sections"><a href="#preview">Free preview</a><a href="#collection">Collection</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+    <a class="logo" href="#hero">Heirloom <b>Paws</b></a>
+    <nav aria-label="Sections"><a href="#collection">Collection</a><a href="#receive">What you get</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
     <button class="btn gold" type="button" data-open="1">Paint my pet</button>
   </div>
 </header>
 
 <main>
-<section class="salon bleed" id="salon" style="padding:0">
+<section class="hero bleed" id="hero" style="padding:0">
   <div class="wall" id="wall" aria-hidden="true"></div>
-  <div class="wrap salon-ui">
-    <div class="inner">
-      <span class="eyebrow">The royal portrait studio for pets</span>
-      <h1><span class="l"><span>Your pet belongs</span></span><span class="l"><span>in <i>the gallery.</i></span></span></h1>
-      <p class="sub">Upload one photo and <b>see your pet as an oil painting in seconds</b>, free. Then choose their role, from monarch to samurai, and we paint the portrait in 24 hours.</p>
-      <button class="btn gold pulse" type="button" data-open="1">See my pet as a painting, free <span class="arr" aria-hidden="true">→</span></button>
-      <div class="trust-row"><span>Free preview</span><span>Delivered in 24 h</span><span>Full refund guarantee</span></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow" id="heroEyebrow">The royal portrait studio for pets</span>
+      <h1 id="heroH1">Your pet, painted <i>as royalty.</i></h1>
+      <p class="sub" id="heroSub">Tap once and see your own pet as an oil painting. Free, in seconds.</p>
+      <label class="btn gold upl desk-cta"><input type="file" class="file-in" aria-label="Upload a photo of your pet"><span id="heroCta">Tap to paint my pet, free</span><span class="arr" aria-hidden="true">→</span></label>
+      <span class="small desk-cta">10 SECONDS · YOUR PHOTO STAYS ON YOUR DEVICE</span>
+      <p class="inapp" hidden>Upload not opening? Tap ⋯ at the top, then "Open in browser".</p>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="fr hframe" id="hframe"><div class="cv" id="heroCv"></div></div>
+      <span class="plate"><small id="heroRole">THE MONARCH</small>Sir Biscuit</span>
+      <span class="stamp">FREE<br>PREVIEW</span>
     </div>
   </div>
 </section>
 
-<div class="ticker bleed" aria-hidden="true"><div class="ttrack" id="ticker"></div></div>
-
-<div class="deadline bleed">
-  <div class="wrap">
-    <p class="lbl" id="dlText"><span>LAST-MINUTE GIFT</span>Too late to ship? A portrait still arrives before Christmas.</p>
-    <div class="clock" id="clock" aria-label="Time left to order for Christmas delivery"><div><b id="cd-d">00</b><small>DAYS</small></div><div><b id="cd-h">00</b><small>HRS</small></div><div><b id="cd-m">00</b><small>MIN</small></div><div><b id="cd-s">00</b><small>SEC</small></div></div>
-    <button class="btn gold" type="button" data-open="1">Order in time <span class="arr" aria-hidden="true">→</span></button>
-  </div>
+<div class="thumbbar" id="thumbbar">
+  <label class="btn gold upl"><input type="file" class="file-in" aria-label="Upload a photo of your pet"><span id="thumbCta">Tap to paint my pet, free</span><span class="arr" aria-hidden="true">→</span></label>
+  <small>10 SECONDS · PHOTO STAYS ON YOUR PHONE</small>
 </div>
 
-<section class="teaser" id="preview">
-  <div class="wrap">
-    <div class="ba rv" id="ba">
-      <div class="canvas">
-        <img src="img/monarch.webp" alt="Finished oil portrait">
-        <img class="photo" src="img/monarch.webp" alt="">
-        <div class="handle"></div>
-        <span class="tagL">YOUR PHOTO</span><span class="tagR">THE PORTRAIT</span>
-        <input type="range" min="0" max="100" value="50" aria-label="Compare photo and portrait">
-      </div>
-    </div>
-    <div>
-      <span class="eyebrow">Try it before you buy</span>
-      <div class="head" style="margin:16px 0 0"><h2>See it <i>first.</i><br>Pay only if you love it.</h2></div>
-      <ul>
-        <li><b>01</b><span>Upload a photo of your pet. It never leaves your device.</span></li>
-        <li><b>02</b><span>Watch it turn into an oil painting inside a gold frame, instantly.</span></li>
-        <li><b>03</b><span>Pick a role, add their name, and our studio paints the final portrait.</span></li>
-      </ul>
-      <button class="btn gold" type="button" data-open="1">Upload a photo <span class="arr" aria-hidden="true">→</span></button>
-    </div>
-  </div>
-</section>
+<div class="ticker bleed" aria-hidden="true"><div class="ttrack" id="ticker"></div></div>
+<div class="eta bleed"><div class="wrap"><span>Order now → in your inbox by <b id="etaTime">tomorrow</b></span><span class="xmas" id="xmas"></span></div></div>
 
-<section id="collection" style="padding-top:20px">
+<section id="collection">
   <div class="wrap">
-    <div class="head"><span class="eyebrow">The collection</span><h2>Every pet has <i>a role</i> to play.</h2><p>Kings and queens, admirals and samurai, wizards and Santa. Or dream up your own: if you can describe it, we can paint it.</p></div>
+    <div class="head"><span class="eyebrow">The collection</span><h2>Who were they <i>in a past life?</i></h2><p>Twenty roles, or describe your own. Tap one to try it.</p></div>
     <div class="chips" id="cats" role="group" aria-label="Filter by category"></div>
     <div class="collage" id="collage"></div>
-    <p class="note" style="margin-top:12px">Studio samples. Your portrait is painted from your own pet's photo, so the coat, markings and expression are theirs.</p>
   </div>
 </section>
 
-<section id="how" style="padding-top:0">
+<section id="receive" style="padding-top:20px">
   <div class="wrap">
-    <div class="head"><span class="eyebrow">How it works</span><h2>Three minutes <i>for you.</i></h2></div>
-    <div class="steps">
-      <div class="step rv"><span class="n">I.</span><h3>Preview it free</h3><p>Upload a photo and see your pet as an oil painting right away.</p></div>
-      <div class="step rv"><span class="n">II.</span><h3>Choose the role</h3><p>Pick from the collection or describe your own idea. Add their name for the plaque.</p></div>
-      <div class="step rv"><span class="n">III.</span><h3>Unwrap it tomorrow</h3><p>Check out securely. Your finished portrait arrives by email within 24 hours.</p></div>
+    <div class="head"><span class="eyebrow">What you get</span><h2>Ready to <i>frame or gift.</i></h2></div>
+    <div class="receive">
+      <div class="rc"><em>THE PORTRAIT</em><b>Print-ready file</b><span>High resolution, painted from your photo.</span></div>
+      <div class="rc"><em>THE PLAQUE</em><b>Their name, engraved</b><span>A gold nameplate painted into the frame.</span></div>
+      <div class="rc"><em>THE PHONE</em><b>Wallpaper version</b><span>Sized for your lock screen.</span></div>
+      <div class="rc"><em>THE GIFT</em><b>Printable gift card</b><span>Wrap it, or hand it over on the day.</span></div>
     </div>
+    <p class="founder"><span><b>A note from the studio:</b> every portrait is checked by a person before it is sent. If it doesn't feel like your pet, we redo it, and if you're still not happy you get every cent back.</span></p>
   </div>
 </section>
 
-<section id="pricing" style="padding-top:0">
+<section id="pricing" style="padding-top:20px">
   <div class="wrap">
     <div class="head"><span class="eyebrow">Pricing</span><h2>Less than <i>a dinner out.</i></h2></div>
     <div class="tiers" id="tiers"></div>
   </div>
 </section>
 
-<section class="guar bleed" style="padding-block:90px">
+<section class="guar bleed" style="padding-block:84px">
   <div class="wrap">
-    <div class="seal"><span><b>100%</b>Love it or<br>it's free</span></div>
-    <div><h2>If it doesn't make you smile, you don't pay.</h2><p>Every portrait includes one free revision. If you are still not happy, we refund every cent. No forms, no questions.</p></div>
+    <div class="seal-big"><span><b>100%</b>Love it or<br>it's free</span></div>
+    <div><h2>The Royal Approval Guarantee.</h2><p>If your portrait doesn't make you smile, we repaint it free, as many times as it takes within 14 days. Still not right? Full refund.</p></div>
   </div>
 </section>
 
@@ -412,12 +400,11 @@ textarea.inp{min-height:84px;resize:vertical}
   <div class="wrap">
     <div class="head"><span class="eyebrow">Questions</span><h2>Before you <i>commission.</i></h2></div>
     <div class="faq">
-      <details><summary>Is the preview the final portrait?</summary><p>No. The preview shows your own photo painted in oil, so you can see the feel. The final portrait is painted by our studio in the role you choose, with the costume, background and lighting of that style.</p></details>
-      <details><summary>How do I pay?</summary><p>Checkout runs on Gumroad, a secure payment platform used by millions of creators. You can pay by card, Apple Pay, Google Pay or PayPal, and sales tax is calculated automatically.</p></details>
-      <details><summary>When do I send my pet's photo?</summary><p>Right after payment. Your receipt has a link to upload the photo. The photo you use for the free preview stays on your device.</p></details>
-      <details><summary>Will it really look like my pet?</summary><p>Yes. We match the coat color, markings and face from your photo. You get one free revision, and a full refund if you are still not happy.</p></details>
-      <details><summary>Is it a print or a file?</summary><p>A high-resolution digital file you can print at home, at a local print shop, or order on canvas online.</p></details>
-      <details><summary>Can I order for Christmas?</summary><p>Yes. Nothing ships, so a portrait ordered before the countdown ends arrives before Christmas morning.</p></details>
+      <details><summary>Is the free preview the final portrait?</summary><p>No. The preview paints your own photo so you can see your pet's colours in oil. The studio then paints the full costume and scene of the role you choose.</p></details>
+      <details><summary>How do I pay?</summary><p>Secure checkout with PayPal or a debit or credit card. You don't need a PayPal account to pay by card.</p></details>
+      <details><summary>When do I send my pet's photo?</summary><p>Right after payment, your receipt has a link to upload the photo. The photo you used for the preview never leaves your device.</p></details>
+      <details><summary>Will it really look like my pet?</summary><p>Yes. We match the coat, markings and face. Free repaints for 14 days, and a full refund if it's still not right.</p></details>
+      <details><summary>Can I order for Christmas?</summary><p>Yes. Nothing ships, so an order placed by December 23 arrives before Christmas morning.</p></details>
     </div>
   </div>
 </section>
@@ -425,19 +412,33 @@ textarea.inp{min-height:84px;resize:vertical}
 <section class="final">
   <div class="wrap">
     <h2>Give them <i>the portrait</i><br>they deserve.</h2>
-    <p>One photo. A free preview in seconds. An heirloom in your inbox tomorrow.</p>
-    <button class="btn gold pulse" type="button" data-open="1">See my pet as a painting <span class="arr" aria-hidden="true">→</span></button>
+    <p>One photo. A free preview in seconds.</p>
+    <label class="btn gold upl"><input type="file" class="file-in" aria-label="Upload a photo of your pet">Tap to paint my pet <span class="arr" aria-hidden="true">→</span></label>
   </div>
 </section>
 </main>
-<footer><div class="wrap"><span>© 2026 Heirloom Paws · Digital portrait studio</span><span>Secure checkout by Gumroad</span></div></footer>
+<footer><div class="wrap"><span>© 2026 Heirloom Paws · Digital portrait studio</span><span>Royal Approval Guarantee · Free repaints for 14 days</span></div></footer>
 
-<div class="dock" id="dock"><div class="wrap">
-  <div class="di"><b>Free preview in seconds</b><span>Portraits from $29 · 24 h delivery</span></div>
-  <button class="btn gold" type="button" data-open="1">Paint my pet</button>
-</div></div>
+<!-- Unveiling -->
+<div class="unveil" id="unveil" role="dialog" aria-modal="true" aria-label="Your pet's portrait">
+  <div class="uv-in">
+    <span class="uv-status" id="uvStatus">The studio is painting…</span>
+    <div class="fr uv-frame" id="uvFrame"><div class="cv"><canvas id="uvCanvas"></canvas></div></div>
+    <span class="plate uv-plate" id="uvPlate"><small id="uvRole">THE MONARCH</small><span id="uvName">&nbsp;</span></span>
+    <div class="uv-ask" id="uvAsk">
+      <label for="uvNameIn">What's their royal name?</label>
+      <input class="inp" id="uvNameIn" maxlength="22" placeholder="e.g. Sir Biscuit" autocomplete="off">
+      <div class="uv-acts">
+        <button class="btn" type="button" id="uvShare">Save</button>
+        <button class="btn gold" type="button" id="uvNext">Now choose their role <span class="arr" aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<canvas id="leaf" aria-hidden="true"></canvas>
+<div class="shareov" id="shareOv" role="dialog" aria-modal="true" aria-label="Save your portrait"><div class="in"><img id="shareImg" alt="Your pet's portrait card"><p>Press and hold the image to save it, then share it on TikTok.</p><button class="btn" type="button" id="shareClose">Close</button></div></div>
 
-<!-- ===== The Studio ===== -->
+<!-- Studio -->
 <div class="studio" id="studio" role="dialog" aria-modal="true" aria-labelledby="stTitle">
   <div class="st-top">
     <span class="logo">Heirloom <b>Paws</b></span>
@@ -448,16 +449,9 @@ textarea.inp{min-height:84px;resize:vertical}
   <div class="st-body" id="stBody">
     <div class="st-grid">
       <div class="st-left">
-        <div class="pv">
-          <div class="cv" id="pvBox">
-            <div class="empty" id="pvEmpty">Your pet's portrait appears here</div>
-            <img id="pvPaint" alt="Oil painting preview of your pet" hidden>
-            <img class="raw" id="pvRaw" alt="" hidden>
-          </div>
-          <span class="badge" id="pvBadge" hidden>INSTANT PREVIEW</span>
-        </div>
-        <div class="plate" id="plate"><small id="plRole">THE MONARCH</small><span id="plName">YOUR PET'S NAME</span></div>
-        <div class="rolemini" id="roleMini"><img id="rmImg" src="img/monarch.webp" alt=""><span>Final style: <b id="rmName" style="color:var(--parchment);font-weight:500">The Monarch</b></span></div>
+        <div class="fr pv"><div class="cv"><img id="pvMain" alt="Selected portrait style"><div class="cameo" id="pvCameo" hidden><img id="pvCameoImg" alt="Your pet"></div></div></div>
+        <span class="plate"><small id="plRole">THE MONARCH</small><span id="plName">YOUR PET'S NAME</span></span>
+        <span class="pv-note" id="pvNote">Studio sample · your pet in the corner</span>
       </div>
       <div class="st-right" id="stRight"></div>
     </div>
@@ -469,31 +463,25 @@ textarea.inp{min-height:84px;resize:vertical}
   </div>
 </div>
 
-<!-- ===== exit offer ===== -->
 <div class="modal" id="exitModal" role="dialog" aria-modal="true" aria-labelledby="exTitle">
-  <div class="mcard">
-    <img src="img/duchess.webp" alt="">
-    <div class="mb">
-      <span class="eyebrow">Before you go</span>
-      <h3 id="exTitle">See your pet painted, free.</h3>
-      <p id="exText">It takes 10 seconds and you don't pay anything to see it.</p>
-      <div class="code" id="exCode" hidden></div>
-      <button class="btn gold" type="button" id="exGo">Show me <span class="arr" aria-hidden="true">→</span></button>
-    </div>
+  <div class="mcard"><img src="img/duchess.webp" alt="">
+    <div class="mb"><span class="eyebrow">Before you go</span><h3 id="exTitle">See your pet painted, free.</h3><p id="exText">It takes 10 seconds. You don't pay anything to see it.</p><div class="code" id="exCode" hidden></div><button class="btn gold" type="button" id="exGo">Show me <span class="arr" aria-hidden="true">→</span></button></div>
     <button class="x" type="button" id="exClose" aria-label="Close">✕</button>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-/* ============ CONFIG: fill these in ============ */
-/* Your Gumroad product links, one per package (e.g. https://yourname.gumroad.com/l/royal) */
-const CHECKOUT = { classic:"", royal:"", heirloom:"" };
-/* Optional: a Gumroad offer code you created (e.g. "WELCOME15"). Leave empty to skip the discount. */
-const OFFER = { code:"", label:"15% off" };
-/* Christmas cutoff: Dec 23, 11:59 pm Eastern */
-const CUTOFF = Date.UTC(2026,11,24,4,59,0);
-/* ============================================== */
+/* ================= CONFIG ================= */
+/* Payhip product links per package (and per package + card bump), e.g. https://payhip.com/b/AbCd. Leave empty until connected. */
+const CHECKOUT = { classic:"", royal:"", heirloom:"", "classic+card":"", "royal+card":"", "heirloom+card":"" };
+/* Optional discount code for returning visitors (must exist in your payment platform). */
+const OFFER = { code:"", label:"10% off" };
+/* TikTok Pixel ID. Works on your own hosting; the claude.ai preview blocks outside scripts. */
+const TIKTOK_PIXEL_ID = "";
+const SITE = "heirloompaws";
+const CUTOFF = Date.UTC(2026,11,24,4,59,0); /* Dec 23, 11:59 pm Eastern */
+/* ========================================== */
 
 const ROLES = [
   {key:"monarch",name:"The Monarch",cat:"Royalty"},{key:"queen",name:"The Queen",cat:"Royalty"},{key:"duchess",name:"The Duchess",cat:"Royalty"},
@@ -505,100 +493,117 @@ const ROLES = [
   {key:"santa",name:"Santa Paws",cat:"Holiday"}
 ];
 const TIERS = [
-  {key:"classic", name:"Classic", price:29, was:null, items:["1 portrait in your chosen role","High-resolution, print-ready file","Delivered within 24 hours","1 free revision"]},
-  {key:"royal", name:"Royal", price:49, was:87, pop:true, items:["3 portraits in 3 roles","Engraved name plaque on each","Priority delivery in 12 hours","Phone wallpapers + printable gift card"]},
-  {key:"heirloom", name:"Heirloom", price:79, was:145, items:["6 portraits, any roles or your own idea","Up to 2 pets in one portrait","Express delivery in 6 hours","Everything in Royal"]}
+  {key:"classic",name:"Classic",price:29,each:"1 portrait",items:["1 portrait in your chosen role","Print-ready file + phone wallpaper","In your inbox within 24 hours","1 free revision"],hours:24},
+  {key:"royal",name:"Royal",price:49,each:"3 portraits · $16 each",pop:true,items:["3 portraits in 3 roles","Engraved name plaque on each","Priority: within 12 hours","Printable gift card"],hours:12},
+  {key:"heirloom",name:"Heirloom",price:79,each:"6 portraits · $13 each",items:["6 portraits, any roles or your own idea","Up to 2 pets together","Express: within 6 hours","Everything in Royal"],hours:6}
 ];
+const BUMP = {price:9, label:"Printable Christmas card of the portrait", sub:"Folded A5 card with their portrait and your message."};
 const img=k=>`img/${k}.webp`;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const roleOf=k=>ROLES.find(r=>r.key===k)||{key:"custom",name:"Your own idea",cat:"Custom"};
-const tierOf=k=>TIERS.find(t=>t.key===k);
+const tierOf=k=>TIERS.find(t=>t.key===k)||TIERS[1];
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
 function toast(m){const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.k); toast.k=setTimeout(()=>t.classList.remove("show"),2800)}
-const AVAILABLE=new Set();
+function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
-/* which role images exist (new roles may still be loading on first publish) */
-function probe(k){return new Promise(res=>{const i=new Image(); i.onload=()=>{AVAILABLE.add(k);res(true)}; i.onerror=()=>res(false); i.src=img(k)})}
+/* ===== TikTok pixel (loads only when an ID is set) ===== */
+function track(ev,props){ try{ window.ttq&&ttq.track(ev,props||{}) }catch(e){} }
+if(TIKTOK_PIXEL_ID){ !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e){var n="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=n;ttq._t=ttq._t||{};ttq._t[e]=+new Date;var o=d.createElement("script");o.type="text/javascript";o.async=!0;o.src=n+"?sdkid="+e+"&lib="+t;var a=d.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(TIKTOK_PIXEL_ID);ttq.page()}(window,document,"ttq"); }
 
-/* ===== salon wall ===== */
+/* ===== state (+ photo kept in IndexedDB so returning visitors find their preview) ===== */
+let S={step:0,role:"monarch",custom:"",tier:"royal",pet:"Dog",name:"",bump:false,offer:false,ordered:false};
+try{const s=JSON.parse(localStorage.getItem("hp-v4")||"null"); if(s) S={...S,...s}}catch(e){}
+let PHOTO=null;
+function save(){try{localStorage.setItem("hp-v4",JSON.stringify(S))}catch(e){}}
+const idb=(()=>{let db; const open=()=>new Promise((res,rej)=>{if(db) return res(db); try{const r=indexedDB.open("hp",1); r.onupgradeneeded=()=>r.result.createObjectStore("kv"); r.onsuccess=()=>{db=r.result;res(db)}; r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
+  return {get:k=>open().then(d=>new Promise(res=>{const q=d.transaction("kv").objectStore("kv").get(k); q.onsuccess=()=>res(q.result); q.onerror=()=>res(null)})).catch(()=>null),
+          set:(k,v)=>open().then(d=>new Promise(res=>{const t=d.transaction("kv","readwrite"); t.objectStore("kv").put(v,k); t.oncomplete=res; t.onerror=res})).catch(()=>{})}})();
+
+/* ===== URL params from TikTok ads: ?role=santa&tier=royal ===== */
+const Q=new URLSearchParams(location.search);
+const AD={role:Q.get("role"),tier:Q.get("tier"),ttclid:Q.get("ttclid"),utm:["utm_source","utm_campaign","utm_content"].map(k=>[k,Q.get(k)]).filter(x=>x[1])};
+if(AD.role&&(ROLES.some(r=>r.key===AD.role)||AD.role==="custom")){S.role=AD.role}
+if(AD.tier&&TIERS.some(t=>t.key===AD.tier)){S.tier=AD.tier}
+const isInApp=/musical_ly|BytedanceWebview|TikTok|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
+if(isInApp){ $$(".file-in").forEach(i=>i.removeAttribute("accept")); $$(".inapp").forEach(p=>p.hidden=false) } else $$(".file-in").forEach(i=>i.setAttribute("accept","image/*"));
+
+/* ===== hero ===== */
+const AVAILABLE=new Set(ROLES.map(r=>r.key));
+function personaliseHero(){
+  if(AD.role&&AD.role!=="custom"){ const r=roleOf(AD.role), pet=/cat/i.test(Q.get("pet")||"")?"cat":"dog";
+    $("#heroH1").innerHTML=`Your ${pet} as <i>${esc(r.name.replace(/^The /,""))}.</i>`;
+    $("#heroSub").textContent="Tap once to see your own pet as an oil painting, free. Then we paint them in this role.";
+    ["#heroCta","#thumbCta"].forEach(s=>$(s).textContent=`Paint my pet as ${r.name.replace(/^The /,"")}`); }
+}
+const HERO_SET=(AD.role&&AD.role!=="custom")?[AD.role,"monarch","duchess"]:["monarch","duchess","knight","santa","admiral"];
+(function heroCycle(){
+  const cv=$("#heroCv"); HERO_SET.forEach((k,i)=>{const im=document.createElement("img"); im.src=img(k); im.alt=""; im.style.opacity=i?0:1; im.dataset.k=k; cv.append(im)});
+  let i=0; $("#heroRole").textContent=roleOf(HERO_SET[0]).name.toUpperCase();
+  if(HERO_SET.length>1&&!reduce) setInterval(()=>{const ims=cv.querySelectorAll("img"); ims[i].style.opacity=0; i=(i+1)%ims.length; ims[i].style.opacity=1; $("#heroRole").textContent=roleOf(ims[i].dataset.k).name.toUpperCase()},2600);
+})();
+/* hero frame tilts toward the finger/cursor */
+const stage=$(".stage");
+addEventListener("pointermove",e=>{ if(reduce) return; const r=stage.getBoundingClientRect(), dx=(e.clientX-(r.left+r.width/2))/r.width, dy=(e.clientY-(r.top+r.height/2))/r.height;
+  $("#hframe").style.transform=`rotate(-3deg) rotateY(${Math.max(-6,Math.min(6,dx*10))}deg) rotateX(${Math.max(-6,Math.min(6,-dy*10))}deg)` },{passive:true});
+
+/* salon wall: no neighbours repeat, faces lit */
 function buildWall(){
-  const wall=$("#wall"); wall.replaceChildren();
-  const keys=ROLES.map(r=>r.key).filter(k=>AVAILABLE.has(k)); if(!keys.length) return;
+  const wall=$("#wall"); wall.replaceChildren(); const keys=ROLES.map(r=>r.key);
   const W=wall.clientWidth, H=wall.clientHeight; const layers=[0,1,2].map(d=>{const l=document.createElement("div"); l.className="layer"; l.dataset.d=d; wall.append(l); return l});
-  let seed=11; const R=()=>{seed=(seed*16807)%2147483647; return (seed-1)/2147483646};
-  const colW=Math.max(150,Math.min(230,W/9)); const cols=Math.ceil(W/colW)+1; let n=0;
-  const frames=["","","","wood","silver",""];
-  for(let c=0;c<cols;c++){
-    let y=-40+R()*80;
-    while(y<H){
-      const w=colW*(.72+R()*.28), oval=R()<.12, h=oval?w*1.25:w*(1.15+R()*.25);
-      const f=document.createElement("div"); f.className="fr "+frames[n%frames.length]+(oval?" oval":"");
-      const d=n%3; f.style.cssText=`left:${c*colW+(colW-w)/2}px;top:${y}px;width:${w}px;height:${h}px;--b:${8+R()*8}px;--r:${(R()-.5)*2.4}deg;--lit:${.62+R()*.38}`;
-      const i=document.createElement("img"); i.src=img(keys[n%keys.length]); i.alt=""; i.loading="eager"; f.append(i);
-      layers[d].append(f); y+=h+18+R()*22; n++;
-    }
-  }
+  let seed=7; const R=()=>{seed=(seed*16807)%2147483647; return (seed-1)/2147483646};
+  const colW=Math.max(130,Math.min(220,W/8)); const cols=Math.ceil(W/colW)+1; let n=0; const kinds=["","","wood","","silver",""];
+  for(let c=0;c<cols;c++){ let y=-30+R()*90, k=(c*7)%keys.length;
+    while(y<H){ const w=colW*(.72+R()*.26), oval=R()<.12, h=oval?w*1.25:w*(1.15+R()*.25);
+      const f=document.createElement("div"); f.className="fr "+kinds[n%kinds.length]+(oval?" oval":"");
+      f.style.cssText=`left:${c*colW+(colW-w)/2}px;top:${y}px;width:${w}px;height:${h}px;--b:${7+R()*8}px;--r:${(R()-.5)*2.6}deg;--lit:${.78+R()*.22};--sd:${(R()*6).toFixed(2)}s`;
+      const im=document.createElement("img"); im.src=img(keys[k%keys.length]); im.alt=""; f.append(im); layers[n%3].append(f); k+=3; y+=h+18+R()*22; n++ } }
 }
 let px=0,py=0,tx=0,ty=0;
 addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5},{passive:true});
-(function loop(){
-  px+=(tx-px)*.06; py+=(ty-py)*.06; const s=Math.min(scrollY,innerHeight);
-  $$(".layer").forEach(l=>{const d=+l.dataset.d+1; l.style.transform=`translate3d(${-px*d*16}px,${-py*d*12 - s*(.06*d)}px,0) scale(${1+d*.02})`});
-  requestAnimationFrame(loop);
-})();
+(function loop(){ px+=(tx-px)*.06; py+=(ty-py)*.06; const s=Math.min(scrollY,innerHeight);
+  $$(".layer").forEach(l=>{const d=+l.dataset.d+1; l.style.transform=`translate3d(${-px*d*14}px,${-py*d*10-s*(.06*d)}px,0)`}); requestAnimationFrame(loop) })();
 
-/* ticker */
-(function(){const words=ROLES.map(r=>r.name).concat(["Your own idea"]); const html=words.concat(words).map(w=>`<span>${w}</span>`).join(""); $("#ticker").innerHTML=html})();
-
-/* header, dock, reveals */
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in"); io.unobserve(e.target)}}),{rootMargin:"0px 0px -8% 0px"});
-$$(".rv").forEach(el=>io.observe(el));
-addEventListener("scroll",()=>{ $("#top").classList.toggle("solid",scrollY>40); $("#dock").classList.toggle("show",scrollY>innerHeight*.9) },{passive:true});
-
-/* countdown */
-function cd(){let s=Math.max(0,Math.floor((CUTOFF-Date.now())/1000));
-  if(!s){ $("#dlText").lastChild.textContent="Christmas orders have closed. A portrait makes a perfect gift any day."; $("#clock").hidden=true; return }
-  const d=Math.floor(s/86400); s%=86400; const h=Math.floor(s/3600); s%=3600; const m=Math.floor(s/60); s%=60;
-  [["#cd-d",d],["#cd-h",h],["#cd-m",m],["#cd-s",s]].forEach(([id,v])=>$(id).textContent=String(v).padStart(2,"0"))}
-cd(); setInterval(cd,1000);
-
-/* before/after slider */
-$("#ba input").addEventListener("input",e=>$("#ba").style.setProperty("--x",e.target.value+"%"));
+/* ticker, header, eta */
+(function(){const w=ROLES.map(r=>r.name).concat(["Your own idea"]); $("#ticker").innerHTML=w.concat(w).map(x=>`<span>${x}</span>`).join("")})();
+addEventListener("scroll",()=>$("#top").classList.toggle("solid",scrollY>40),{passive:true});
+function eta(){ const h=tierOf(S.tier).hours, d=new Date(Date.now()+h*3600e3);
+  const day=d.toDateString()===new Date().toDateString()?"today":d.toLocaleDateString("en-US",{weekday:"short"});
+  $("#etaTime").textContent=`${day} ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`;
+  const left=CUTOFF-Date.now(), x=$("#xmas");
+  if(left<=0) x.textContent=""; else if(left<14*864e5){ const dd=Math.floor(left/864e5), hh=Math.floor(left%864e5/36e5); x.textContent=`Christmas orders close in ${dd}d ${hh}h` } else x.textContent="Christmas-safe: order by Dec 23, arrives before Dec 25" }
+eta(); setInterval(eta,30000);
 
 /* ===== collection collage ===== */
 let catSel="All";
 function buildCollection(){
-  const cats=["All",...new Set(ROLES.filter(r=>AVAILABLE.has(r.key)).map(r=>r.cat))];
-  $("#cats").innerHTML=cats.map(c=>`<button class="chip" type="button" aria-pressed="${c===catSel}" data-cat="${c}">${c}<small>${c==="All"?ROLES.filter(r=>AVAILABLE.has(r.key)).length:ROLES.filter(r=>r.cat===c&&AVAILABLE.has(r.key)).length}</small></button>`).join("");
-  const list=ROLES.filter(r=>AVAILABLE.has(r.key)&&(catSel==="All"||r.cat===catSel));
-  const ars=["4/5","4/5.6","4/4.6","4/5.2"];
-  const pieces=list.map((r,i)=>`<button class="piece" type="button" data-role="${r.key}" aria-label="Choose ${r.name}"><div class="fr ${i%5===3?"wood":i%7===5?"silver":""}"><img loading="lazy" src="${img(r.key)}" alt="" style="--ar:${ars[i%4]}"></div><span class="go">Paint my pet as ${r.name.replace("The ","")} →</span><div class="cap"><h3>${r.name}</h3><span class="cat">${r.cat}</span></div></button>`);
-  pieces.splice(Math.min(5,pieces.length),0,`<button class="dream" type="button" data-role="custom"><span class="eyebrow">Unlimited</span><h3>Dream up your own role.</h3><p>A chef, a rock star, their favorite team's captain. Describe it and we paint it.</p><span>Describe my idea →</span></button>`);
-  $("#collage").innerHTML=pieces.join("");
+  const avail=ROLES.filter(r=>AVAILABLE.has(r.key)); const cats=["All",...new Set(avail.map(r=>r.cat))];
+  $("#cats").innerHTML=cats.map(c=>`<button class="chip" type="button" aria-pressed="${c===catSel}" data-cat="${c}">${c}<small>${c==="All"?avail.length:avail.filter(r=>r.cat===c).length}</small></button>`).join("");
+  const list=avail.filter(r=>catSel==="All"||r.cat===catSel), sizes=["big","","wide","","","big",""], kinds=["","","wood","","silver","","oval"];
+  const html=list.map((r,i)=>{const sz=sizes[i%sizes.length], kd=kinds[i%kinds.length], tilt=((i*37)%7-3)*.9;
+    return `<button class="piece ${sz}" type="button" data-role="${r.key}" style="--r:${tilt}deg" aria-label="Try ${r.name}"><div class="fr ${kd}" style="--sd:${(i%6)}s"><img loading="lazy" src="${img(r.key)}" alt=""></div><span class="label">${r.name}</span>${r.cat==="Holiday"?'<span class="seal">GIFT<br>READY</span>':""}</button>`});
+  html.splice(Math.min(4,html.length),0,`<button class="dream" type="button" data-role="custom"><span class="eyebrow">Unlimited</span><h3>Dream up your own role.</h3><p>A chef, a rock star, their team's captain. Describe it, we paint it.</p><span>Describe my idea →</span></button>`);
+  const box=$("#collage"); const swap=()=>{box.innerHTML=html.join("")};
+  if(document.startViewTransition&&!reduce) document.startViewTransition(swap); else swap();
 }
 $("#cats").addEventListener("click",e=>{const b=e.target.closest("[data-cat]"); if(!b) return; catSel=b.dataset.cat; buildCollection()});
-$("#collage").addEventListener("click",e=>{const b=e.target.closest("[data-role]"); if(!b) return; S.role=b.dataset.role; save(); openStudio(S.photo?1:0)});
+$("#collage").addEventListener("click",e=>{const b=e.target.closest("[data-role]"); if(!b) return; S.role=b.dataset.role; save(); buzz(8); openStudio(1)});
 
 /* tiers */
-$("#tiers").innerHTML=TIERS.map(t=>`<div class="tier ${t.pop?"pop":""}" data-tier="${t.key}" role="button" tabindex="0">${t.pop?'<span class="tag">MOST POPULAR</span>':""}<h3>${t.name}</h3><div class="pr"><b>$${t.price}</b>${t.was?`<s>$${t.was}</s><em>SAVE ${Math.round((1-t.price/t.was)*100)}%</em>`:""}</div><ul>${t.items.map(i=>`<li>${i}</li>`).join("")}</ul><span class="btn ${t.pop?"gold":""}">Choose ${t.name}</span></div>`).join("");
-$("#tiers").addEventListener("click",e=>{const t=e.target.closest("[data-tier]"); if(!t) return; S.tier=t.dataset.tier; save(); openStudio(S.photo?2:0)});
+$("#tiers").innerHTML=TIERS.map(t=>`<div class="tier ${t.pop?"pop":""}" data-tier="${t.key}" role="button" tabindex="0">${t.pop?'<span class="tag">MOST CHOSEN AS A GIFT</span>':""}<h3>${t.name}</h3><div class="pr"><b>$${t.price}</b><em>${t.each.toUpperCase()}</em></div><ul>${t.items.map(i=>`<li>${i}</li>`).join("")}</ul><span class="btn ${t.pop?"gold":""}">Choose ${t.name}</span></div>`).join("");
+$("#tiers").addEventListener("click",e=>{const t=e.target.closest("[data-tier]"); if(!t) return; S.tier=t.dataset.tier; save(); eta(); openStudio(PHOTO?2:1)});
 $("#tiers").addEventListener("keydown",e=>{if(e.key==="Enter"){const t=e.target.closest("[data-tier]"); if(t) t.click()}});
 
-/* ===== state ===== */
-let S={step:0,role:"monarch",custom:"",tier:"royal",pet:"Dog",name:"",photo:null,offer:false};
-try{const s=JSON.parse(localStorage.getItem("hp-studio")||"null"); if(s) S={...S,...s,photo:null}}catch(e){}
-function save(){try{const {photo,...rest}=S; localStorage.setItem("hp-studio",JSON.stringify(rest))}catch(e){}}
-
-/* ===== instant oil-painting preview (Kuwahara filter on the GPU, runs on the customer's device) ===== */
+/* ===== oil-painting preview (GPU Kuwahara, runs on the visitor's device) ===== */
 function paintify(srcImg){
   const max=720, sc=Math.min(1,max/Math.max(srcImg.naturalWidth,srcImg.naturalHeight));
-  /* crop to 4:5 portrait around centre */
   let sw=srcImg.naturalWidth, sh=srcImg.naturalHeight, cw=sw, ch=sw*1.25; if(ch>sh){ch=sh; cw=sh*.8}
-  const W=Math.round(cw*sc*1.0)||560, H=Math.round(ch*sc*1.0)||700;
+  const W=Math.round(cw*sc)||560, H=Math.round(ch*sc)||700;
   const base=document.createElement("canvas"); base.width=W; base.height=H; base.getContext("2d").drawImage(srcImg,(sw-cw)/2,(sh-ch)/2.6,cw,ch,0,0,W,H);
-  const rawURL=base.toDataURL("image/jpeg",.9);
   const c=document.createElement("canvas"); c.width=W; c.height=H;
   const gl=c.getContext("webgl",{preserveDrawingBuffer:true});
-  if(!gl){ const x=base.getContext("2d"); x.filter="contrast(1.15) saturate(1.2) sepia(.25)"; x.drawImage(base,0,0); return {raw:rawURL,paint:base.toDataURL("image/jpeg",.92)} }
+  const out=(paintCanvas)=>({raw:base,paint:paintCanvas,rawURL:base.toDataURL("image/jpeg",.88),paintURL:paintCanvas.toDataURL("image/jpeg",.92)});
+  if(!gl){ const k=document.createElement("canvas"); k.width=W; k.height=H; const x=k.getContext("2d"); x.filter="contrast(1.15) saturate(1.2) sepia(.25)"; x.drawImage(base,0,0); return out(k) }
   const vs=`attribute vec2 p; varying vec2 uv; void main(){uv=p*.5+.5; uv.y=1.-uv.y; gl_Position=vec4(p,0.,1.);}`;
   const fs=`precision highp float; uniform sampler2D t; uniform vec2 px; varying vec2 uv;
     float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
@@ -608,145 +613,215 @@ function paintify(srcImg){
         vec3 c=texture2D(t,uv+vec2(float(i),float(j))*px).rgb;
         if(i<=0&&j<=0){m0+=c;s0+=c*c;} if(i>=0&&j<=0){m1+=c;s1+=c*c;} if(i<=0&&j>=0){m2+=c;s2+=c*c;} if(i>=0&&j>=0){m3+=c;s3+=c*c;}
       }}
-      float n=49.; vec3 col=vec3(0.); float best=1e9; vec3 v;
-      m0/=n; v=abs(s0/n-m0*m0); float q=v.r+v.g+v.b; if(q<best){best=q;col=m0;}
+      float n=49.; vec3 col=vec3(0.); float best=1e9; vec3 v; float q;
+      m0/=n; v=abs(s0/n-m0*m0); q=v.r+v.g+v.b; if(q<best){best=q;col=m0;}
       m1/=n; v=abs(s1/n-m1*m1); q=v.r+v.g+v.b; if(q<best){best=q;col=m1;}
       m2/=n; v=abs(s2/n-m2*m2); q=v.r+v.g+v.b; if(q<best){best=q;col=m2;}
       m3/=n; v=abs(s3/n-m3*m3); q=v.r+v.g+v.b; if(q<best){best=q;col=m3;}
-      float l=dot(col,vec3(.3,.59,.11)); col=mix(vec3(l),col,1.18);                  /* richer pigment */
-      col=pow(col,vec3(1.08)); col=col*vec3(1.06,.98,.86)+vec3(.02,.01,0.);           /* warm varnish */
-      col=smoothstep(0.,1.,col*1.04);                                                 /* old-master contrast */
-      float canvas=(h(floor(uv/px*.5))-.5)*.035+sin((uv.x+uv.y)/px.x*.9)*.008;        /* linen weave */
-      col+=canvas;
+      float l=dot(col,vec3(.3,.59,.11)); col=mix(vec3(l),col,1.18);
+      col=pow(col,vec3(1.08)); col=col*vec3(1.06,.98,.86)+vec3(.02,.01,0.);
+      col=smoothstep(0.,1.,col*1.04);
+      col+=(h(floor(uv/px*.5))-.5)*.035+sin((uv.x+uv.y)/px.x*.9)*.008;
       float vig=smoothstep(.95,.3,length((uv-vec2(.5,.45))*vec2(1.,.9))); col*=.55+.45*vig;
       gl_FragColor=vec4(col,1.);}`;
-  const sh2=(type,src)=>{const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s};
-  const pr=gl.createProgram(); gl.attachShader(pr,sh2(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,sh2(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr);
-  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) return {raw:rawURL,paint:rawURL};
+  const mk=(type,src)=>{const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s};
+  const pr=gl.createProgram(); gl.attachShader(pr,mk(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,mk(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) return out(base);
   gl.useProgram(pr);
   const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
   const loc=gl.getAttribLocation(pr,"p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
   const tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(p=>gl.texParameteri(gl.TEXTURE_2D,p,gl.LINEAR));
+  [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(p=>gl.texParameteri(gl.TEXTURE_2D,p,gl.CLAMP_TO_EDGE));
   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,base);
   gl.uniform2f(gl.getUniformLocation(pr,"px"),1.25/W,1.25/H);
   gl.viewport(0,0,W,H); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-  return {raw:rawURL,paint:c.toDataURL("image/jpeg",.92)};
+  const k=document.createElement("canvas"); k.width=W; k.height=H; k.getContext("2d").drawImage(c,0,0);
+  return out(k);
 }
-function handleFile(file){
-  if(!file||!file.type.startsWith("image/")){ toast("Please choose a photo (JPG, PNG or HEIC saved as JPG)."); return }
-  const url=URL.createObjectURL(file), im=new Image();
-  im.onload=()=>{ const r=paintify(im); URL.revokeObjectURL(url); S.photo=r; showPreview(true); $("#stNext").innerHTML='Choose a role <span class="arr">→</span>'; toast("Here's your pet in oil. Now choose their role."); setTimeout(()=>go(1),1600) };
-  im.onerror=()=>toast("That photo couldn't be opened. Try a JPG or PNG.");
-  im.src=url;
-}
-function showPreview(animate){
-  const raw=$("#pvRaw"), paint=$("#pvPaint");
-  if(S.photo){ $("#pvEmpty").hidden=true; paint.src=S.photo.paint; paint.hidden=false; $("#pvBadge").hidden=false;
-    if(animate){ raw.src=S.photo.raw; raw.hidden=false; raw.classList.remove("go"); void raw.offsetWidth; requestAnimationFrame(()=>raw.classList.add("go")); setTimeout(()=>raw.hidden=true,2600) } else raw.hidden=true }
-  else{ paint.src=img(S.role==="custom"?"monarch":S.role); paint.hidden=false; $("#pvEmpty").hidden=true; $("#pvBadge").hidden=true; raw.hidden=true }
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src})}
+
+/* ===== sound: a soft thud + a gilded "ting", made with WebAudio ===== */
+let AC=null;
+function audioInit(){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume() }catch(e){} }
+function thud(){ if(!AC) return; const n=AC.createBuffer(1,AC.sampleRate*.08,AC.sampleRate), d=n.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+  const s=AC.createBufferSource(); s.buffer=n; const f=AC.createBiquadFilter(); f.type="lowpass"; f.frequency.value=380; const g=AC.createGain(); g.gain.value=.9; s.connect(f).connect(g).connect(AC.destination); s.start() }
+function ting(){ if(!AC) return; const t0=AC.currentTime; [880,1320,1760].forEach((fq,i)=>{const o=AC.createOscillator(), g=AC.createGain(); o.type="sine"; o.frequency.value=fq; g.gain.setValueAtTime(.12/(i+1),t0); g.gain.exponentialRampToValueAtTime(.0001,t0+1.2); o.connect(g).connect(AC.destination); o.start(t0); o.stop(t0+1.25)}) }
+
+/* ===== gold-leaf confetti ===== */
+function goldLeaf(){
+  if(reduce) return; const cv=$("#leaf"), x=cv.getContext("2d"), dpr=Math.min(devicePixelRatio,2);
+  cv.width=innerWidth*dpr; cv.height=innerHeight*dpr; x.scale(dpr,dpr);
+  const fl=Array.from({length:90},()=>({x:innerWidth/2+(Math.random()-.5)*innerWidth*.5,y:innerHeight*.42,vx:(Math.random()-.5)*9,vy:-Math.random()*11-4,s:6+Math.random()*8,rot:Math.random()*6,vr:.05+Math.random()*.15,ph:Math.random()*6}));
+  const t0=performance.now();
+  (function f(now){ const t=(now-t0)/1000; x.clearRect(0,0,innerWidth,innerHeight); if(t>2.4){x.clearRect(0,0,innerWidth,innerHeight); return}
+    fl.forEach(p=>{p.vy+=.12; p.vx*=.985; p.vy*=.985; p.x+=p.vx+Math.sin(t*3+p.ph)*.6; p.y+=p.vy; p.rot+=p.vr;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.rot); x.scale(Math.cos(t*6+p.ph),1); x.globalAlpha=Math.max(0,1-t/2.4);
+      const g=x.createLinearGradient(-p.s,0,p.s,0); g.addColorStop(0,"#7A5418"); g.addColorStop(.5,"#F7DE9E"); g.addColorStop(1,"#A87A2C"); x.fillStyle=g;
+      x.beginPath(); x.moveTo(-p.s/2,-p.s/3); x.lineTo(p.s/2,-p.s/2); x.lineTo(p.s/2.4,p.s/2); x.lineTo(-p.s/2,p.s/2.6); x.closePath(); x.fill(); x.restore()});
+    requestAnimationFrame(f) })(t0);
 }
 
-/* ===== Studio flow ===== */
-const STEPS=["photo","role","package","review"];
-function openStudio(step=0){ S.step=step; $("#studio").classList.add("open"); document.body.classList.add("locked"); renderStep(); $("#stNext").focus() }
-function closeStudio(){ $("#studio").classList.remove("open"); document.body.classList.remove("locked"); save(); if(!S.ordered) setTimeout(()=>maybeOffer("close"),400) }
-$$("[data-open]").forEach(b=>b.addEventListener("click",()=>openStudio(S.photo?Math.max(1,S.step):0)));
-$("#stClose").addEventListener("click",closeStudio);
+/* ===== the Unveiling ===== */
+function openUnveil(){ $("#unveil").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"unveil"},"") }
+function closeUnveil(){ $("#unveil").classList.remove("open"); if(!$("#studio").classList.contains("open")) document.body.classList.remove("locked") }
+async function handleFile(file){
+  if(!file) return;
+  if(file.type&&!file.type.startsWith("image/")){ toast("Please choose a photo."); return }
+  audioInit();
+  const url=URL.createObjectURL(file); let im;
+  try{ im=await loadImg(url) }catch(e){ toast("That photo couldn't be opened. Try a JPG or PNG."); return }
+  closeStudio(true); openUnveil();
+  const fr=$("#uvFrame"), cv=$("#uvCanvas"), st=$("#uvStatus"), plate=$("#uvPlate"), ask=$("#uvAsk");
+  fr.classList.remove("dropin"); plate.classList.remove("up"); ask.classList.remove("show"); st.textContent="The studio is painting…";
+  $("#uvRole").textContent=(S.role==="custom"?"Your own idea":roleOf(S.role).name).toUpperCase(); $("#uvName").textContent=S.name||" "; $("#uvNameIn").value=S.name;
+  await new Promise(r=>setTimeout(r,60));
+  const P=paintify(im); URL.revokeObjectURL(url);
+  PHOTO={raw:P.rawURL,paint:P.paintURL}; idb.set("photo",PHOTO); track("UploadImage"); track("CustomizeProduct",{content_id:S.role});
+  cv.width=P.paint.width; cv.height=P.paint.height; const x=cv.getContext("2d");
+  x.filter="blur(14px) saturate(.4)"; x.drawImage(P.raw,0,0); x.filter="none";
+  /* frame drops in */
+  requestAnimationFrame(()=>fr.classList.add("dropin"));
+  setTimeout(()=>{ thud(); buzz(18); $("#unveil").classList.add("shake"); setTimeout(()=>$("#unveil").classList.remove("shake"),260) },560);
+  /* brush strokes reveal the painting */
+  const W=cv.width, H=cv.height, strokes=Array.from({length:42},(_,i)=>{const y=(i/42)*H+Math.random()*H/30; return {y,x0:-W*.1,x1:W*1.1,w:H/12+Math.random()*H/16,wob:Math.random()*6}});
+  const mask=document.createElement("canvas"); mask.width=W; mask.height=H; const mx=mask.getContext("2d"); mx.lineCap="round"; mx.strokeStyle="#000";
+  const T0=performance.now()+700, DUR=reduce?10:1500;
+  await new Promise(done=>{ (function f(now){ const k=Math.min(1,Math.max(0,(now-T0)/DUR));
+      strokes.forEach((s,i)=>{const local=Math.min(1,Math.max(0,k*1.6-i/42*.6)); if(local<=0) return; mx.lineWidth=s.w; mx.beginPath(); mx.moveTo(s.x0,s.y); const xe=s.x0+(s.x1-s.x0)*local; mx.quadraticCurveTo((s.x0+xe)/2,s.y+Math.sin(s.wob)*H/30,xe,s.y+Math.cos(s.wob)*H/40); mx.stroke()});
+      x.save(); x.filter="blur(14px) saturate(.4)"; x.drawImage(P.raw,0,0); x.restore();
+      const tmp=document.createElement("canvas"); tmp.width=W; tmp.height=H; const tx2=tmp.getContext("2d"); tx2.drawImage(P.paint,0,0); tx2.globalCompositeOperation="destination-in"; tx2.drawImage(mask,0,0); x.drawImage(tmp,0,0);
+      if(k<1) requestAnimationFrame(f); else { x.drawImage(P.paint,0,0); done() } })(performance.now()) });
+  st.textContent="Here they are."; ting(); goldLeaf(); buzz(30);
+  plate.classList.add("up");
+  setTimeout(()=>{ ask.classList.add("show"); if(!S.name) $("#uvNameIn").focus({preventScroll:true}) },500);
+}
+$("#uvNameIn").addEventListener("input",e=>{S.name=e.target.value.trim(); save(); $("#uvName").textContent=S.name||" "});
+$("#uvNext").addEventListener("click",()=>{ closeUnveil(); openStudio(AD.role?2:1) });
+$("#uvShare").addEventListener("click",shareCard);
+$$(".file-in").forEach(i=>i.addEventListener("change",()=>{ handleFile(i.files[0]); i.value="" }));
+
+/* ===== share card (1080x1920) ===== */
+async function shareCard(){
+  if(!PHOTO) return; try{ await document.fonts.load("600 60px 'Bodoni Moda'") }catch(e){}
+  const W=1080,H=1920, c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
+  const bg=x.createRadialGradient(W/2,H*.4,100,W/2,H*.5,H*.8); bg.addColorStop(0,"#4A1220"); bg.addColorStop(1,"#120A0C"); x.fillStyle=bg; x.fillRect(0,0,W,H);
+  const fw=760, fh=950, fx=(W-fw)/2, fy=330, b=46;
+  const g=x.createLinearGradient(fx,fy,fx+fw,fy+fh); [["0","#5E3E10"],[".18","#F2D18A"],[".38","#A87A2C"],[".58","#F7DE9E"],[".8","#7A5418"],["1","#D9A94A"]].forEach(([o,cl])=>g.addColorStop(+o,cl));
+  x.shadowColor="rgba(0,0,0,.7)"; x.shadowBlur=60; x.shadowOffsetY=30; x.fillStyle=g; x.fillRect(fx-b,fy-b,fw+b*2,fh+b*2); x.shadowColor="transparent";
+  x.strokeStyle="rgba(40,24,6,.6)"; x.lineWidth=3; x.strokeRect(fx-b*.55,fy-b*.55,fw+b*1.1,fh+b*1.1);
+  const pi=await loadImg(PHOTO.paint); x.drawImage(pi,fx,fy,fw,fh);
+  const pw=520, ph=110, ppx=(W-pw)/2, ppy=fy+fh+b+40; const pg=x.createLinearGradient(0,ppy,0,ppy+ph); pg.addColorStop(0,"#F2D18A"); pg.addColorStop(.55,"#B8892F"); pg.addColorStop(1,"#8F6420"); x.fillStyle=pg; x.fillRect(ppx,ppy,pw,ph);
+  x.fillStyle="#2A1806"; x.textAlign="center"; x.font="500 22px 'DM Mono', monospace"; x.fillText((S.role==="custom"?"YOUR OWN IDEA":roleOf(S.role).name.toUpperCase()).split("").join(" "),W/2,ppy+38);
+  x.font="600 44px 'Bodoni Moda', Georgia, serif"; x.fillText((S.name||"My pet").toUpperCase(),W/2,ppy+88);
+  x.fillStyle="#F2D18A"; x.font="italic 500 64px 'Bodoni Moda', Georgia, serif"; x.fillText("Painted like royalty.",W/2,200);
+  x.fillStyle="#B7A58C"; x.font="500 30px 'DM Mono', monospace"; x.fillText(`Try yours free · ${SITE}`,W/2,H-140);
+  c.toBlob(async blob=>{ const file=new File([blob],`${(S.name||"my-pet").replace(/\W+/g,"-")}-portrait.png`,{type:"image/png"});
+    try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"My pet, painted like royalty"}); track("Share"); return } }catch(e){ if(e&&e.name==="AbortError") return }
+    $("#shareImg").src=URL.createObjectURL(blob); $("#shareOv").classList.add("open") },"image/png");
+}
+$("#shareClose").addEventListener("click",()=>$("#shareOv").classList.remove("open"));
+
+/* ===== Studio ===== */
+function openStudio(step){ S.step=step; save(); $("#studio").classList.add("open"); document.body.classList.add("locked"); history.pushState({hp:"studio",step},""); renderStep(); track("ViewContent",{content_id:S.role}) }
+function closeStudio(silent){ if(!$("#studio").classList.contains("open")) return; $("#studio").classList.remove("open"); if(!$("#unveil").classList.contains("open")) document.body.classList.remove("locked"); save(); if(!silent&&!S.ordered) setTimeout(()=>maybeOffer(),350) }
+$$("[data-open]").forEach(b=>b.addEventListener("click",()=>openStudio(PHOTO?Math.max(1,S.step||1):1)));
+$("#stClose").addEventListener("click",()=>closeStudio());
+$("#stBack").addEventListener("click",()=>history.back());
+addEventListener("popstate",()=>{ if($("#shareOv").classList.contains("open")){ $("#shareOv").classList.remove("open"); return }
+  if($("#unveil").classList.contains("open")){ closeUnveil(); return }
+  if($("#studio").classList.contains("open")){ if(S.step>1){ S.step--; save(); renderStep() } else closeStudio() } });
+$("#stNext").addEventListener("click",()=>{ if(S.step<4){ S.step++; save(); history.pushState({hp:"studio",step:S.step},""); renderStep(); $("#stBody").scrollTop=0; if(S.step===3) track("AddToCart",{value:total(),currency:"USD",content_id:S.tier}) } else checkout() });
 addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("#exitModal").classList.contains("open")) closeOffer(); else if($("#studio").classList.contains("open")) closeStudio() }});
-$("#stBack").addEventListener("click",()=>go(S.step-1));
-$("#stNext").addEventListener("click",()=>{ if(S.step<3) go(S.step+1); else checkout() });
-function go(n){ S.step=Math.max(0,Math.min(3,n)); save(); renderStep(); $("#stBody").scrollTop=0 }
-function total(){ return tierOf(S.tier).price }
-
+function total(){ return tierOf(S.tier).price+(S.bump?BUMP.price:0) }
 function renderStep(){
-  const r=roleOf(S.role), t=tierOf(S.tier);
-  $$(".prog i").forEach((i,k)=>i.classList.toggle("done",k<=S.step));
-  $("#stCount").textContent=`STEP ${S.step+1} OF 4`;
-  $("#stBack").style.visibility=S.step?"visible":"hidden";
+  /* steps: 1 role, 2 package+name, 3 extras+review, 4 pay confirm */
+  const r=roleOf(S.role), t=tierOf(S.tier), step=Math.max(1,Math.min(4,S.step||1)); S.step=step;
+  $$(".prog i").forEach((i,k)=>i.classList.toggle("done",k<step));
+  $("#stCount").textContent=`STEP ${step} OF 4`;
+  $("#pvMain").src=img(S.role==="custom"?"monarch":S.role);
+  if(PHOTO){ $("#pvCameo").hidden=false; $("#pvCameoImg").src=PHOTO.paint; $("#pvNote").textContent=`Studio sample · ${S.name||"your pet"} in the corner` } else { $("#pvCameo").hidden=true; $("#pvNote").textContent="Studio sample" }
   $("#plRole").textContent=(S.role==="custom"?(S.custom||"Your own idea"):r.name).toUpperCase();
   $("#plName").textContent=(S.name||"Your pet's name").toUpperCase();
-  $("#rmImg").src=img(S.role==="custom"?"monarch":S.role); $("#rmName").textContent=S.role==="custom"?"Your own idea":r.name;
-  $("#roleMini").hidden=!S.photo;
-  showPreview(false);
   $("#stSum").innerHTML=`<b>$${total()}</b>${t.name} · ${S.role==="custom"?"Custom role":r.name}${S.name?" · "+esc(S.name):""}`;
-  const next=$("#stNext"); next.disabled=false;
-  const R=$("#stRight"); R.className="st-right panel"; void R.offsetWidth;
-  if(S.step===0){
-    next.innerHTML=S.photo?'Choose a role <span class="arr">→</span>':'Skip for now <span class="arr">→</span>';
-    R.innerHTML=`<span class="eyebrow">Step 1 · Free preview</span><h2 id="stTitle" style="margin-top:12px">Show us your pet.</h2><p class="lead">Upload one photo and watch it become an oil painting. It stays on your device and takes about five seconds.</p>
-      <label class="drop" id="drop"><input type="file" accept="image/*" id="file" aria-label="Upload a photo of your pet"><span class="ic">↑</span><b>${S.photo?"Try another photo":"Upload a photo"}</b><span>Tap to choose, or drop it here</span></label>
-      <div class="tips"><div><b>Eye level</b>Get down to their height</div><div><b>Daylight</b>Near a window works best</div><div><b>Both eyes</b>Clearly visible, in focus</div></div>`;
-    const f=$("#file"), d=$("#drop");
-    f.addEventListener("change",()=>handleFile(f.files[0]));
-    ["dragenter","dragover"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.add("over")}));
-    ["dragleave","drop"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault(); d.classList.remove("over")}));
-    d.addEventListener("drop",e=>handleFile(e.dataTransfer.files[0]));
-  }
-  if(S.step===1){
+  const next=$("#stNext"), R=$("#stRight"); R.className="st-right panel"; void R.offsetWidth;
+  if(step===1){
     next.innerHTML='Choose a package <span class="arr">→</span>';
-    const list=ROLES.filter(x=>AVAILABLE.has(x.key));
-    R.innerHTML=`<span class="eyebrow">Step 2 · The role</span><h2 id="stTitle" style="margin-top:12px">Who were they in a past life?</h2><p class="lead">${list.length} roles in the collection, or describe your own idea.</p>
-      <div class="rgrid" role="radiogroup" aria-label="Portrait role">${list.map(x=>`<button type="button" class="rcard" role="radio" aria-checked="${S.role===x.key}" data-r="${x.key}"><img src="${img(x.key)}" alt=""><span>${x.name.replace("The ","")}</span></button>`).join("")}<button type="button" class="rcard custom" role="radio" aria-checked="${S.role==="custom"}" data-r="custom">✦<br>Your own<br>idea</button></div>
-      <div class="customin" id="customBox" ${S.role==="custom"?"":"hidden"}><label class="lbl2" for="customIn">Describe the role</label><textarea class="inp" id="customIn" maxlength="160" placeholder="e.g. A 1920s jazz singer with a pearl microphone">${esc(S.custom)}</textarea></div>`;
-    R.querySelector(".rgrid").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b) return; S.role=b.dataset.r; save(); renderStep(); if(S.role==="custom") setTimeout(()=>$("#customIn").focus(),50)});
+    R.innerHTML=`<span class="eyebrow">Step 1 · The role</span><h2 id="stTitle" style="margin-top:12px">Who were they in a past life?</h2><p class="lead">${PHOTO?"Tap a role to try it on.":"Tap a role to see it. Upload a photo anytime for your free preview."}</p>
+      <div class="rgrid" role="radiogroup" aria-label="Portrait role">${ROLES.map(x=>`<button type="button" class="rcard" role="radio" aria-checked="${S.role===x.key}" data-r="${x.key}"><img src="${img(x.key)}" alt=""><span>${x.name.replace(/^The /,"")}</span></button>`).join("")}<button type="button" class="rcard custom" role="radio" aria-checked="${S.role==="custom"}" data-r="custom">Your own<br>idea</button></div>
+      <div style="display:grid;gap:8px;margin-top:14px" id="customBox" ${S.role==="custom"?"":"hidden"}><label class="lbl2" for="customIn">Describe the role</label><textarea class="inp" id="customIn" maxlength="160" placeholder="e.g. A 1920s jazz singer with a pearl microphone">${esc(S.custom)}</textarea></div>
+      ${PHOTO?"":`<label class="btn upl" style="margin-top:18px"><input type="file" class="file-in" ${isInApp?"":'accept="image/*"'} aria-label="Upload a photo">Upload a photo for my free preview</label>`}`;
+    R.querySelector(".rgrid").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b) return; S.role=b.dataset.r; save(); buzz(8); renderStep();
+      const nb=R.querySelector(`[data-r="${S.role}"]`); if(nb){ nb.insertAdjacentHTML("beforeend",'<svg class="ring" viewBox="0 0 100 125" preserveAspectRatio="none"><rect x="2" y="2" width="96" height="121" rx="6"/></svg>') }
+      if(S.role==="custom") setTimeout(()=>$("#customIn").focus(),50)});
     const ci=$("#customIn"); if(ci) ci.addEventListener("input",()=>{S.custom=ci.value.trim(); save(); $("#plRole").textContent=(S.custom||"Your own idea").toUpperCase()});
+    const fi=R.querySelector(".file-in"); if(fi) fi.addEventListener("change",()=>handleFile(fi.files[0]));
   }
-  if(S.step===2){
-    next.innerHTML='Review my order <span class="arr">→</span>';
-    R.innerHTML=`<span class="eyebrow">Step 3 · Package</span><h2 id="stTitle" style="margin-top:12px">How many masterpieces?</h2><p class="lead">Most people choose Royal: three roles make a gallery wall, or three gifts.</p>
-      <div class="opts" role="radiogroup" aria-label="Package">${TIERS.map(x=>`<button type="button" class="opt" role="radio" aria-checked="${S.tier===x.key}" data-t="${x.key}">${x.pop?'<span class="tag">MOST POPULAR</span>':""}<span class="rd"></span><span><b>${x.name}</b><p>${x.items.slice(0,3).join(" · ")}</p></span><span class="pr">$${x.price}${x.was?`<s>$${x.was}</s>`:""}</span></button>`).join("")}</div>
-      <div style="display:grid;gap:10px;margin-top:26px"><span class="lbl2">Your pet</span><div class="seg" role="radiogroup" aria-label="Pet type">${["Dog","Cat","Two pets","Other"].map(p=>`<button type="button" role="radio" aria-checked="${S.pet===p}" data-p="${p}">${p}</button>`).join("")}</div></div>
-      <div style="display:grid;gap:8px;margin-top:22px"><label class="lbl2" for="nameIn">Their name, for the plaque</label><input class="inp" id="nameIn" maxlength="22" placeholder="e.g. Sir Biscuit" value="${esc(S.name)}" autocomplete="off"></div>`;
-    R.querySelector(".opts").addEventListener("click",e=>{const b=e.target.closest("[data-t]"); if(!b) return; S.tier=b.dataset.t; save(); renderStep()});
+  if(step===2){
+    next.innerHTML='Continue <span class="arr">→</span>';
+    R.innerHTML=`<span class="eyebrow">Step 2 · Package</span><h2 id="stTitle" style="margin-top:12px">How many masterpieces?</h2><p class="lead">Three roles make a gallery wall, or three gifts.</p>
+      <div class="opts" role="radiogroup" aria-label="Package">${TIERS.map(x=>`<button type="button" class="opt" role="radio" aria-checked="${S.tier===x.key}" data-t="${x.key}">${x.pop?'<span class="tag">MOST CHOSEN</span>':""}<span class="rd"></span><span><b>${x.name}</b><p>${x.items.slice(0,3).join(" · ")}</p></span><span class="pr">$${x.price}<small>${x.each}</small></span></button>`).join("")}</div>
+      ${S.tier==="classic"?`<button type="button" class="bump" id="stepUp" style="width:100%;text-align:start"><span style="flex:1"><b>+$20 → 3 roles instead of 1</b><span>Most gifts need more than one.</span></span><em>Royal</em></button>`:""}
+      <div style="display:grid;gap:10px;margin-top:24px"><span class="lbl2">Your pet</span><div class="seg" role="radiogroup" aria-label="Pet type">${["Dog","Cat","Two pets","Other"].map(p=>`<button type="button" role="radio" aria-checked="${S.pet===p}" data-p="${p}">${p}</button>`).join("")}</div></div>
+      <div style="display:grid;gap:8px;margin-top:20px"><label class="lbl2" for="nameIn">Their royal name, for the plaque</label><input class="inp" style="text-align:start" id="nameIn" maxlength="22" placeholder="e.g. Sir Biscuit" value="${esc(S.name)}" autocomplete="off"></div>`;
+    R.querySelector(".opts").addEventListener("click",e=>{const b=e.target.closest("[data-t]"); if(!b) return; S.tier=b.dataset.t; save(); eta(); renderStep()});
+    const su=$("#stepUp"); if(su) su.addEventListener("click",()=>{S.tier="royal"; save(); eta(); buzz(8); renderStep(); toast("Upgraded to Royal: 3 roles.")});
     R.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-p]"); if(!b) return; S.pet=b.dataset.p; save(); renderStep()});
-    const ni=$("#nameIn"); ni.addEventListener("input",()=>{S.name=ni.value.trim(); save(); $("#plName").textContent=(S.name||"Your pet's name").toUpperCase(); $("#stSum").innerHTML=`<b>$${total()}</b>${t.name} · ${S.role==="custom"?"Custom role":r.name}${S.name?" · "+esc(S.name):""}`});
+    const ni=$("#nameIn"); ni.addEventListener("input",()=>{S.name=ni.value.trim(); save(); $("#plName").textContent=(S.name||"Your pet's name").toUpperCase()});
   }
-  if(S.step===3){
-    next.innerHTML=`Pay $${total()} securely <span class="arr">→</span>`; next.classList.add("pulse");
-    const off=S.offer&&OFFER.code;
-    R.innerHTML=`<span class="eyebrow">Step 4 · Review</span><h2 id="stTitle" style="margin-top:12px">Your commission.</h2><p class="lead">Check the details, then pay securely on Gumroad.</p>
+  if(step===3){
+    next.innerHTML=`Pay $${total()} securely <span class="arr">→</span>`;
+    const h=t.hours, d=new Date(Date.now()+h*3600e3);
+    R.innerHTML=`<span class="eyebrow">Step 3 · Review</span><h2 id="stTitle" style="margin-top:12px">Your commission.</h2><p class="lead">In your inbox by ${d.toLocaleDateString("en-US",{weekday:"long"})} ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}.</p>
       <div class="review">
         <div class="rrow"><span>Package</span><b>${t.name} · ${t.items[0]}</b></div>
-        <div class="rrow"><span>Role</span><b>${S.role==="custom"?esc(S.custom||"Your own idea (describe after checkout)"):r.name}</b></div>
+        <div class="rrow"><span>Role</span><b>${S.role==="custom"?esc(S.custom||"Your own idea"):r.name}</b></div>
         <div class="rrow"><span>Pet</span><b>${S.pet}${S.name?" · "+esc(S.name):""}</b></div>
-        <div class="rrow"><span>Delivery</span><b>${t.key==="heirloom"?"6 hours":t.key==="royal"?"12 hours":"24 hours"}, by email</b></div>
-        ${off?`<div class="rrow"><span>Offer code</span><b style="color:var(--ok)">${OFFER.code} · ${OFFER.label}</b></div>`:""}
-        <div class="rtotal"><span>TOTAL</span><b>$${total()}</b></div>
+        ${S.offer&&OFFER.code?`<div class="rrow"><span>Offer</span><b style="color:var(--ok)">${OFFER.code} · ${OFFER.label}</b></div>`:""}
+        <div class="rtotal"><span>TOTAL</span><b id="rTotal">$${total()}</b></div>
       </div>
-      <div class="next"><div><b>01</b><span>Your order details are copied for you. Paste them into the "Order details" box at checkout.</span></div><div><b>02</b><span>After paying, your receipt has a link to upload your pet's photo.</span></div><div><b>03</b><span>Your portrait arrives by email. One free revision, full refund if you're not happy.</span></div></div>`;
-  } else next.classList.remove("pulse");
+      <label class="bump"><input type="checkbox" id="bumpIn" ${S.bump?"checked":""}><span style="flex:1"><b>${BUMP.label}</b><span>${BUMP.sub}</span></span><em>+$${BUMP.price}</em></label>
+      <div class="assure"><span>✓ FREE REPAINTS FOR 14 DAYS</span><span>✓ FULL REFUND GUARANTEE</span><span>✓ CARD OR PAYPAL</span></div>`;
+    $("#bumpIn").addEventListener("change",e=>{S.bump=e.target.checked; save(); renderStep()});
+  }
+  if(step===4){ S.step=3; renderStep(); checkout() }
 }
-function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function orderText(){ const r=roleOf(S.role), t=tierOf(S.tier);
-  return `Package: ${t.name}\nRole: ${S.role==="custom"?"Custom: "+(S.custom||"(I'll describe it)"):r.name}\nPet: ${S.pet}\nName for plaque: ${S.name||"-"}` }
+  return `Package: ${t.name}${S.bump?" + Christmas card":""}\nRole: ${S.role==="custom"?"Custom: "+(S.custom||"(I'll describe it)"):r.name}\nPet: ${S.pet}\nName for plaque: ${S.name||"-"}` }
 function checkout(){
-  const t=tierOf(S.tier); let url=CHECKOUT[t.key];
-  const txt=orderText();
-  try{ navigator.clipboard.writeText(txt).catch(()=>{}) }catch(e){}
-  if(!url){ toast("Checkout isn't connected yet. Add your Gumroad links in CHECKOUT."); return }
-  if(S.offer&&OFFER.code) url=url.replace(/\/$/,"")+"/"+encodeURIComponent(OFFER.code);
+  const key=S.tier+(S.bump?"+card":""); let url=CHECKOUT[key]||(S.bump?"":CHECKOUT[S.tier]);
+  track("InitiateCheckout",{value:total(),currency:"USD",content_id:key});
+  if(!url){
+    const R=$("#stRight"); if(!R.querySelector(".otext")) R.insertAdjacentHTML("beforeend",`<div class="otext"><span class="lbl2">Your order</span><pre>${esc(orderText())}</pre></div>`);
+    toast("Checkout isn't connected yet. Add your payment links in CHECKOUT."); return }
+  if(S.offer&&OFFER.code) toast(`Enter code ${OFFER.code} at checkout.`);
+  const p=new URLSearchParams(); if(AD.ttclid) p.set("ttclid",AD.ttclid); AD.utm.forEach(([k,v])=>p.set(k,v));
+  try{ navigator.clipboard&&navigator.clipboard.writeText(orderText()).catch(()=>{}) }catch(e){}
   S.ordered=true; save();
-  window.open(url+(url.includes("?")?"&":"?")+"wanted=true","_blank","noopener");
-  toast("Order details copied. Paste them at checkout.");
+  location.href=url+(p.toString()?(url.includes("?")?"&":"?")+p.toString():"");
 }
 
-/* ===== exit offer: once per visit ===== */
+/* ===== exit offer (desktop mouse-out, mobile back from the studio) ===== */
 let offered=false; try{offered=sessionStorage.getItem("hp-offer")==="1"}catch(e){}
-function maybeOffer(why){
+function maybeOffer(){
   if(offered||S.ordered) return; offered=true; try{sessionStorage.setItem("hp-offer","1")}catch(e){}
-  if(OFFER.code){ $("#exTitle").textContent=`Wait, take ${OFFER.label}.`; $("#exText").textContent="Your first portrait, on us a little. The code is applied when you check out from the studio."; $("#exCode").hidden=false; $("#exCode").textContent=OFFER.code; $("#exGo").innerHTML='Use my offer <span class="arr">→</span>' }
-  else if(S.photo){ $("#exTitle").textContent="Your preview is saved."; $("#exText").textContent="Pick a role and they'll be hanging in your gallery tomorrow."; $("#exGo").innerHTML='Finish my portrait <span class="arr">→</span>' }
+  if(OFFER.code&&RETURNING){ $("#exTitle").textContent=`Welcome back: ${OFFER.label}.`; $("#exText").textContent="Enter this code at checkout."; $("#exCode").hidden=false; $("#exCode").textContent=OFFER.code; $("#exGo").innerHTML='Use my offer <span class="arr">→</span>' }
+  else if(PHOTO){ $("#exTitle").textContent=`${S.name||"Your pet"}'s preview is saved.`; $("#exText").textContent="Pick a role and they'll be hanging in your gallery tomorrow."; $("#exGo").innerHTML='Finish my portrait <span class="arr">→</span>' }
   $("#exitModal").classList.add("open");
 }
 function closeOffer(){ $("#exitModal").classList.remove("open") }
 $("#exClose").addEventListener("click",closeOffer);
 $("#exitModal").addEventListener("click",e=>{ if(e.target.id==="exitModal") closeOffer() });
-$("#exGo").addEventListener("click",()=>{ if(OFFER.code) S.offer=true; closeOffer(); openStudio(S.photo?1:0) });
-document.addEventListener("mouseout",e=>{ if(!e.relatedTarget && e.clientY<8 && scrollY>200 && !$("#studio").classList.contains("open")) maybeOffer("exit") });
+$("#exGo").addEventListener("click",()=>{ if(OFFER.code&&RETURNING) S.offer=true; closeOffer(); if(PHOTO) openStudio(Math.max(1,S.step||1)); else document.querySelector(".hero .file-in").click() });
+document.addEventListener("mouseout",e=>{ if(!e.relatedTarget&&e.clientY<8&&scrollY>200&&!$("#studio").classList.contains("open")) maybeOffer() });
+
+/* ===== returning visitors ===== */
+let RETURNING=false;
+idb.get("photo").then(p=>{ if(!p) return; PHOTO=p; RETURNING=true;
+  const b=document.createElement("div"); b.className="back-banner"; b.innerHTML=`<img src="${p.paint}" alt=""><span>${esc(S.name||"Your pet")}'s portrait is waiting</span><button type="button">Finish</button>`;
+  b.querySelector("button").addEventListener("click",()=>{b.remove(); openStudio(Math.max(1,S.step||1))}); document.body.append(b); setTimeout(()=>b.remove(),12000) });
 
 /* ===== boot ===== */
-Promise.all(ROLES.map(r=>probe(r.key))).then(()=>{ buildWall(); buildCollection(); renderStep() });
+personaliseHero(); buildWall(); buildCollection(); track("ViewContent",{content_id:S.role});
 addEventListener("resize",()=>{clearTimeout(buildWall.t); buildWall.t=setTimeout(buildWall,250)});
 </script>
