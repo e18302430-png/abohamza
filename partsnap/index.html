@@ -252,15 +252,15 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
         </div>
       </div>
 
-      <div class="stage" id="stage" aria-label="Example: a scanned Whirlpool washer label and the parts that usually fail">
+      <div class="stage" id="stage" aria-label="Example: a scanned washer label (made-up brand) and the parts that usually fail">
         <div class="film" id="film" hidden><video id="filmV" muted playsinline preload="none" poster="assets/poster.jpg" aria-label="12-second film: the label is scanned, the washer opens up, and the drain pump is identified"><source src="assets/hero.mp4" type="video/mp4"><source src="assets/hero.webm" type="video/webm"></video><span class="tag">How PartSnap sees it</span><button class="btn sm skip" type="button" id="filmSkip">Skip</button><span class="prog" id="filmProg"></span></div>
         <div class="vf" id="vf"><i></i><i></i><i></i><i></i>
           <div class="plate" id="plate">
             <span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span>
             <span class="scanline" id="scanline"></span>
-            <div class="pbrand" id="pBrand">Whirlpool</div>
+            <div class="pbrand" id="pBrand">Northgate</div>
             <dl>
-              <dt>Model No.</dt><dd class="model" id="pModel"><span id="pModelText">WTW5000DW1</span><span class="box" id="pBox"></span></dd>
+              <dt>Model No.</dt><dd class="model" id="pModel"><span id="pModelText">NGT5000DW1</span><span class="box" id="pBox"></span></dd>
               <dt>Serial No.</dt><dd id="pSerial">C91234567</dd>
               <dt>Rating</dt><dd id="pRating">120V~ 60Hz 10A</dd>
             </dl>
@@ -314,7 +314,7 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
   </main>
 
   <footer id="foot">
-    <p><b>Affiliate disclosure:</b> PartSnap earns commissions from some links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases.</p>
+    <p><b>Affiliate disclosure:</b> PartSnap earns commissions from some links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases. Brand and model names are used only to identify compatible parts; PartSnap isn't affiliated with any manufacturer.</p>
     <p><b>Safety:</b> unplug the appliance and shut off water before any repair. Gas, refrigerant and microwave internals are for licensed technicians. Repair information is general guidance; you're responsible for your repair. Electrical parts are often non-returnable, so confirm the fault first and check the seller's return policy.</p>
     <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><button class="link" type="button" id="clearData">Delete my data on this device</button></nav>
   </footer>
@@ -411,7 +411,7 @@ const P=(name,like,why,confirm,diff)=>({part_name:name,likelihood:like,why,how_t
 const TYPES={washer:"Washer",dryer:"Dryer",dishwasher:"Dishwasher",refrigerator:"Refrigerator",range:"Range / oven",microwave:"Microwave",disposal:"Garbage disposal"};
 const SYMPTOMS={
  washer:[
-  {id:"no_drain",label:"Won't drain",free:["Check the drain hose for kinks; it shouldn't be pushed more than about 8 inches into the standpipe.","Front-load: open the small door at the bottom front and clean the drain pump filter (have towels ready)."],
+  {id:"no_drain",label:"Won't drain",free:["Check the drain hose for kinks; it shouldn't be pushed more than about 4–6 inches into the standpipe.","Front-load: open the small door at the bottom front and clean the drain pump filter (have towels ready)."],
    parts:[P("Drain pump","high","The most common cause when water stays in the tub after a cycle.","During the drain step, a hum with no water moving usually means a jammed or failed pump.","moderate"),P("Lid switch / door lock assembly","medium","If the washer can't sense the lid or door is locked, it skips draining and spinning.","Does it also refuse to spin? Press the lid switch by hand and listen for a click.","easy")]},
   {id:"no_spin",label:"Won't spin",free:["Rebalance the load. An off-balance load stops the spin.","Run a drain & spin cycle with the tub empty."],
    parts:[P("Lid switch / door lock assembly","high","The washer won't spin unless it detects a closed, locked lid or door.","Listen for the lock click when the cycle starts. No click points to the lock.","easy"),P("Drive belt","medium","Front-loaders and many older top-loaders turn the drum with a belt that stretches or snaps.","Unplugged, look behind the back panel: a loose or missing belt is obvious.","easy"),P("Motor coupling","medium","Older direct-drive top-loaders use a plastic coupling that wears out.","The motor hums but the basket doesn't move; plastic bits under the washer.","moderate")]},
@@ -421,23 +421,30 @@ const SYMPTOMS={
    parts:[P("Water inlet valve","high","When the valve coil fails, no water flows in.","Screens clean, taps open, still no water: the valve is the usual suspect.","moderate"),P("Lid switch / door lock assembly","low","Some washers won't fill until the lid or door is locked.","The cycle stops right after you press start.","easy")]},
   {id:"noisy",label:"Loud or shaking",free:["Level the washer by adjusting the feet until it doesn't rock.","New front-loader? Remove the shipping bolts on the back."],
    parts:[P("Suspension springs / shock absorbers","high","Worn springs or dampers let the tub bang the cabinet during spin.","Push down on the tub or drum: it should bounce once and stop.","moderate"),P("Tub bearing","medium","A roar during spin that gets louder over weeks points to bearings.","Spin the empty drum by hand: grinding or play means bearings. A big job.","hard")]},
+  {id:"smell",label:"Smells musty",free:["Leave the door or lid open between loads.","Run a hot cleaning cycle with washer cleaner.","Front-load: wipe inside the folds of the door seal."],
+   parts:[P("Door boot seal","medium","Mold that won't wipe out of the seal folds means the seal needs replacing.","Black spots stay after cleaning the seal with diluted bleach.","moderate"),P("Drain pump filter","medium","Trapped lint and water in the pump filter smell.","Open the filter door at the bottom front and check for gunk.","easy")]},
   {id:"no_start",label:"Won't start",free:["Check the outlet and the breaker.","Check for a control-lock or child-lock setting."],
    parts:[P("Lid switch / door lock assembly","high","The most common reason a washer with power refuses to start.","Lights come on but nothing happens after you press start.","easy"),P("Main control board","low","Rare and expensive. Rule out everything else first.","No lights or response at all with a working outlet.","hard")]},
  ],
  dryer:[
   {id:"no_heat",label:"Runs but no heat",free:["Clean the whole vent duct to the outside wall. A clogged vent blows the thermal fuse again.","Electric dryers need both halves of a 240V breaker. Reset it fully."],
-   parts:[P("Thermal fuse","high","A blown thermal fuse is the top cause, usually from a clogged vent.","Unplugged, test the fuse with a multimeter for continuity.","easy"),P("Heating element","high","Electric dryers heat with a coil that can break.","Test the element for continuity, or look for a break in the coil.","moderate"),P("High-limit thermostat","medium","It cuts the heat when overheated and can fail open.","Test for continuity at room temperature.","easy")],
-   gas:[P("Igniter","high","On gas dryers the igniter is the most common failure.","Through the burner window: no orange glow at start means the igniter.","moderate"),P("Gas valve solenoid coils","medium","The igniter glows but the flame never lights.","The igniter glows, then goes out with no flame.","moderate")]},
+   parts:[P("Thermal fuse","high","A blown thermal fuse is the top cause. It blows because the vent is clogged. Clean the vent before you replace it, and never bypass it.","Unplugged, test the fuse with a multimeter for continuity.","easy"),P("Heating element","high","Electric dryers heat with a coil that can break.","Test the element for continuity, or look for a break in the coil.","moderate"),P("High-limit thermostat","medium","It cuts the heat if the dryer overheats. If it reads open when cold, replace it, and suspect poor airflow.","Test for continuity at room temperature.","easy")],
+   gas:[P("Igniter","high","On gas dryers the igniter is the most common failure.","Through the burner window: no orange glow at start means the igniter.","moderate"),P("Gas valve solenoid coils","medium","The igniter glows but the flame never lights.","The igniter glows, then goes out with no flame.","moderate"),P("Flame sensor","medium","A failed flame sensor stops the igniter from glowing.","No glow at start, and the thermal fuse tests good.","moderate")]},
   {id:"no_tumble",label:"Motor runs, drum doesn't turn",free:[],
    parts:[P("Drive belt","high","A snapped belt leaves the motor running alone.","Turn the drum by hand. If it spins freely with no resistance, the belt is broken.","easy"),P("Idler pulley","medium","The pulley keeps the belt tight; when it fails the belt slips off.","Squealing before it stopped points to the pulley.","easy")]},
   {id:"no_start",label:"Won't start at all",free:["Check the breaker and the plug.","Make sure the door closes firmly."],
    parts:[P("Thermal fuse","high","On many models a blown thermal fuse also stops the motor.","Test the fuse for continuity.","easy"),P("Door switch","medium","If the dryer can't sense the door is shut, it won't start.","Press the switch by hand and listen for a click.","easy"),P("Start switch","low","The push-to-start switch can wear out.","The drum light works but start does nothing.","easy")]},
   {id:"noisy",label:"Squeaking or thumping",free:["Check the drum for coins, buttons or a stuck item."],
    parts:[P("Drum support rollers","high","Worn rollers make a rhythmic thump or rumble.","Remove the belt and spin the drum: rough rollers are obvious.","moderate"),P("Idler pulley","high","A worn pulley squeals, especially at startup.","Spin the pulley by hand. It should turn smoothly and quietly.","easy"),P("Drum glides / bearing","medium","Scraping at the front or back of the drum.","Look for worn felt or plastic glides at the drum's front edge.","moderate")]},
+  {id:"hot",label:"Too hot or shuts off",free:["Clean the lint screen and the entire vent duct to the outside. Overheating is a fire risk.","Make sure the outside vent flap opens when the dryer runs."],
+   parts:[P("Cycling thermostat","medium","A stuck thermostat lets the dryer run too hot.","Clothes are very hot even on low heat with a clear vent.","easy"),P("Heating element","low","A shorted element can keep heating with the dryer off-cycle.","Heat continues after the timer ends.","moderate")],
+   safety:{level:"caution",note:"Stop using a dryer that overheats until the vent is cleared. Lint fires are a leading cause of dryer fires."}},
   {id:"slow",label:"Takes too long to dry",free:["Wash the lint screen with soap and water to remove dryer-sheet film.","Clean the vent duct. This fixes most slow-drying problems."],
    parts:[P("Moisture sensor bars","medium","Dirty sensor bars end cycles early. Clean them before buying.","Wipe the two metal strips inside the drum with rubbing alcohol and retry.","easy"),P("Heating element","medium","A failing element gives weak heat.","Clothes come out warm but not hot after a timed cycle.","moderate"),P("Cycling thermostat","low","It controls air temperature and can drift.","Heat cycles on and off too quickly.","easy")]},
  ],
  dishwasher:[
+  {id:"no_start",label:"Won't start",free:["Check the breaker; many dishwashers are hard-wired.","Make sure the door latches firmly and control lock is off."],
+   parts:[P("Door latch assembly","high","If the latch switch doesn't close, the dishwasher won't start.","Lights work but nothing happens when you press start with the door closed.","easy"),P("Thermal fuse","medium","Some models have a thermal fuse on the control board that blows.","No lights at all with power confirmed.","moderate"),P("Main control board","low","Rare and expensive; rule out the latch first.","Error codes or a dead panel after checking the latch.","hard")]},
   {id:"no_drain",label:"Won't drain",free:["Remove and rinse the filter at the bottom of the tub.","New install? Check the disposal knockout plug was removed."],
    parts:[P("Drain pump","high","Water left in the bottom after a cycle usually means the pump.","A hum at the end of the cycle but the water doesn't go down.","moderate"),P("Drain check valve","medium","A stuck check valve blocks drain water or lets it flow back.","Water returns to the tub after it drains.","easy")]},
   {id:"not_clean",label:"Dishes not clean",free:["Clean the filter.","Clear the spray-arm holes with a toothpick.","Run the kitchen tap hot before you start."],
@@ -459,6 +466,8 @@ const SYMPTOMS={
    parts:[P("Ice maker assembly","high","The ice maker unit itself is the most common failure.","Water reaches the tray but never ejects, or nothing happens.","easy"),P("Water inlet valve","medium","No water reaches the ice maker or dispenser.","Dispenser and ice maker stopped at the same time.","moderate"),P("Water filter","medium","An old filter restricts water flow.","The filter is more than 6 months old.","easy")]},
   {id:"water",label:"Water slow or tastes off",free:["Check the filter date. Change it about every 6 months."],
    parts:[P("Water filter","high","Slow flow and bad taste are classic signs of an old filter.","Flow improves right after the old filter is removed.","easy"),P("Water inlet valve","low","A weak valve slows water even with a new filter.","Still slow with a new filter.","moderate")]},
+  {id:"dispenser",label:"Water dispenser not working",free:["Check the dispenser lock setting.","A frozen line is common: thaw the door water line with a hair dryer on low."],
+   parts:[P("Dispenser switch","medium","The switch behind the paddle tells the valve to open.","The paddle clicks but nothing happens and the ice maker still works.","easy"),P("Water inlet valve","medium","No water reaches the dispenser or ice maker.","Both dispenser and ice maker stopped.","moderate")]},
   {id:"leak",label:"Leaking water",free:["Clear the defrost drain at the back of the freezer with warm water.","Check the water line behind the fridge."],
    parts:[P("Water filter housing","medium","Cracked housings leak inside near the filter.","Water pools under the filter location.","easy"),P("Water inlet valve","medium","Leaks at the back bottom where the water line connects.","Water appears behind the fridge, not inside.","moderate")]},
   {id:"noisy",label:"Loud or buzzing",free:["Make sure the fridge is level and not touching the wall."],
@@ -472,7 +481,7 @@ const SYMPTOMS={
    parts:[P("Surface element (coil)","high","Coils burn out and are the cheapest fix.","Swap with a working coil. If the problem follows the coil, replace the coil.","easy"),P("Surface element receptacle","medium","Burnt receptacle terminals stop power reaching the coil.","Look for scorching where the coil plugs in.","moderate"),P("Infinite switch","medium","The knob switch can fail and leave the burner off or stuck on high.","The burner only works on high, or not at all, with a good coil.","moderate")],
    gas:[P("Spark igniter / burner","high","Gas burners that click but won't light need inspection.","Clicking with no flame, or a gas smell.","moderate")]},
   {id:"temp",label:"Oven temperature is off",free:["Use an oven thermometer to measure the real temperature.","Many ovens let you calibrate the temperature by up to 35°F in settings."],
-   parts:[P("Oven temperature sensor","high","A drifting sensor makes the oven run hot or cold.","The sensor reads about 1,100 ohms at room temperature on most models.","easy")]},
+   parts:[P("Oven temperature sensor","high","A drifting sensor makes the oven run hot or cold.","Unplugged, most sensors read about 1,000–1,100 ohms at room temperature. Check the tech sheet for your model's value.","easy")]},
   {id:"door",label:"Door locked after self-clean",free:["Turn off the breaker for 5 minutes, then back on, to reset the lock.","Wait until the oven is fully cool."],
    parts:[P("Door lock motor and switch assembly","high","The lock motor fails, often right after a self-clean cycle.","The lock light stays on and the door won't open when cool.","moderate")]},
  ],
@@ -480,16 +489,19 @@ const SYMPTOMS={
   {id:"turntable",label:"Turntable won't spin",free:["Seat the glass tray on the roller ring and the center coupler.","Clean food out of the track under the tray."],
    parts:[P("Turntable coupler","high","The small plastic coupler in the center wears or cracks.","The coupler spins but the tray doesn't, or the coupler is cracked.","easy"),P("Roller ring","medium","A broken roller ring makes the tray stall or wobble.","Look for broken or flat wheels on the ring.","easy")]},
   {id:"sparks",label:"Sparks inside",free:["Remove any metal: foil, twist ties, gold-rimmed plates.","Clean grease off the walls and the ceiling."],
-   parts:[P("Waveguide cover","high","The small card-like cover on the inside wall gets greasy or burnt and arcs.","Look for a burnt spot on the cover inside the cavity.","easy")]},
+   parts:[P("Waveguide cover","high","The small card-like cover on the inside wall gets greasy or burnt and arcs.","Look for a burnt spot on the cover inside the cavity.","easy")],
+   safety:{level:"caution",note:"Unplug first. Replace only the waveguide cover. If sparks continue or the cavity paint is burned through, stop using it."}},
   {id:"light",label:"Light is out",free:["Check the light works in both door-open and running modes."],
    parts:[P("Light bulb","high","The bulb just burns out.","The microwave works, only the light is out.","easy")],
-   safety:{level:"caution",note:"Unplug first. Change only bulbs reachable from outside or under the vent grille, and never open the outer cabinet."}},
+   safety:{level:"caution",note:"Unplug first. Change only bulbs you can reach through an outside cover or the vent grille. Countertop bulbs behind the cabinet need a technician."}},
+  {id:"no_power",label:"Won't turn on",free:["Try another outlet and check the breaker or GFCI."],parts:[],
+   safety:{level:"pro_only",note:"The door switches and fuse are inside the cabinet, where lethal voltage is stored. Have a technician check it."}},
   {id:"no_heat",label:"Runs but doesn't heat",free:["Test with a cup of water for 1 minute to confirm."],parts:[],
    safety:{level:"pro_only",note:"Microwaves store lethal voltage inside even when unplugged. Heating problems need a technician."}},
  ],
  disposal:[
-  {id:"hums",label:"Hums but won't spin",free:["Turn off the power. Put a 1/4-inch hex key in the socket on the bottom center and work it back and forth.","Press the red reset button on the bottom, then try again."],
-   parts:[P("Disposal hex wrench (jam-buster)","medium","Most units ship with one; any 1/4-inch hex key works.","The flywheel turns freely after you work it.","easy"),P("Garbage disposal unit","low","If it still hums after clearing the jam, the motor is failing.","Hums with a free-turning flywheel.","moderate")]},
+  {id:"hums",label:"Hums but won't spin",free:["Unplug it or switch off its breaker. Never put your hand inside; use tongs to remove objects. Then put a 1/4-inch hex key in the socket on the bottom center and work it back and forth.","Press the red reset button on the bottom, then try again."],
+   parts:[P("Disposal hex wrench (jam-buster)","high","Most units ship with one; any 1/4-inch hex key works.","The flywheel turns freely after you work it.","easy"),P("Garbage disposal unit","low","If it still hums after clearing the jam, the motor is failing.","Hums with a free-turning flywheel.","moderate")]},
   {id:"no_power",label:"Won't turn on at all",free:["Press the reset button on the bottom of the unit.","Check the breaker and the wall switch or air switch."],
    parts:[P("Disposal air switch or wall switch","low","Worn switches stop power reaching the unit.","Reset and breaker are fine but the unit is dead.","moderate"),P("Garbage disposal unit","medium","A dead motor after a reset usually means replacement.","No hum at all with power confirmed.","moderate")]},
   {id:"leak",label:"Leaking",free:["Find where it leaks: top (sink flange), side (dishwasher or drain hose), or bottom (internal seal)."],
@@ -500,22 +512,24 @@ const SYMPTOMS={
    parts:[P("Toilet flapper","high","A worn flapper lets water leak into the bowl and the tank refills.","Put a few drops of food coloring in the tank; if color shows in the bowl in 15 minutes, it's the flapper.","easy"),P("Fill valve","medium","A worn fill valve keeps hissing or overfills into the overflow tube.","Water keeps flowing into the overflow tube.","easy")]},
   {id:"weak",label:"Weak flush",free:["Make sure the chain has only a little slack.","Make sure the shut-off valve behind the toilet is fully open."],
    parts:[P("Toilet flapper","medium","A flapper that closes too early cuts the flush short.","Hold the handle down; if the flush improves, adjust the chain or replace the flapper.","easy"),P("Flush valve","low","A warped flush valve seat leaks and weakens the flush.","A new flapper didn't fix it.","moderate")]},
-  {id:"base",label:"Leaks at the base",free:["Tighten the two bolts at the base gently, alternating sides."],
+  {id:"base",label:"Leaks at the base",free:["Dry everything, then check the supply line and tank bolts first. Tighten the base bolts by hand plus a quarter turn, alternating sides. Overtightening cracks porcelain."],
    parts:[P("Wax ring","high","Leaks at the floor mean the wax ring seal failed.","Water appears at the base after flushing.","moderate")],
-   safety:{level:"caution",note:"A toilet weighs 60–120 lb. Shut off and drain the water first, and lift with help."}},
+   safety:{level:"caution",note:"A toilet weighs 60–120 lb, so lift with help. Use a new wax ring every time and never stack two. Stuff a rag in the drain against sewer gas. A broken flange or soft floor needs a plumber."}},
  ],
  faucet:[
   {id:"drip",label:"Drips from the spout",free:["Note the brand (it's usually on the handle or base) before buying parts."],
    parts:[P("Faucet cartridge","high","Most modern faucets drip because the cartridge wears out.","Turn off the water under the sink and pull the cartridge; take it to compare.","easy"),P("Faucet O-rings and seats","medium","Older compression faucets drip from worn washers and seats.","The handle turns several times to shut off.","easy")]},
+  {id:"low_flow",label:"Low water flow",free:["Unscrew the aerator at the tip of the spout and rinse out debris.","Check that both shut-off valves under the sink are fully open."],
+   parts:[P("Faucet aerator","high","A clogged aerator is the most common cause of weak flow.","Flow is strong with the aerator removed.","easy"),P("Faucet cartridge","medium","Debris in the cartridge restricts flow.","Still weak without the aerator.","easy")]},
   {id:"base",label:"Leaks around the handle or base",free:["Tighten the handle set screw or the packing nut a quarter turn."],
    parts:[P("Faucet O-rings","high","Worn O-rings leak at the base of the spout or handle.","Water pools only when the faucet is on.","easy")]},
  ],
 };
-const LIFESPAN={washer:11,dryer:13,dishwasher:10,refrigerator:13,range:15,microwave:9,disposal:12};
-const NEWPRICE={washer:750,dryer:700,dishwasher:650,refrigerator:1600,range:900,microwave:250,disposal:180};
+const LIFESPAN={washer:11,dryer:13,dishwasher:10,refrigerator:12,range:15,microwave:9,disposal:12};
+const NEWPRICE={washer:750,dryer:700,dishwasher:650,refrigerator:1600,range:900,microwave:300,disposal:180};
 const UPKEEP={
   washer:[{t:"Run a washer cleaning cycle",m:1,buy:"washing machine cleaner tablets"}],
-  dryer:[{t:"Clean the dryer vent duct",m:12,buy:"dryer vent cleaning kit"}],
+  dryer:[{t:"Clean the dryer vent duct",m:12,buy:"dryer vent cleaning kit"},{t:"Replace foil or plastic dryer duct with metal",m:60,buy:"metal dryer vent duct"}],
   dishwasher:[{t:"Clean the dishwasher filter",m:1,buy:"dishwasher cleaner"}],
   refrigerator:[{t:"Replace the fridge water filter",m:6,buy:"water filter",partselect:true},{t:"Vacuum the condenser coils",m:6,buy:"refrigerator coil brush"}],
   range:[{t:"Wipe the oven and check door gasket",m:3}],
@@ -533,7 +547,7 @@ const FILTER_SIZES=["10x20x1","12x24x1","14x20x1","14x24x1","14x25x1","15x20x1",
 
 /* ================= state, URL sync ================= */
 const S={view:"home",app:null,symptom:null,details:"",partImg:null,result:null,labelImg:null,filter:null};
-const SAMPLE={brand:"Whirlpool",model:"WTW5000DW1",serial:"C91234567",type:"washer",fuel:"electric",confidence:"high",unclear:"",alts:[]};
+const SAMPLE={demo:true,brand:"Northgate",model:"NGT5000DW1",serial:"C91234567",type:"washer",fuel:"electric",confidence:"high",unclear:"",alts:[]};
 function syncURL(push){
   const q=new URLSearchParams();
   if(S.view!=="home") q.set("v",S.view);
@@ -546,19 +560,21 @@ function go(view,push=true){S.view=view;syncURL(push);render()}
 addEventListener("popstate",e=>{const st=e.state;if(st){Object.assign(S,st,{partImg:null,labelImg:null})}else{S.view="home"}render(false)});
 
 /* ================= API: timeout, bot check, friendly errors ================= */
-let TS_KEY="", tsReady=null;
-fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).then(c=>{TS_KEY=c.turnstile||""}).catch(()=>{});
-function turnstileToken(){
-  if(!TS_KEY) return Promise.resolve("");
-  if(!tsReady) tsReady=new Promise((ok)=>{const s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";s.async=true;s.onload=()=>ok();s.onerror=()=>ok();document.head.append(s)});
-  return tsReady.then(()=>new Promise(ok=>{ if(!window.turnstile) return ok("");
-    const el=$("#ts");el.hidden=false;el.innerHTML="";
-    const t=setTimeout(()=>ok(""),12000);
-    window.turnstile.render(el,{sitekey:TS_KEY,size:"flexible",appearance:"interaction-only",callback:tok=>{clearTimeout(t);el.hidden=true;ok(tok)},"error-callback":()=>{clearTimeout(t);ok("")}});
-  }));
+const CFG_READY=fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).catch(()=>({}));
+let tsReady=null,tsWidget=null,tsWaiter=null;
+async function turnstileToken(){
+  const cfg=await CFG_READY;const key=cfg.turnstile||"";if(!key) return "";
+  if(!tsReady) tsReady=new Promise(ok=>{const s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";s.async=true;s.onload=()=>ok();s.onerror=()=>ok();document.head.append(s)});
+  await tsReady;if(!window.turnstile) return "";
+  return new Promise(ok=>{
+    const done=tok=>{clearTimeout(t);$("#ts").hidden=true;tsWaiter=null;ok(tok||"")};
+    const t=setTimeout(()=>done(""),12000);tsWaiter=done;
+    if(tsWidget===null){$("#ts").hidden=false;tsWidget=window.turnstile.render("#ts",{sitekey:key,size:"flexible",appearance:"interaction-only","refresh-expired":"manual",callback:tok=>tsWaiter&&tsWaiter(tok),"error-callback":()=>tsWaiter&&tsWaiter("")})}
+    else{$("#ts").hidden=false;window.turnstile.reset(tsWidget)}
+  });
 }
 async function api(path,body,method="POST"){
-  const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),40000);
+  const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),45000);
   try{
     const headers={"content-type":"application/json"};
     if(method==="POST"){const tok=await turnstileToken();if(tok)headers["x-turnstile"]=tok}
@@ -613,7 +629,7 @@ function decodeTo(el,text,dur=900){
 }
 async function heroSequence(a){
   const plate=$("#plate"),line=$("#scanline"),box=$("#pBox"),txt=$("#pModelText");
-  const model=(a&&a.model)||"WTW5000DW1";
+  const model=(a&&a.model)||"NGT5000DW1";
   $("#vf").classList.add("snap");
   if(window.gsap&&!RM){
     gsap.fromTo(plate,{rotateX:18,y:24,opacity:0},{rotateX:4,y:0,opacity:1,duration:.8,ease:"power3.out",transformPerspective:900});
@@ -633,8 +649,8 @@ async function heroSequence(a){
   }
 }
 function setPlate(a){
-  $("#pBrand").textContent=a?(a.brand||"Brand"):"Whirlpool";
-  $("#pModelText").textContent=a?(a.model||"—"):"WTW5000DW1";
+  $("#pBrand").textContent=a?(a.brand||"Brand"):"Northgate";
+  $("#pModelText").textContent=a?(a.model||"—"):"NGT5000DW1";
   $("#pSerial").textContent=a?(a.serial||"—"):"C91234567";
   $("#pRating").textContent=a?(a.fuel==="gas"?"Gas":a.fuel==="electric"?"Electric":"—"):"120V~ 60Hz 10A";
   $("#pFine").textContent=a?`${(TYPES[a.type]||"Appliance").toUpperCase()} · READ FROM YOUR LABEL`:"AUTOMATIC WASHER · READ ALL INSTRUCTIONS BEFORE USE";
@@ -704,7 +720,7 @@ function viewConfirm(focus,msg){
     const model=$("#inModel").value.toUpperCase().replace(/\s+/g,""),type=t.value;const err=$("#modelErr");
     if(model.length<4){err.hidden=false;err.textContent="Enter the full model number from the label.";$("#inModel").setAttribute("aria-invalid","true");$("#inModel").focus();return}
     if(!type){err.hidden=false;err.textContent="Choose the type of appliance.";t.setAttribute("aria-invalid","true");t.focus();return}
-    S.app={...(S.app||{}),brand:$("#inBrand").value.trim(),model,type,fuel:["dryer","range"].includes(type)?$("#inFuel").value:"electric"};
+    S.app={...(S.app||{}),demo:!!(S.app&&S.app.demo&&model===SAMPLE.model),brand:$("#inBrand").value.trim(),model,type,fuel:["dryer","range"].includes(type)?$("#inFuel").value:"electric"};
     setPlate(S.app);heroParts(defaultHeroParts(type));S.symptom=null;S.details="";S.partImg=null;
     track("label_confirm",{type});go("symptom");
   });
@@ -753,8 +769,8 @@ async function findParts(){
   S.result=localResult(a,local);go("parts");
 }
 function localResult(a,s){
-  let parts=s.parts,safety={level:"diy",note:"Unplug the appliance and turn off the water before you start."};
-  if(a.fuel==="gas"&&s.gas){parts=s.gas;safety={level:"pro_only",note:"This involves gas parts. Have a licensed technician do this repair."}}
+  let parts=s.parts,safety={level:"diy",note:"Unplug it or switch off its breaker, and shut off the water, before you start."};
+  if(a.fuel!=="electric"&&s.gas){parts=s.gas;safety={level:"pro_only",note:"This involves gas parts. Have a licensed technician do this repair. If you smell gas, leave the house and call your gas utility from outside."}}
   else if(s.safety) safety=s.safety;
   return {safety_level:safety.level,safety_note:safety.note,free_checks:s.free,candidates:parts,follow_up_question:"",source:"guide"};
 }
@@ -762,8 +778,9 @@ function localResult(a,s){
 function partLinks(a,part){
   const plumb=["toilet","faucet"].includes(a.type);
   const q=`${a.brand||""} ${plumb?"":a.model} ${part}`.replace(/\s+/g," ").trim();
-  const primary=plumb||!a.model
-    ?{label:`Get the ${part.toLowerCase()}`,sub:"Amazon",url:amazon(q),partner:"amazon"}
+  const generic=a.demo?TYPES[a.type]+" ":"";
+  const primary=plumb||!a.model||a.demo
+    ?{label:`Get the ${part.toLowerCase()}`,sub:"Amazon",url:amazon(a.demo?generic+part:q),partner:"amazon"}
     :{label:`Get this part for ${a.model}`,sub:"Exact-fit diagram",url:wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(a.model)}/`),partner:"partselect"};
   const compare=[{label:"Amazon",url:amazon(q),partner:"amazon"},{label:"eBay",url:ebay(q),partner:"ebay"}].filter(c=>c.url!==primary.url);
   return {primary,compare,video:youtube(`how to replace ${part} ${a.brand||""} ${plumb?"":a.model}`)};
@@ -807,8 +824,8 @@ function viewParts(focus){
   $("#backSym").addEventListener("click",()=>go("symptom"));
 }
 function proBlock(a){return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Compare quotes from local, rated appliance technicians. Free to ask.</p>
-  <div class="grid3">${[["Sears Home Services",CONFIG.PRO.sears,"sears"],["Angi",CONFIG.PRO.angi,"angi"],["Thumbtack",CONFIG.PRO.thumbtack,"thumbtack"]].map(([n,u,p],i)=>`<a class="btn ${i===0?"signal":""}" href="${esc(u)}" target="_blank" rel="sponsored noopener" data-partner="${p}">${n}</a>`).join("")}</div>
-  <p class="disclose">We may earn a fee when you book through these links. We never share your details with anyone.</p></div>`}
+  <p class="disclose">We may earn a fee if you book through these links, at no cost to you. We don't sell your information.</p>
+  <div class="grid3">${[["Sears Home Services",CONFIG.PRO.sears,"sears"],["Angi",CONFIG.PRO.angi,"angi"],["Thumbtack",CONFIG.PRO.thumbtack,"thumbtack"]].map(([n,u,p],i)=>`<a class="btn ${i===0?"signal":""}" href="${esc(u)}" target="_blank" rel="sponsored noopener" data-partner="${p}">${n}</a>`).join("")}</div></div>`}
 
 /* ---------- HVAC filter ---------- */
 function viewFilter(focus,msg){
@@ -872,7 +889,9 @@ async function runRecall(){
     const card=x=>`<div class="app-row"><b>${esc(x.title)}</b><span class="muted" style="font-size:14px">${esc(x.date)}${x.hazard?" · "+esc(x.hazard):""}</span>${x.remedy?`<span style="font-size:14px">Remedy: ${esc(x.remedy)}</span>`:""}${x.url?`<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="noopener">Read the recall notice</a>`:""}</div>`;
     out.innerHTML=(r.exact.length?`<div class="notice stop"><b>${r.exact.length} recall${r.exact.length>1?"s":""} list your model</b><span>Stop using it and follow the remedy in the notice. Recall repairs are free.</span></div>${r.exact.map(card).join("")}`
       :`<div class="notice ok"><b>No recalls found for ${esc(model)}</b><span>Checked today against CPSC records. We'll recheck when you open My home.</span></div>`)
-      +(r.related.length?`<h3>Recent ${esc(brand)} recalls (check the model list)</h3>${r.related.map(card).join("")}`:"")
+      +(r.possible&&r.possible.length?`<div class="notice warn"><b>Similar model numbers were recalled</b><span>Check whether your exact model is in the notice's model list.</span></div>${r.possible.map(card).join("")}`:"")
+      +(r.related.length?`<h3>Recent ${esc(brand)} ${esc((TYPES[type]||"").toLowerCase())} recalls (check the model list)</h3>${r.related.map(card).join("")}`:"")
+      +(r.partial?`<p class="disclose">Part of the search didn't respond. Try again later for a full check.</p>`:"")
       +`<p class="disclose">Source: U.S. Consumer Product Safety Commission. Always confirm on <a href="${cpsc}" target="_blank" rel="noopener">cpsc.gov</a>.</p>`;
     const home=store.get("ps-home",[]);const i=home.findIndex(x=>x.model===model);if(i>=0){home[i].recall={date:Date.now(),n:r.exact.length};store.set("ps-home",home);renderHome()}
   }catch(x){out.innerHTML=`<div class="notice info"><b>Search CPSC directly</b><span>${x.offline?"Our recall search isn't available right now.":esc(x.message)} You can search for ${esc(model)} on the official site.</span></div><a class="btn" href="${cpsc}" target="_blank" rel="noopener">Open cpsc.gov recalls</a>`}
@@ -889,12 +908,12 @@ function viewCalc(focus){
      <label class="f" for="cCost">Repair cost ($)<input type="number" id="cCost" min="0" inputmode="numeric" value="120"></label>
      <label class="f" for="cNew">Price of a new one ($)<input type="number" id="cNew" min="1" inputmode="numeric" value="${NEWPRICE[type]}"></label>
    </div>
-   <p class="muted" style="font-size:13px">DIY repair? Enter just the part price. A technician visit usually adds $100–$200 for labor (estimate).</p>
+   <p class="muted" style="font-size:13px">DIY repair? Enter just the part price. A technician visit usually adds $100–$250 including the service call (estimate).</p>
    <div id="cOut" aria-live="polite"></div>`,focus);
   const run=()=>{
     const t=$("#cType").value,age=+$("#cAge").value||0,cost=+$("#cCost").value||0,np=+$("#cNew").value||1,life=LIFESPAN[t];
     const score=age*cost,rep=score<np,left=Math.max(0,life-age);
-    const verdict=age>=life?"Replace":rep?(cost/np>.5?"Close call":"Repair it"):"Replace";
+    const verdict=cost>=np?"Replace":cost/np<.15?"Repair it":age>=life?"Replace":rep?(cost/np>.5?"Close call":"Repair it"):"Replace";
     const tone=verdict==="Repair it"?"ok":verdict==="Close call"?"warn":"stop";
     $("#cOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)">
       <p class="verdict" style="color:var(--${tone})">${verdict}</p>
@@ -929,10 +948,10 @@ function reminderButtons(title,months){return `<a class="btn sm" target="_blank"
 function viewUpkeep(focus){
   const home=store.get("ps-home",[]);const f=store.get("ps-filter",null);
   const rows=[...HOME_UPKEEP.map(u=>({...u,who:"Whole home",t:f&&u.t.startsWith("Change the AC")?`${u.t} (${f.size})`:u.t})),...home.flatMap(a=>(UPKEEP[a.type]||[]).map(u=>({...u,who:`${a.brand} ${a.model}`,a})))];
-  openFlow(`<div class="flow-head"><h2>Home upkeep calendar</h2></div><p class="muted">Add any reminder to your own calendar. It repeats on its own. We never email or text you.</p>
+  openFlow(`<div class="flow-head"><h2>Home upkeep calendar</h2></div><p class="muted">Add any reminder to your own calendar. It repeats on its own. We never email or text you.</p><p class="disclose">Affiliate links: "Shop supplies" links earn us a commission if you buy, at no cost to you.</p>
    <div style="display:grid;gap:10px">${rows.map(u=>`<div class="app-row"><div class="flow-head"><div><p class="stamp">${esc(u.who)}</p><b>${esc(u.t)}</b></div><span class="muted mono" style="font-size:13px">every ${u.m===1?"month":u.m+" months"}</span></div>
-     <div class="acts">${reminderButtons(u.t+(u.a?` (${u.a.brand} ${u.a.model})`:""),u.m)}${u.buy?`<a class="btn sm" href="${esc(u.partselect&&u.a?wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(u.a.model)}/`):amazon((u.a?u.a.brand+" "+u.a.model+" ":"")+u.buy))}" target="_blank" rel="sponsored noopener">Shop supplies</a>`:""}</div></div>`).join("")}</div>
-   <p class="disclose">"Shop supplies" are affiliate links. Save appliances to add their reminders here.</p>`,focus);
+     <div class="acts">${reminderButtons(u.t+(u.a?` (${u.a.brand} ${u.a.model})`:""),u.m)}${u.buy?`<a class="btn sm" href="${esc(u.partselect&&u.a?wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(u.a.model)}/`):amazon((u.a?u.a.brand+" "+u.a.model+" ":"")+u.buy))}" target="_blank" rel="sponsored noopener" data-partner="${u.partselect&&u.a?"partselect":"amazon"}">Shop supplies</a>`:""}</div></div>`).join("")}</div>
+   <p class="disclose">Save appliances to add their reminders here.</p>`,focus);
 }
 
 /* ---------- plumbing ---------- */
@@ -968,7 +987,7 @@ document.addEventListener("click",e=>{
   if(a){const act=a.dataset.act;
     if(act==="snap"){closeHome();$("#labelFile").click()}
     if(act==="type"){S.app=blankApp();go("confirm");setTimeout(()=>$("#inBrand")&&$("#inBrand").focus(),350)}
-    if(act==="sample"){S.app={...SAMPLE};setPlate(S.app);heroSequence(S.app);heroParts(HERO_PARTS);S.view="confirm";syncURL(true);viewConfirm(true,{kind:"ok",title:"Example label read",text:"A Whirlpool top-load washer. Tap Next and pick a symptom."})}
+    if(act==="sample"){S.app={...SAMPLE};setPlate(S.app);heroSequence(S.app);heroParts(HERO_PARTS);S.view="confirm";syncURL(true);viewConfirm(true,{kind:"ok",title:"Example label read",text:"An example label from a made-up brand. Tap Next and pick a symptom; links will search for the part by name."})}
     if(act==="upkeep"){closeHome();go("upkeep")}
   }
   const g=e.target.closest("[data-go]");if(g) go(g.dataset.go);

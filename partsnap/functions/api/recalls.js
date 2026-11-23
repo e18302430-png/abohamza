@@ -35,20 +35,24 @@ export const onRequestGet = handle(async ({ request, env }) => {
   const word = WORD[q.get("type")] || "";
   if (model.length < 4) throw new HttpError(400, "Enter a model number to check.");
   return cached(env, `recall:${model}:${brand}:${word}`, 60 * 60 * 12, async () => {
-    const base = model.replace(/[^A-Z0-9]/g, "").slice(0, Math.max(6, model.length - 2));
-    const [byModel, byName] = await Promise.all([
-      query({ ProductModel: model }).catch(() => []),
-      brand && word ? query({ ProductName: `${brand} ${word}` }).catch(() => []) : [],
-    ]);
+    const norm = (x) => String(x || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const full = norm(model);
+    const base = full.slice(0, Math.max(6, full.length - 2));
+    // The model query must succeed; an outage must never look like "no recalls".
+    const byModel = await query({ ProductModel: model });
+    let byName = [], partial = false;
+    if (brand && word) { try { byName = await query({ Manufacturer: brand, ProductName: word }); } catch { partial = true; } }
     const seen = new Set();
-    const exact = [], related = [];
+    const exact = [], possible = [], related = [];
     for (const r of [...byModel, ...byName].map(shape)) {
       if (seen.has(r.id)) continue; seen.add(r.id);
-      const models = r.models.toUpperCase().replace(/[^A-Z0-9 ]/g, "");
-      if (models.includes(base) || models.includes(model.replace(/[^A-Z0-9]/g, ""))) exact.push(r);
-      else if (brand && r.title.toLowerCase().includes(brand.toLowerCase())) related.push(r);
+      if (!/^https:\/\//.test(r.url)) r.url = "";
+      const tokens = r.models.toUpperCase().split(/[\s,;]+/).map(norm);
+      if (tokens.includes(full) || norm(r.models).includes(full)) exact.push(r);
+      else if (tokens.some((t) => t.length >= 6 && (t.startsWith(base) || base.startsWith(t)))) possible.push(r);
+      else related.push(r);
     }
-    related.sort((a, b) => b.date.localeCompare(a.date));
-    return { checked: new Date().toISOString(), model, exact, related: related.slice(0, 5), source: "U.S. Consumer Product Safety Commission" };
+    related.sort((x, y) => y.date.localeCompare(x.date));
+    return { checked: new Date().toISOString(), model, exact, possible, related: related.slice(0, 5), partial, source: "U.S. Consumer Product Safety Commission" };
   });
 });

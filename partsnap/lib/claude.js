@@ -22,15 +22,22 @@ export function json(data, status = 200, extra = {}) {
 const today = () => new Date().toISOString().slice(0, 10);
 
 // Approximate counters in KV (eventually consistent; good enough as a brake).
+// Best-effort brake only: KV is eventually consistent and allows ~1 write/sec per key.
+// The hard spend cap is the monthly limit set in the Anthropic Console.
 async function bump(env, key, ttl) {
   if (!env.PS_KV) return 0;
-  const n = Number((await env.PS_KV.get(key)) || 0) + 1;
-  await env.PS_KV.put(key, String(n), { expirationTtl: ttl });
-  return n;
+  try {
+    const n = Number((await env.PS_KV.get(key)) || 0) + 1;
+    await env.PS_KV.put(key, String(n), { expirationTtl: ttl });
+    return n;
+  } catch { return 0; }
 }
 
 async function verifyTurnstile(env, token, ip) {
-  if (!env.TURNSTILE_SECRET) return; // not configured yet
+  if (!env.TURNSTILE_SECRET) {
+    if (env.ALLOWED_ORIGIN) throw new HttpError(503, "This feature is not switched on yet."); // production must have bot protection
+    return; // local development
+  }
   if (!token) throw new HttpError(403, "Please confirm you're not a robot and try again.");
   const form = new FormData();
   form.append("secret", env.TURNSTILE_SECRET);
@@ -44,12 +51,22 @@ async function verifyTurnstile(env, token, ip) {
 // Every paid (AI) call goes through here: origin check, bot check, per-IP limit, daily cap.
 export async function guard(request, env, { ai = true } = {}) {
   const origin = request.headers.get("origin");
-  if (env.ALLOWED_ORIGIN && origin !== env.ALLOWED_ORIGIN) throw new HttpError(403, "Requests from this site are not allowed.");
+  const site = request.headers.get("sec-fetch-site");
+  if (env.ALLOWED_ORIGIN) {
+    if (request.method === "POST" && origin !== env.ALLOWED_ORIGIN) throw new HttpError(403, "Requests from this site are not allowed.");
+    if (request.method === "GET" && site && site !== "same-origin") throw new HttpError(403, "Requests from this site are not allowed.");
+  }
   const ip = request.headers.get("cf-connecting-ip") || "anon";
-  const minute = Math.floor(Date.now() / 60000);
-  const perMin = Number(env.PER_IP_PER_MINUTE || 8);
-  if ((await bump(env, `ip:${ip}:${minute}`, 120)) > perMin) throw new HttpError(429, "Too many requests in a short time. Wait a minute and try again.");
+  if (env.LIMITER) { // Workers Rate Limiting binding (preferred, atomic)
+    const { success } = await env.LIMITER.limit({ key: ip }).catch(() => ({ success: true }));
+    if (!success) throw new HttpError(429, "Too many requests in a short time. Wait a minute and try again.");
+  } else {
+    const minute = Math.floor(Date.now() / 60000);
+    const ipKey = (await sha256(ip + (env.IP_SALT || "ps"))).slice(0, 16);
+    if ((await bump(env, `ip:${ipKey}:${minute}`, 120)) > Number(env.PER_IP_PER_MINUTE || 8)) throw new HttpError(429, "Too many requests in a short time. Wait a minute and try again.");
+  }
   if (request.method !== "POST") return null;
+  if (Number(request.headers.get("content-length") || 0) > MAX_BODY) throw new HttpError(413, "That photo is too large. Try again with a smaller photo.");
   const text = await request.text();
   if (text.length > MAX_BODY) throw new HttpError(413, "That photo is too large. Try again with a smaller photo.");
   let body;
@@ -74,20 +91,20 @@ export async function sha256(s) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 export async function cached(env, key, ttl, fn) {
-  if (env.PS_KV) { const hit = await env.PS_KV.get(key, "json"); if (hit) return hit; }
+  if (env.PS_KV) { try { const hit = await env.PS_KV.get(key, "json"); if (hit) return hit; } catch {} }
   const val = await fn();
-  if (env.PS_KV) await env.PS_KV.put(key, JSON.stringify(val), { expirationTtl: ttl });
+  if (env.PS_KV && !(val && val.partial)) { try { await env.PS_KV.put(key, JSON.stringify(val), { expirationTtl: ttl }); } catch {} }
   return val;
 }
 
 // One structured call; the answer must match `schema`. Refusals fall back server-side ("default" routing).
 export async function askJSON(env, { system, content, schema, effort, route }) {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 0, timeout: 30_000 });
   let res;
   try {
     res = await client.beta.messages.create({
       model: MODEL,
-      max_tokens: 3000,
+      max_tokens: 16000,
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: { effort, format: { type: "json_schema", schema } },
@@ -126,9 +143,12 @@ export function handle(fn) {
 // user's own model number, years, voltages and short tokens.
 const CODE = /\b[A-Z0-9]+(?:[-/][A-Z0-9]+)*\b/gi;
 export function noPartNumbers(s, keep = "") {
-  const k = String(keep || "").toUpperCase();
+  const K = String(keep || "").toUpperCase().replace(/\s+/g, "");
+  const kBase = K.split("/")[0];
   return String(s || "").replace(CODE, (t) => {
-    if (t.toUpperCase() === k) return t;
+    const T = t.toUpperCase();
+    if (K && (K.includes(T) || (kBase.length >= 5 && T.includes(kBase)) || (T.length >= 6 && kBase.startsWith(T)))) return t;
+    if (/^\d{4}-\d{4}$/.test(t)) return t;
     const digits = (t.match(/\d/g) || []).length;
     const letters = (t.match(/[A-Z]/gi) || []).length;
     const looksLikeCode = t.length >= 6 && digits >= 4 && (letters >= 1 || t.includes("-")) ;
