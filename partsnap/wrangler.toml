@@ -1,0 +1,6 @@
+# Cloudflare Pages project config. Deploy with: npx wrangler pages deploy dist
+name = "partsnap"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+# The Anthropic SDK uses Node built-ins (crypto, fs, path) for credential loading.
+compatibility_flags = ["nodejs_compat"]
