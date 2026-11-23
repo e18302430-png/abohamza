@@ -44,14 +44,14 @@ function plateCanvas(){
   for(let i=0;i<5000;i++){const v=rnd()<.5?255:0;g.fillStyle=`rgba(${v},${v},${v},${.025+rnd()*.035})`;g.fillRect(0,rnd()*1216,2048,1+rnd()*1.5)}
   const screw=(x,y)=>{const r=g.createRadialGradient(x-6,y-6,2,x,y,22);r.addColorStop(0,"#fff");r.addColorStop(1,"#5a636b");g.fillStyle=r;g.beginPath();g.arc(x,y,22,0,7);g.fill();g.strokeStyle="rgba(0,0,0,.5)";g.lineWidth=4;g.beginPath();g.moveTo(x-14,y);g.lineTo(x+14,y);g.stroke()};
   [[60,60],[1988,60],[60,1156],[1988,1156]].forEach(p=>screw(...p));
-  g.fillStyle="#141A20";g.font="bold 120px 'DejaVu Sans'";g.letterSpacing="18px";g.fillText("WHIRLPOOL",150,250);
+  g.fillStyle="#141A20";g.font="bold 120px 'DejaVu Sans'";g.letterSpacing="18px";g.fillText("NORTHGATE",150,250);
   g.font="bold 54px 'DejaVu Sans Mono'";g.globalAlpha=.75;g.fillText("MODEL NO.",150,520);g.fillText("SERIAL NO.",150,720);g.fillText("RATING",150,880);g.globalAlpha=1;
   g.font="bold 78px 'DejaVu Sans Mono'";g.fillText("C91234567",720,730);g.fillText("120V~ 60Hz 10A",720,890);
   g.font="44px 'DejaVu Sans Mono'";g.globalAlpha=.65;g.fillText("AUTOMATIC WASHER · READ ALL INSTRUCTIONS",150,1060);g.globalAlpha=1;
   // printed model number, aligned with the glyph planes
   const _gw=0.072,_PW=1.6,_PH=0.95,_gx0=-_PW/2+720/2048*_PW+_gw/2,_gy=_PH/2-500/1216*_PH+0.012;
   g.font="bold 96px 'DejaVu Sans Mono'";g.textAlign="center";g.textBaseline="middle";g.fillStyle="#141A20";
-  [..."WTW5000DW1"].forEach((ch,i)=>{const x=((_gx0+i*_gw*0.98)+_PW/2)/_PW*2048,y=(_PH/2-_gy)/_PH*1216+5;g.fillText(ch,x,y)});
+  [..."NGT5000DW1"].forEach((ch,i)=>{const x=((_gx0+i*_gw*0.98)+_PW/2)/_PW*2048,y=(_PH/2-_gy)/_PH*1216+5;g.fillText(ch,x,y)});
   g.textAlign="left";g.textBaseline="alphabetic";
   return c;
 }
@@ -61,7 +61,7 @@ const plateMat=[metal,metal,metal,metal,new THREE.MeshStandardMaterial({map:plat
 const plate=new THREE.Mesh(new THREE.BoxGeometry(PW,PH,.03),plateMat);plate.position.set(0,1.0,1.52);washer.add(plate);
 const P0=plate.position.clone();
 // model glyphs as separate planes so they can light up and lift
-const MODEL="WTW5000DW1";const glyphs=[];
+const MODEL="NGT5000DW1";const glyphs=[];
 function glyphTex(ch,glow){const c=document.createElement("canvas");c.width=128;c.height=160;const g=c.getContext("2d");g.font="bold 132px 'DejaVu Sans Mono'";g.textAlign="center";g.textBaseline="middle";
   if(glow){g.shadowColor="#3FD8F2";g.shadowBlur=36;g.fillStyle="rgba(63,216,242,.9)";for(let i=0;i<3;i++)g.fillText(ch,64,84)}else{g.fillStyle="#fff";g.fillText(ch,64,84)}
   const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t}
@@ -116,7 +116,7 @@ function cardTex(){const c=document.createElement("canvas");c.width=1024;c.heigh
   g.fillStyle="rgba(10,13,16,.92)";g.strokeStyle="#FF6B2C";g.lineWidth=6;const r=36;g.beginPath();g.roundRect?g.roundRect(6,6,1012,408,r):g.rect(6,6,1012,408);g.fill();g.stroke();
   g.fillStyle="#FF6B2C";g.font="bold 54px 'DejaVu Sans Mono'";g.fillText("01",56,110);
   g.fillStyle="#E7EBEE";g.font="bold 92px 'DejaVu Sans Condensed','DejaVu Sans'";g.fillText("DRAIN PUMP",160,115);
-  g.fillStyle="#3FD8F2";g.font="bold 46px 'DejaVu Sans Mono'";g.fillText("EXACT FIT · WTW5000DW1",56,205);
+  g.fillStyle="#3FD8F2";g.font="bold 46px 'DejaVu Sans Mono'";g.fillText("EXACT FIT · NGT5000DW1",56,205);
   const chips=["Get this part","Compare","How-to"];let x=56;chips.forEach((t,i)=>{g.font="bold 40px 'DejaVu Sans'";const w=g.measureText(t).width+60;g.fillStyle=i?"rgba(255,255,255,.08)":"#FF6B2C";g.beginPath();g.roundRect?g.roundRect(x,270,w,84,18):g.rect(x,270,w,84);g.fill();g.fillStyle=i?"#E7EBEE":"#0D1115";g.fillText(t,x+30,326);x+=w+20});
   const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t}
 const card=new THREE.Mesh(new THREE.PlaneGeometry(2.0,.82),new THREE.MeshBasicMaterial({map:cardTex(),transparent:true,opacity:0,depthTest:false}));card.renderOrder=10;scene.add(card);

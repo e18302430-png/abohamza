@@ -17,13 +17,13 @@
   --bg:#0A0D10; --panel:#11161B; --panel-2:#182027; --line:#24303A; --ink:#E7EBEE; --muted:#8D97A1;
   --signal:#FF6B2C; --on-signal:#0D1115; --scan:#3FD8F2; --scan-soft:rgba(63,216,242,.12);
   --ok:#5BD08F; --ok-soft:#12291C; --warn:#E8B450; --warn-soft:#2E2412; --stop:#F2796C; --stop-soft:#341714;
-  --blueprint:rgba(63,216,242,.45); --steel-a:#47505A; --steel-b:#252C33; --plate-ink:#EEF1F3; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --blueprint:rgba(63,216,242,.45); --steel-a:#D5DADF; --steel-b:#97A1AA; --plate-ink:#141A20; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0A0D10; --panel:#11161B; --panel-2:#182027; --line:#24303A; --ink:#E7EBEE; --muted:#8D97A1;
   --signal:#FF6B2C; --on-signal:#0D1115; --scan:#3FD8F2; --scan-soft:rgba(63,216,242,.12);
   --ok:#5BD08F; --ok-soft:#12291C; --warn:#E8B450; --warn-soft:#2E2412; --stop:#F2796C; --stop-soft:#341714;
-  --blueprint:rgba(63,216,242,.45); --steel-a:#47505A; --steel-b:#252C33; --plate-ink:#EEF1F3; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --blueprint:rgba(63,216,242,.45); --steel-a:#D5DADF; --steel-b:#97A1AA; --plate-ink:#141A20; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
   color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -104,13 +104,13 @@ a{color:inherit}
 .ptile.hot svg{color:var(--signal)}
 .leaders{position:absolute;inset:0;pointer-events:none;overflow:visible}
 .leaders path{fill:none;stroke:var(--blueprint);stroke-width:1.2;stroke-dasharray:4 4}
-.film{position:absolute;top:0;left:0;right:0;aspect-ratio:1/1;max-width:100%;z-index:3;border-radius:16px;overflow:hidden;background:#0A0D10;box-shadow:var(--shadow);transition:opacity .6s ease}
-.film video{width:100%;height:100%;object-fit:cover;display:block}
+.film{position:absolute;inset:0;z-index:3;border-radius:16px;overflow:hidden;background:#0A0D10;box-shadow:var(--shadow);transition:opacity .6s ease}
+.film video{width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block;transform:scale(1.05)}
 .film.gone{opacity:0;pointer-events:none}
 .film .skip{position:absolute;right:12px;bottom:12px;background:rgba(10,13,16,.6);color:#E7EBEE;border-color:rgba(231,235,238,.25);backdrop-filter:blur(6px)}
 .film .prog{position:absolute;left:0;bottom:0;height:3px;background:#3FD8F2;width:0}
 .film .tag{position:absolute;left:12px;top:12px;font:600 11px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:#3FD8F2;background:rgba(10,13,16,.6);padding:7px 9px;border-radius:6px}
-.stage-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;font-size:13px;color:var(--muted)}
+.stage-cap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;font-size:13px;color:var(--muted)}
 
 /* section blocks */
 .block{display:grid;gap:20px}
@@ -130,7 +130,7 @@ a{color:inherit}
 /* flow card */
 .card{background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:16px;min-width:0;box-shadow:var(--shadow)}
 .card>*{min-width:0}
-#flow{scroll-margin-top:12px}
+#flow{scroll-margin-top:12px;max-width:760px;width:100%;justify-self:start}
 .rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .rail div{display:grid;gap:6px;font:600 11px/1 var(--display);font-stretch:125%;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .rail div::before{content:"";height:3px;border-radius:2px;background:var(--line)}
@@ -138,7 +138,9 @@ a{color:inherit}
 .rail div.on{color:var(--ink)}
 .flow-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 label.f{display:grid;gap:6px;font-weight:600;font-size:14px}
+::placeholder{color:var(--muted);opacity:.6}
 input[type=text],input[type=number],select,textarea{font:16px/1.4 var(--body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;width:100%;min-height:48px}
+input.ai{color:var(--scan);border-color:var(--scan)}
 input.mono{font-family:var(--mono);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
 input[aria-invalid="true"],select[aria-invalid="true"]{border-color:var(--stop)}
 .err{color:var(--stop);font-size:14px;font-weight:500}
@@ -173,7 +175,7 @@ textarea{min-height:88px;resize:vertical}
 .ticket .body{display:grid;gap:9px;min-width:0}
 .lk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;font:600 12px/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .lk .bar{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
-.lk .bar i{display:block;height:100%;background:var(--scan);border-radius:3px;transform-origin:left;animation:fill .8s cubic-bezier(.2,.8,.2,1) both}
+.lk .bar i{display:block;height:100%;background:var(--muted);border-radius:3px;transform-origin:left;animation:fill .8s cubic-bezier(.2,.8,.2,1) both}
 @keyframes fill{from{transform:scaleX(0)}}
 .ticket.first .lk .bar i{background:var(--signal)}
 .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
@@ -222,7 +224,7 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
 .flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60}
 
 @media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:8px}.services{grid-template-columns:repeat(2,minmax(0,1fr))}.where{grid-template-columns:repeat(2,minmax(0,1fr))}.how,.honest{grid-template-columns:minmax(0,1fr)}.dock{display:flex}.dock[hidden]{display:none}.hero .cta-row{display:none}}
-@media (max-width:480px){.grid2,.grid3{grid-template-columns:minmax(0,1fr)}.card{padding:16px}.shell{gap:44px}.ticket{grid-template-columns:minmax(0,1fr)}.ticket .ic{width:48px;height:48px}}
+@media (max-width:480px){.sheet{padding-inline:0;padding-bottom:0}.sheet .card{position:absolute;left:0;right:0;bottom:0;margin:0;border-radius:18px 18px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}.grid2,.grid3{grid-template-columns:minmax(0,1fr)}.card{padding:16px}.shell{gap:44px}.ticket{grid-template-columns:minmax(0,1fr)}.ticket .ic{width:48px;height:48px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -409,6 +411,7 @@ function iconFor(name){const n=name.toLowerCase();
 /* ================= repair knowledge (common US failures; names as retailers list them) ================= */
 const P=(name,like,why,confirm,diff)=>({part_name:name,likelihood:like,why,how_to_confirm:confirm,difficulty:diff});
 const TYPES={washer:"Washer",dryer:"Dryer",dishwasher:"Dishwasher",refrigerator:"Refrigerator",range:"Range / oven",microwave:"Microwave",disposal:"Garbage disposal"};
+const PLUMB_TYPES={toilet:"Toilet",faucet:"Faucet"};
 const SYMPTOMS={
  washer:[
   {id:"no_drain",label:"Won't drain",free:["Check the drain hose for kinks; it shouldn't be pushed more than about 4–6 inches into the standpipe.","Front-load: open the small door at the bottom front and clean the drain pump filter (have towels ready)."],
@@ -551,13 +554,15 @@ const SAMPLE={demo:true,brand:"Northgate",model:"NGT5000DW1",serial:"C91234567",
 function syncURL(push){
   const q=new URLSearchParams();
   if(S.view!=="home") q.set("v",S.view);
-  if(S.app&&S.app.model){q.set("m",S.app.model);q.set("t",S.app.type||"");if(S.app.brand)q.set("b",S.app.brand);if(S.app.fuel==="gas")q.set("f","gas")}
+  if(S.app&&S.app.type) q.set("t",S.app.type);
+  if(S.app&&S.app.model){q.set("m",S.app.model);if(S.app.brand)q.set("b",S.app.brand);if(S.app.fuel==="gas")q.set("f","gas");if(S.app.demo)q.set("d","1")}
   if(S.symptom) q.set("s",S.symptom);
   const url=location.pathname+(q.toString()?"?"+q:"");
+  try{sessionStorage.setItem("ps-res:"+url,JSON.stringify({result:S.result,details:S.details}))}catch(e){}
   try{ push?history.pushState({...S,partImg:null,labelImg:null},"",url):history.replaceState({...S,partImg:null,labelImg:null},"",url) }catch(e){}
 }
-function go(view,push=true){S.view=view;syncURL(push);render()}
-addEventListener("popstate",e=>{const st=e.state;if(st){Object.assign(S,st,{partImg:null,labelImg:null})}else{S.view="home"}render(false)});
+function go(view,push=true){if(push)syncURL(false);S.view=view;syncURL(push);render()}
+addEventListener("popstate",e=>{closeHome();const st=e.state;if(st){Object.assign(S,st,{partImg:null,labelImg:null});if(S.view==="reading")S.view="confirm"}else{S.view="home"}render(true)});
 
 /* ================= API: timeout, bot check, friendly errors ================= */
 const CFG_READY=fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).catch(()=>({}));
@@ -581,7 +586,7 @@ async function api(path,body,method="POST"){
     const r=await fetch(CONFIG.API_BASE+path,{method,headers,body:method==="POST"?JSON.stringify(body):undefined,signal:ctl.signal});
     let j=null;try{j=await r.json()}catch(e){}
     if(r.ok&&j) return j;
-    throw new Error(j&&j.error?j.error:(r.status===404?"offline":"This is taking longer than usual. Try again in a moment."));
+    throw new Error(j&&j.error?j.error:(r.status===404?"offline":r.status>=500?"Something went wrong on our side. Try again, or pick a listed symptom.":"This is taking longer than usual. Try again in a moment."));
   }catch(err){
     if(err.name==="AbortError") throw new Error("That took too long. Check your connection and try again.");
     if(err.message==="offline"||err instanceof TypeError){const e=new Error("offline");e.offline=true;throw e}
@@ -673,7 +678,7 @@ const SERVICES=[
 ];
 $("#services").innerHTML=SERVICES.map(s=>`<button class="svc ${s.main?"main":""}" type="button" data-svc="${s.id}">${ICON[s.icon]}<b>${esc(s.t)}</b><span>${esc(s.d)}</span></button>`).join("");
 $("#services").addEventListener("click",e=>{const b=e.target.closest("[data-svc]");if(!b)return;const id=b.dataset.svc;
-  if(id==="fix") return actSnapOrType();
+  if(id==="fix"){S.app=blankApp();return go("confirm")}
   if(id==="water"){const fr=store.get("ps-home",[]).find(a=>a.type==="refrigerator");if(fr){S.app={...fr};}else S.app=null;return go("water")}
   if(id==="recall"&&!S.app){const first=store.get("ps-home",[])[0];if(first)S.app={...first}}
   go(id)});
@@ -706,12 +711,12 @@ function viewConfirm(focus,msg){
      <label class="f" for="inType">Appliance<select id="inType"><option value="">Choose…</option>${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?"selected":""}>${v}</option>`).join("")}</select></label>
    </div>
    <label class="f" for="inModel">Model number <span class="muted" style="font-weight:400">(every character counts)</span><input class="mono ${a.model?"ai":""}" type="text" id="inModel" value="${esc(a.model)}" placeholder="WTW5000DW1" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="modelErr"></label>
-   <p class="err" id="modelErr" hidden></p>
+   <p class="err" role="alert" id="modelErr" hidden></p>
    ${a.alts&&a.alts.length?`<div class="alts"><span class="muted" style="font-size:14px">Or did your label say:</span>${a.alts.map(m=>`<button class="btn sm" type="button" data-alt="${esc(m)}">${esc(m)}</button>`).join("")}</div>`:""}
    ${a.unclear?`<p class="muted" style="font-size:14px">Double-check: ${esc(a.unclear)}</p>`:""}
    <label class="f" id="fuelWrap" for="inFuel" ${["dryer","range"].includes(a.type)?"":"hidden"}>Power<select id="inFuel"><option value="electric" ${a.fuel!=="gas"?"selected":""}>Electric</option><option value="gas" ${a.fuel==="gas"?"selected":""}>Gas</option></select></label>
    <button class="btn signal wide" type="button" id="toSymptom">This is right. Next</button>
-   <div class="acts"><button class="btn sm" type="button" data-act="snap">Retake the photo</button><button class="link" type="button" id="noLabel">I can't find the label</button></div>`,focus);
+   <div class="acts"><button class="btn sm" type="button" data-act="snap">${S.labelImg?"Retake the photo":"Snap the label instead"}</button><button class="link" type="button" id="noLabel">I can't find the label</button></div>`,focus);
   const t=$("#inType");t.addEventListener("change",()=>{$("#fuelWrap").hidden=!["dryer","range"].includes(t.value)});
   $("#inModel").addEventListener("input",e=>{e.target.classList.remove("ai");e.target.removeAttribute("aria-invalid");$("#modelErr").hidden=true});
   $$("[data-alt]").forEach(b=>b.addEventListener("click",()=>{$("#inModel").value=b.dataset.alt;$("#inModel").classList.add("ai")}));
@@ -731,14 +736,14 @@ function viewSymptom(focus){
   const a=S.app;const list=SYMPTOMS[a.type]||[];const saved=store.get("ps-home",[]).some(x=>x.model===a.model);
   const plumb=["toilet","faucet"].includes(a.type);
   openFlow(`${plumb?"":rail(1)}
-   <div class="flow-head"><h2>What's wrong with your ${esc((TYPES[a.type]||a.type).toLowerCase())}?</h2>${plumb||saved?"":`<button class="btn sm" type="button" id="quickSave">Save to My home</button>`}</div>
+   <div class="flow-head"><h2>What's wrong with your ${esc((TYPES[a.type]||PLUMB_TYPES[a.type]||a.type).toLowerCase())}?</h2>${plumb||saved?"":`<button class="btn sm" type="button" id="quickSave">Save to My home</button>`}</div>
    ${plumb?"":`<p class="mono ai" style="font-size:14px">${esc(a.brand)} ${esc(a.model)}</p>`}
    <div class="chips" role="group" aria-label="Symptom">${list.map(s=>`<button type="button" class="chip" data-id="${s.id}" aria-pressed="${S.symptom===s.id}">${esc(s.label)}</button>`).join("")}${plumb?"":`<button type="button" class="chip" data-id="other" aria-pressed="${S.symptom==="other"}">Something else</button>`}</div>
    ${plumb?`<label class="f" for="inBrand2">Brand (optional)<input type="text" id="inBrand2" value="${esc(a.brand)}" placeholder="Moen, Delta, Kohler, American Standard…"></label>`:`
    <label class="f" for="inDetails">Describe it in your own words (optional)<textarea id="inDetails" placeholder="Example: water stays in the drum and it hums at the end of the cycle">${esc(S.details)}</textarea></label>
    <div class="thumb">${S.partImg?`<img src="${S.partImg.preview}" alt="Photo of the problem area">`:""}<button class="btn sm" type="button" id="addPhoto">${S.partImg?"Change photo":"Add a photo of the problem (optional)"}</button></div>
    <p class="muted" style="font-size:13px">Photos may show your room. Frame just the appliance part.</p>`}
-   <p class="err" id="symErr" hidden></p>
+   <p class="err" role="alert" id="symErr" hidden></p>
    <button class="btn signal wide" type="button" id="toParts">Show free fixes &amp; likely parts</button>
    ${plumb?"":`<button class="link" type="button" id="backLabel">Back to the label</button>`}`,focus);
   $$(".chip").forEach(b=>b.addEventListener("click",()=>{S.symptom=b.dataset.id;$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));if(window.gsap&&!RM)gsap.fromTo(b,{scale:.92},{scale:1,duration:.5,ease:"elastic.out(1,.5)"});$("#symErr").hidden=true}));
@@ -772,18 +777,19 @@ function localResult(a,s){
   let parts=s.parts,safety={level:"diy",note:"Unplug it or switch off its breaker, and shut off the water, before you start."};
   if(a.fuel!=="electric"&&s.gas){parts=s.gas;safety={level:"pro_only",note:"This involves gas parts. Have a licensed technician do this repair. If you smell gas, leave the house and call your gas utility from outside."}}
   else if(s.safety) safety=s.safety;
+  else if(["toilet","faucet"].includes(a.type)) safety={level:"diy",note:"Close the shut-off valve under the fixture, then flush or open the tap to drain it before you start."};
   return {safety_level:safety.level,safety_note:safety.note,free_checks:s.free,candidates:parts,follow_up_question:"",source:"guide"};
 }
 
 function partLinks(a,part){
   const plumb=["toilet","faucet"].includes(a.type);
-  const q=`${a.brand||""} ${plumb?"":a.model} ${part}`.replace(/\s+/g," ").trim();
-  const generic=a.demo?TYPES[a.type]+" ":"";
+  const q=(a.demo?`${TYPES[a.type]} ${part}`:`${a.brand||""} ${plumb?"":a.model} ${part}`).replace(/\s+/g," ").trim();
+  const psModel=String(a.model||"").split("/")[0];
   const primary=plumb||!a.model||a.demo
-    ?{label:`Get the ${part.toLowerCase()}`,sub:"Amazon",url:amazon(a.demo?generic+part:q),partner:"amazon"}
-    :{label:`Get this part for ${a.model}`,sub:"Exact-fit diagram",url:wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(a.model)}/`),partner:"partselect"};
+    ?{label:`Get the ${part.toLowerCase()}`,sub:"Amazon",url:amazon(q),partner:"amazon"}
+    :{label:`Get this part for ${a.model}`,sub:"Exact-fit diagram",url:wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(psModel)}/`),partner:"partselect"};
   const compare=[{label:"Amazon",url:amazon(q),partner:"amazon"},{label:"eBay",url:ebay(q),partner:"ebay"}].filter(c=>c.url!==primary.url);
-  return {primary,compare,video:youtube(`how to replace ${part} ${a.brand||""} ${plumb?"":a.model}`)};
+  return {primary,compare,video:youtube(a.demo?`how to replace ${TYPES[a.type]} ${part}`:`how to replace ${part} ${a.brand||""} ${plumb?"":a.model}`)};
 }
 function viewParts(focus){
   const a=S.app,r=S.result;if(!r){return go("symptom",false)}
@@ -794,7 +800,7 @@ function viewParts(focus){
   track("results",{type:a.type,src:r.source});
   openFlow(`${plumb?"":rail(2)}
    <div class="flow-head"><h2>${pro?"This one's for a pro":"Free fixes first"}</h2></div>
-   <p class="mono ${plumb?"muted":"ai"}" style="font-size:14px">${esc(a.brand)} ${esc(plumb?TYPES[a.type]||a.type:a.model)}${r.source==="guide"?' <span class="muted">· from our repair guide</span>':""}</p>
+   <p class="mono ${plumb?"muted":"ai"}" style="font-size:14px">${esc(a.brand)} ${esc(plumb?PLUMB_TYPES[a.type]:a.model)}${r.source==="guide"?' <span class="muted">· from our repair guide</span>':""}</p>
    <div class="notice ${sev[0]}"><b>${sev[1]}</b><span>${esc(r.safety_note)}</span></div>
    ${r.free_checks&&r.free_checks.length?`<div style="display:grid;gap:6px"><h3>Check these first. They're free.</h3><ul class="checks">${r.free_checks.map((c,i)=>`<li><label><input type="checkbox" id="fc${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul></div>`:""}
    ${pro?proBlock(a):""}
@@ -815,12 +821,12 @@ function viewParts(focus){
    ${r.follow_up_question?`<div class="notice info"><b>One question would narrow it down</b><span>${esc(r.follow_up_question)} Add the answer to your description and search again.</span></div>`:""}
    ${IN_APP?`<div class="notice info"><b>Tip</b><span>You're in an in-app browser. Open this page in Safari or Chrome to keep your saved appliances.</span></div>`:""}
    <div class="grid2">
-     ${plumb?"":`<button class="btn ${saved?"":"signal"}" type="button" id="saveApp">${saved?"Saved to My home":`Save my ${esc((TYPES[a.type]||"").toLowerCase())} for next time`}</button>`}
+     ${plumb||a.demo?"":`<button class="btn" type="button" id="saveApp">${saved?"Saved to My home":`Save my ${esc((TYPES[a.type]||"").toLowerCase())} for next time`}</button>`}
      <button class="btn" type="button" id="backSym">Different symptom</button>
      ${plumb?"":`<button class="btn" type="button" data-go="calc">Repair or replace?</button><button class="btn" type="button" data-go="recall">Check for recalls</button>`}
      ${pro?"":`<button class="btn" type="button" data-go="pro">Rather hire a pro?</button>`}
    </div>`,focus);
-  $("#saveApp")&&$("#saveApp").addEventListener("click",e=>{saveAppliance(a);e.target.textContent="Saved to My home";e.target.classList.remove("signal")});
+  $("#saveApp")&&$("#saveApp").addEventListener("click",e=>{saveAppliance(a);e.target.textContent="Saved to My home"});
   $("#backSym").addEventListener("click",()=>go("symptom"));
 }
 function proBlock(a){return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Compare quotes from local, rated appliance technicians. Free to ask.</p>
@@ -833,15 +839,16 @@ function viewFilter(focus,msg){
   openFlow(`<div class="flow-head"><h2>Your AC &amp; furnace filter</h2></div>
    <p class="muted">The size is printed on the edge of the filter frame, like 16x25x1. Snap it and we'll read it.</p>
    ${msg?`<div class="notice ${msg.kind}"><b>${esc(msg.title)}</b><span>${esc(msg.text)}</span></div>`:""}
-   <button class="btn signal wide" type="button" id="snapFilter">${ICON.camera} Snap the filter edge</button>
+   <button class="btn ${f?"":"signal"} wide" type="button" id="snapFilter">${ICON.camera} Snap the filter edge</button>
    <div class="grid2">
-     <label class="f" for="fSize">Size (W x H x D, inches)<select id="fSize">${FILTER_SIZES.map(s=>`<option ${f&&f.size===s?"selected":""}>${s}</option>`).join("")}${f&&!FILTER_SIZES.includes(f.size)?`<option selected>${esc(f.size)}</option>`:""}</select></label>
+     <label class="f" for="fSize">Size (W x H x D, inches)<select id="fSize" aria-describedby="fErr"><option value="">Choose size…</option>${FILTER_SIZES.map(s=>`<option ${f&&f.size===s?"selected":""}>${s}</option>`).join("")}${f&&!FILTER_SIZES.includes(f.size)?`<option selected>${esc(f.size)}</option>`:""}</select></label>
      <label class="f" for="fMerv">Rating<select id="fMerv">${["MERV 8 (most homes)","MERV 11 (pets, allergies)","MERV 13 (best filtration)"].map(m=>`<option ${f&&f.merv===m?"selected":""}>${m}</option>`).join("")}</select></label>
    </div>
+   <p class="err" role="alert" id="fErr" hidden></p>
    <button class="btn wide" type="button" id="filterGo">Show filters for this size</button>
-   <div id="filterOut"></div>`,focus);
+   <div id="filterOut" aria-live="polite"></div>`,focus);
   $("#snapFilter").addEventListener("click",()=>$("#filterFile").click());
-  $("#filterGo").addEventListener("click",()=>{const size=$("#fSize").value,merv=$("#fMerv").value;S.filter={size,merv};store.set("ps-filter",S.filter);track("filter");filterResult()});
+  $("#filterGo").addEventListener("click",()=>{const size=$("#fSize").value,merv=$("#fMerv").value;if(!size){const e=$("#fErr");e.hidden=false;e.textContent="Choose the size printed on your filter, or snap it.";$("#fSize").setAttribute("aria-invalid","true");$("#fSize").focus();return}S.filter={size,merv};store.set("ps-filter",S.filter);track("filter");filterResult()});
   if(f) filterResult();
 }
 function filterResult(){
@@ -850,7 +857,7 @@ function filterResult(){
   $("#filterOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)">
     <p class="stamp">Your filter</p><p class="mono ai" style="font-size:28px;font-weight:700">${esc(size)} · ${esc(m)}</p>
     <p class="disclose">Affiliate links: we earn a commission if you buy.</p>
-    <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.FILTERBUY_WRAP,"https://filterbuy.com/"))}" target="_blank" rel="sponsored noopener" data-partner="filterbuy">Filterbuy (auto-delivery)</a><a class="btn" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
+    <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.FILTERBUY_WRAP,"https://filterbuy.com/"))}" target="_blank" rel="sponsored noopener" data-partner="filterbuy">Filterbuy: pick ${esc(size)}</a><a class="btn" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
     <div class="acts"><span class="muted" style="flex:1 1 200px">Change it every 90 days (every 60 with pets).</span>${reminderButtons("Change the AC filter ("+size+")",3)}</div></div>`;
 }
 $("#filterFile").addEventListener("change",async e=>{const file=e.target.files[0];e.target.value="";if(!file)return;flash();
@@ -873,9 +880,9 @@ function viewRecall(focus){
      <label class="f" for="rModel">Model<input class="mono" type="text" id="rModel" value="${esc(a.model)}" placeholder="GDT665SSN0SS"></label>
      <label class="f" for="rType">Appliance<select id="rType">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?"selected":""}>${v}</option>`).join("")}</select></label>
    </div>
-   <p class="err" id="rErr" hidden></p>
+   <p class="err" role="alert" id="rErr" hidden></p>
    <button class="btn signal wide" type="button" id="rGo">Check recalls</button>
-   <div id="rOut" style="display:grid;gap:10px"></div>`,focus);
+   <div id="rOut" style="display:grid;gap:10px" aria-live="polite"></div>`,focus);
   $("#rGo").addEventListener("click",runRecall);
   if(a.model) runRecall();
 }
@@ -888,7 +895,7 @@ async function runRecall(){
     const r=await api(`/recalls?model=${enc(model)}&brand=${enc(brand)}&type=${enc(type)}`,null,"GET");
     const card=x=>`<div class="app-row"><b>${esc(x.title)}</b><span class="muted" style="font-size:14px">${esc(x.date)}${x.hazard?" · "+esc(x.hazard):""}</span>${x.remedy?`<span style="font-size:14px">Remedy: ${esc(x.remedy)}</span>`:""}${x.url?`<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="noopener">Read the recall notice</a>`:""}</div>`;
     out.innerHTML=(r.exact.length?`<div class="notice stop"><b>${r.exact.length} recall${r.exact.length>1?"s":""} list your model</b><span>Stop using it and follow the remedy in the notice. Recall repairs are free.</span></div>${r.exact.map(card).join("")}`
-      :`<div class="notice ok"><b>No recalls found for ${esc(model)}</b><span>Checked today against CPSC records. We'll recheck when you open My home.</span></div>`)
+      :`<div class="notice ok"><b>No recalls found for ${esc(model)}</b><span>Checked today against CPSC records. Check again from My home any time.</span></div>`)
       +(r.possible&&r.possible.length?`<div class="notice warn"><b>Similar model numbers were recalled</b><span>Check whether your exact model is in the notice's model list.</span></div>${r.possible.map(card).join("")}`:"")
       +(r.related.length?`<h3>Recent ${esc(brand)} ${esc((TYPES[type]||"").toLowerCase())} recalls (check the model list)</h3>${r.related.map(card).join("")}`:"")
       +(r.partial?`<p class="disclose">Part of the search didn't respond. Try again later for a full check.</p>`:"")
@@ -920,7 +927,7 @@ function viewCalc(focus){
       <div class="grid3"><div class="stat"><b>${(score).toLocaleString()}</b><span>Age × repair cost</span></div><div class="stat"><b>$${np.toLocaleString()}</b><span>New price</span></div><div class="stat"><b>~${left} yr</b><span>Typical life left (of ~${life})</span></div></div>
       <p class="muted">${verdict==="Repair it"?"The repair costs little compared with what a new one would. Fix it.":verdict==="Close call"?"The repair is a big share of a new one. Fix it only if the rest of the machine is in good shape.":"At this age and cost, the money is usually better spent on a new, more efficient one."} Lifespans are typical US averages, not guarantees.</p>
       ${verdict==="Repair it"?"":`<p class="disclose">Affiliate link: we earn a commission if you buy.</p><a class="btn" href="${esc(amazon("new "+TYPES[t]))}" target="_blank" rel="sponsored noopener" data-partner="amazon">See new ${esc(TYPES[t].toLowerCase())}s</a>`}
-    </div>`;track("calc",{type:t});
+    </div>`;clearTimeout(viewCalc.t);viewCalc.t=setTimeout(()=>track("calc",{type:t}),1500);
   };
   $$("#cType,#cAge,#cCost,#cNew").forEach(el=>el.addEventListener("input",()=>{if(el.id==="cType")$("#cNew").value=NEWPRICE[el.value];run()}));run();
 }
@@ -930,12 +937,12 @@ function viewWater(focus){
   const a=S.app&&S.app.type==="refrigerator"?S.app:{...blankApp(),type:"refrigerator"};
   openFlow(`<div class="flow-head"><h2>Fridge water filter</h2></div>
    <p class="muted">Filters are matched to your fridge model. Change it about every 6 months, or when water slows or tastes off.</p>
-   <div class="grid2"><label class="f" for="wBrand">Brand<input type="text" id="wBrand" value="${esc(a.brand)}" placeholder="Samsung"></label><label class="f" for="wModel">Fridge model<input class="mono" type="text" id="wModel" value="${esc(a.model)}" placeholder="RF28R7351SR/AA"></label></div>
-   <p class="err" id="wErr" hidden></p>
-   <button class="btn signal wide" type="button" id="wGo">Find my filter</button><div id="wOut"></div>`,focus);
+   <div class="grid2"><label class="f" for="wBrand">Brand<input type="text" id="wBrand" value="${esc(a.brand)}" placeholder="e.g. Samsung"></label><label class="f" for="wModel">Fridge model<input class="mono" type="text" id="wModel" value="${esc(a.model)}" placeholder="e.g. RF28R7351SR/AA"></label></div>
+   <p class="err" role="alert" id="wErr" hidden></p>
+   <button class="btn signal wide" type="button" id="wGo">Find my filter</button><div id="wOut" aria-live="polite"></div>`,focus);
   const go2=()=>{const b=$("#wBrand").value.trim(),m=$("#wModel").value.toUpperCase().replace(/\s+/g,"");if(m.length<4){const e=$("#wErr");e.hidden=false;e.textContent="Enter your fridge's model number.";return}$("#wErr").hidden=true;
     $("#wOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)"><p class="disclose">Affiliate links: we earn a commission if you buy.</p>
-     <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(m)}/`))}" target="_blank" rel="sponsored noopener" data-partner="partselect">Exact filter for ${esc(m)}</a><a class="btn" href="${esc(amazon(`${b} ${m} water filter`))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
+     <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(m.split("/")[0])}/`))}" target="_blank" rel="sponsored noopener" data-partner="partselect">Exact filter for ${esc(m)}</a><a class="btn" href="${esc(amazon(`${b} ${m} water filter`))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
      <div class="acts"><span class="muted" style="flex:1 1 200px">Every 6 months</span>${reminderButtons(`Replace fridge water filter (${b} ${m})`,6)}</div></div>`};
   $("#wGo").addEventListener("click",go2);if(a.model)go2();
 }
@@ -944,12 +951,12 @@ function viewWater(focus){
 function viewPro(focus){track("pro");openFlow(`<div class="flow-head"><h2>Book a technician</h2></div><p class="muted">For gas, refrigerant, microwave internals, or when you'd rather not do it yourself.</p>${proBlock(S.app||{})}`,focus)}
 
 /* ---------- upkeep ---------- */
-function reminderButtons(title,months){return `<a class="btn sm" target="_blank" rel="noopener" href="${esc(gcal(title,months))}">Google Calendar</a><button class="btn sm" type="button" data-ics="${esc(title)}" data-m="${months}">Apple / Outlook</button>`}
+function reminderButtons(title,months){return `<a class="btn sm" target="_blank" rel="noopener" href="${esc(gcal(title,months))}">Google Calendar</a>${IN_APP?`<span class="muted" style="font-size:13px">Open in Safari for Apple Calendar</span>`:`<button class="btn sm" type="button" data-ics="${esc(title)}" data-m="${months}">Apple / Outlook</button>`}`}
 function viewUpkeep(focus){
   const home=store.get("ps-home",[]);const f=store.get("ps-filter",null);
   const rows=[...HOME_UPKEEP.map(u=>({...u,who:"Whole home",t:f&&u.t.startsWith("Change the AC")?`${u.t} (${f.size})`:u.t})),...home.flatMap(a=>(UPKEEP[a.type]||[]).map(u=>({...u,who:`${a.brand} ${a.model}`,a})))];
   openFlow(`<div class="flow-head"><h2>Home upkeep calendar</h2></div><p class="muted">Add any reminder to your own calendar. It repeats on its own. We never email or text you.</p><p class="disclose">Affiliate links: "Shop supplies" links earn us a commission if you buy, at no cost to you.</p>
-   <div style="display:grid;gap:10px">${rows.map(u=>`<div class="app-row"><div class="flow-head"><div><p class="stamp">${esc(u.who)}</p><b>${esc(u.t)}</b></div><span class="muted mono" style="font-size:13px">every ${u.m===1?"month":u.m+" months"}</span></div>
+   <div style="display:grid;gap:10px">${rows.map(u=>`<div class="app-row"><div><p class="stamp">${esc(u.who)}</p><b>${esc(u.t)}</b><p class="muted mono" style="font-size:13px">Every ${u.m===1?"month":u.m+" months"}</p></div>
      <div class="acts">${reminderButtons(u.t+(u.a?` (${u.a.brand} ${u.a.model})`:""),u.m)}${u.buy?`<a class="btn sm" href="${esc(u.partselect&&u.a?wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(u.a.model)}/`):amazon((u.a?u.a.brand+" "+u.a.model+" ":"")+u.buy))}" target="_blank" rel="sponsored noopener" data-partner="${u.partselect&&u.a?"partselect":"amazon"}">Shop supplies</a>`:""}</div></div>`).join("")}</div>
    <p class="disclose">Save appliances to add their reminders here.</p>`,focus);
 }
@@ -966,6 +973,7 @@ async function onLabel(file){
   closeHome();flash();track("label_start");
   try{const img=await shrink(file);S.labelImg=img.preview;S.view="reading";syncURL(true);viewReading();
     const r=await api("/label",{image:{media_type:img.media_type,data:img.data}});
+    if(S.view!=="reading") return;
     const type=(TYPES[r.appliance_type]?r.appliance_type:"");
     S.app={brand:r.brand,model:r.model_number,serial:r.serial_number,type,fuel:r.fuel,unclear:r.unclear_characters,alts:r.alternate_readings||[]};
     track("label_read",{type,src:r.confidence});
@@ -976,6 +984,7 @@ async function onLabel(file){
     S.view="confirm";syncURL(false);viewConfirm(true,msg);
     if(r.model_number){setPlate(S.app);heroSequence(S.app);heroParts(defaultHeroParts(type||"washer"))}
   }catch(err){
+    if(S.view!=="reading") return;
     S.app=S.app&&S.app.model?S.app:blankApp();S.view="confirm";syncURL(false);
     viewConfirm(true,err.offline?{kind:"info",title:"Type the model number from your label",text:"Automatic label reading is unavailable right now. Typing it works just as well."}:{kind:"warn",title:"We couldn't read the label",text:err.message});
   }
@@ -1014,7 +1023,7 @@ function renderHome(){
   $("#homeList").innerHTML=list.length?list.map((a,i)=>`<div class="app-row">
      <div class="flow-head"><div><p class="stamp">${esc(TYPES[a.type]||"Appliance")}</p><p class="mono ai" style="font-weight:700">${esc(a.brand)} ${esc(a.model)}</p></div><button class="btn sm signal" type="button" data-fix="${i}">Something's wrong</button></div>
      <p class="muted" style="font-size:14px">${a.recall?(a.recall.n?`<b style="color:var(--stop)">${a.recall.n} recall(s) found</b>`:`No recalls as of ${new Date(a.recall.date).toLocaleDateString()}`):"Recalls not checked yet"}</p>
-     <div class="acts"><button class="btn sm" type="button" data-rc="${i}">Check recalls</button><button class="btn sm" type="button" data-up="${i}">Upkeep</button><button class="btn sm ghost" type="button" data-del="${i}">Remove</button></div>
+     <div class="acts"><button class="btn sm" type="button" data-rc="${i}">Check recalls</button><button class="btn sm" type="button" data-up="${i}">Upkeep</button><button class="link" style="color:var(--stop);margin-left:auto" type="button" data-del="${i}">Remove</button></div>
    </div>`).join(""):`<div class="notice info"><b>Nothing saved yet</b><span>Scan a label, then tap Save on the results.</span></div>`;
   $$("[data-fix]").forEach(b=>b.addEventListener("click",()=>{S.app={...list[+b.dataset.fix],serial:""};setPlate(S.app);closeHome();S.symptom=null;go("symptom")}));
   $$("[data-rc]").forEach(b=>b.addEventListener("click",()=>{S.app={...list[+b.dataset.rc]};closeHome();go("recall")}));
@@ -1034,18 +1043,21 @@ $("#clearData").addEventListener("click",()=>{store.del("ps-home");store.del("ps
 renderHome();heroParts(HERO_PARTS);
 (function restore(){
   const q=new URLSearchParams(location.search);const m=q.get("m"),t=q.get("t"),v=q.get("v");
-  if(m||v){S.app=m?{brand:q.get("b")||"",model:m,type:TYPES[t]?t:"",fuel:q.get("f")==="gas"?"gas":"electric",alts:[]}:null;S.symptom=q.get("s");
+  if(m||v){const plumbT=["toilet","faucet"].includes(t);
+    S.app=m?{demo:q.get("d")==="1",brand:q.get("b")||"",model:m,type:TYPES[t]?t:"",fuel:q.get("f")==="gas"?"gas":"electric",alts:[]}:plumbT?{brand:"",model:"",type:t,fuel:"unknown"}:null;S.symptom=q.get("s");
+    let saved=null;try{saved=JSON.parse(sessionStorage.getItem("ps-res:"+location.pathname+location.search)||"null")}catch(e){}
+    if(saved){S.details=saved.details||"";if(saved.result)S.result=saved.result}
     if(S.app&&S.app.model)setPlate(S.app);
-    if(v==="parts"&&S.app&&S.symptom){const local=(SYMPTOMS[S.app.type]||[]).find(s=>s.id===S.symptom);if(local){S.result=localResult(S.app,local);S.view="parts"}else S.view="symptom"}
-    else S.view=v||"confirm";
+    if(v==="parts"&&S.app&&S.symptom){const local=(SYMPTOMS[S.app.type]||[]).find(s=>s.id===S.symptom);if(saved&&saved.result){S.view="parts"}else if(local){S.result=localResult(S.app,local);S.view="parts"}else S.view="symptom"}
+    else S.view=(v==="reading"?"confirm":v)||"confirm";
     syncURL(false);render(false);
   } else syncURL(false);
 })();
 track("view",{src:IN_APP?"inapp":"web"});
 /* hero film → hands off to the live scan */
 const film=$("#film"),fv=$("#filmV");let filmDone=false;
-function endFilm(){if(filmDone)return;filmDone=true;fv.pause();film.classList.add("gone");setTimeout(()=>{film.hidden=true},650);heroSequence(S.app&&S.app.model?S.app:null)}
-function playFilm(){if(RM){return heroSequence(S.app&&S.app.model?S.app:null)}filmDone=false;film.hidden=false;film.classList.remove("gone");fv.preload="auto";try{fv.currentTime=0}catch(e){}const pr=fv.play();if(pr&&pr.catch)pr.catch(()=>endFilm())}
+function endFilm(){if(filmDone)return;filmDone=true;fv.pause();film.classList.add("gone");setTimeout(()=>{film.hidden=true},650);if(window.gsap)gsap.set("#leaders",{opacity:1});heroSequence(S.app&&S.app.model?S.app:null)}
+function playFilm(){if(RM){return heroSequence(S.app&&S.app.model?S.app:null)}filmDone=false;if(window.gsap)gsap.set("#plate,.ptile,#leaders",{opacity:0});film.hidden=false;film.classList.remove("gone");fv.preload="auto";try{fv.currentTime=0}catch(e){}const pr=fv.play();if(pr&&pr.catch)pr.catch(()=>endFilm())}
 fv.addEventListener("ended",endFilm);fv.addEventListener("error",endFilm);const filmSrcs=$$("source",fv);filmSrcs[filmSrcs.length-1].addEventListener("error",endFilm);
 fv.addEventListener("timeupdate",()=>{if(fv.duration)$("#filmProg").style.width=(fv.currentTime/fv.duration*100)+"%"});
 $("#filmSkip").addEventListener("click",endFilm);
