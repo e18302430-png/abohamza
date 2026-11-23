@@ -1,6 +1,6 @@
-<title>PartSnap</title>
+<title>Fixwise</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Photograph the model label on your washer, dryer, dishwasher, fridge, range, microwave or disposal. PartSnap reads it, shows free fixes first, then the exact part that fits.">
+<meta name="description" content="Photograph the model label on your washer, dryer, dishwasher, fridge, range, microwave or disposal. Fixwise reads it, shows free fixes first, then the exact part that fits.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -72,6 +72,17 @@ a{color:inherit}
 .svc span{font-size:14px;color:var(--muted)}
 .svc.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .svc.main span{color:inherit;opacity:.75}
+.plancard{border:2px solid var(--signal);border-radius:16px;padding:18px;display:grid;gap:12px;background:linear-gradient(180deg,rgba(242,96,30,.06),transparent 60%)}
+.plancard h3{font-size:24px}
+.planlist{margin:0;padding-left:20px;display:grid;gap:4px}
+.keyrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.steps{margin:0;padding:0;list-style:none;counter-reset:st;display:grid;gap:10px}
+.steps li{counter-increment:st;border:1.5px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.steps li label{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;cursor:pointer}
+.steps li label::before{content:counter(st);grid-row:1;grid-column:1;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 12px/26px var(--mono);text-align:center}
+.steps input{position:absolute;opacity:0}
+.steps li:has(input:checked){opacity:.6}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
 .svc-cat{grid-column:1/-1;font:600 12px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:var(--scan);margin-top:10px}
 .svc.main svg{color:var(--signal)}
 
@@ -232,9 +243,9 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
 <nav class="railnav" id="railnav" aria-label="Story progress"><a href="#" data-to="0" aria-label="Step 0"></a><a href="#" data-to="1" aria-label="Step 1"></a><a href="#" data-to="2" aria-label="Step 2"></a><a href="#" data-to="3" aria-label="Step 3"></a><a href="#" data-to="4" aria-label="Step 4"></a><a href="#" data-to="5" aria-label="Step 5"></a></nav>
 <div class="shell">
   <header class="top" id="top">
-    <a class="brand" href="./" aria-label="PartSnap home">
+    <a class="brand" href="./" aria-label="Fixwise home">
       <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="var(--signal)"/><path d="M8 12V8h4M24 12V8h-4M8 20v4h4M24 20v4h-4" stroke="var(--on-signal)" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 16h14" stroke="var(--on-signal)" stroke-width="2.4" stroke-linecap="round"/></svg>
-      PartSnap
+      Fixwise
     </a>
     <button class="btn sm" id="openHome" type="button">My home <span class="count" id="homeCount" hidden>0</span></button>
   </header>
@@ -290,7 +301,7 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
     <section class="card" id="flow" tabindex="-1" hidden></section>
 
     <section class="block" aria-labelledby="svcH">
-      <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">What PartSnap does for your home</h2></div>
+      <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">What Fixwise does for your home</h2></div>
       <div class="services" id="services"></div>
     </section>
 
@@ -329,7 +340,7 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
   </main>
 
   <footer id="foot">
-    <p><b>Affiliate disclosure:</b> PartSnap earns commissions from some links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases. Brand and model names are used only to identify compatible parts; PartSnap isn't affiliated with any manufacturer.</p>
+    <p><b>Affiliate disclosure:</b> Fixwise earns commissions from some links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases. Brand and model names are used only to identify compatible parts; Fixwise isn't affiliated with any manufacturer.</p>
     <p><b>Safety:</b> unplug the appliance and shut off water before any repair. Gas, refrigerant and microwave internals are for licensed technicians. Repair information is general guidance; you're responsible for your repair. Electrical parts are often non-returnable, so confirm the fault first and check the seller's return policy.</p>
     <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><button class="link" type="button" id="clearData">Delete my data on this device</button></nav>
   </footer>
@@ -362,10 +373,15 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
 /* ================= settings: fill in before launch ================= */
 const CONFIG = {
   API_BASE: "/api",
-  AMAZON_TAG: "",            // Amazon Associates id, e.g. "partsnap-20"
+  AMAZON_TAG: "",            // Amazon Associates id, e.g. "fixwise-20"
   EBAY_CAMPID: "",           // eBay Partner Network campaign id
   PARTSELECT_WRAP: "",       // affiliate deep-link template containing {url} (Impact); empty = plain link
   FILTERBUY_WRAP: "",        // Filterbuy affiliate template containing {url}
+  PAYHIP: {                  // checkout links of the 3 Payhip products (each with "Generate unique license keys" on)
+    single: "",              // e.g. "https://payhip.com/b/AbCd"  -> $3.99, 1 plan
+    pack: "",                // $12.99, 5 plans
+    year: "",                // $29, unlimited plans for 365 days
+  },
   PRO: {                     // lead-gen links for jobs that need a technician (replace with affiliate links)
     sears: "https://www.searshomeservices.com/",
     angi: "https://www.angi.com/",
@@ -635,6 +651,7 @@ const SERVICES=[
   {cat:"Fix it",id:"fix",main:true,icon:"camera",t:"Fix an appliance",d:"Snap the label, pick the symptom, get the exact part and a how-to."},
   {cat:"Fix it",id:"quick",icon:"wrench",t:"Fix something else",d:"Water heater, AC, garage door, mower, sump pump, grill and 8 more."},
   {cat:"Fix it",id:"plumb",icon:"faucet",t:"Toilet & faucet fixes",d:"Running toilet, dripping faucet: the part and the fix."},
+  {cat:"Fix it",id:"proplans",icon:"wrench",t:"Fixwise Pro: repair plans",d:"Step-by-step plans written for your exact model. From $3.99."},
   {cat:"Fix it",id:"pro",icon:"pro",t:"Book a pro",d:"Gas, refrigerant or no time? Get quotes from local technicians."},
   {cat:"Save money",id:"calc",icon:"scale",t:"Repair or replace?",d:"A quick, honest answer before you spend money."},
   {cat:"Save money",tool:"age",icon:"calendar",t:"How old is it?",d:"Serial number → age, and whether it's likely still under warranty."},
@@ -670,7 +687,7 @@ function openFlow(html,focus=true){
 function render(focus=true){
   const v=S.view;
   if(v==="home"){$("#flow").hidden=true;$("#dock").hidden=false;return}
-  const views={confirm:viewConfirm,reading:viewReading,symptom:viewSymptom,parts:viewParts,filter:viewFilter,recall:viewRecall,calc:viewCalc,water:viewWater,pro:viewPro,upkeep:viewUpkeep,plumb:viewPlumb,tool:viewTool,quick:viewQuick};
+  const views={confirm:viewConfirm,reading:viewReading,symptom:viewSymptom,parts:viewParts,filter:viewFilter,recall:viewRecall,calc:viewCalc,water:viewWater,pro:viewPro,upkeep:viewUpkeep,plumb:viewPlumb,tool:viewTool,quick:viewQuick,plan:viewPlan,proplans:viewProPlans};
   if(["symptom","parts"].includes(v)&&!(S.app&&S.app.model)&&!(S.app&&isQuick(S.app.type))){S.view="confirm"}
   (views[S.view]||viewConfirm)(focus);
 }
@@ -794,6 +811,7 @@ function viewParts(focus){
         ${pro?"":`<a class="btn ${i===0?"signal":""} wide" style="justify-content:space-between;text-align:left" href="${esc(L.primary.url)}" target="_blank" rel="sponsored noopener" data-partner="${L.primary.partner}">${esc(L.primary.label)} <span class="mono" style="font-size:12px;opacity:.75">${esc(L.primary.sub)}</span></a>
         <div class="compare"><span class="muted" style="font-size:14px;align-self:center">Compare:</span>${L.compare.map(x=>`<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="sponsored noopener" data-partner="${x.partner}">${x.label}</a>`).join("")}<a class="btn sm ghost" href="${esc(L.video)}" target="_blank" rel="noopener" data-partner="youtube">▶ How-to video</a></div>`}
       </div></article>`}).join("")}
+   ${planCard(a)}
    ${!plumb&&!pro&&a.model?`<p class="disclose">On the diagram page, pick the part by name. It lists the exact part number that fits ${esc(a.model)}.</p>`:""}
    ${r.follow_up_question?`<div class="notice info"><b>One question would narrow it down</b><span>${esc(r.follow_up_question)} Add the answer to your description and search again.</span></div>`:""}
    ${IN_APP?`<div class="notice info"><b>Tip</b><span>You're in an in-app browser. Open this page in Safari or Chrome to keep your saved appliances.</span></div>`:""}
@@ -805,6 +823,7 @@ function viewParts(focus){
    </div>`,focus);
   $("#saveApp")&&$("#saveApp").addEventListener("click",e=>{saveAppliance(a);e.target.textContent="Saved to My home"});
   $("#backSym").addEventListener("click",()=>go("symptom"));
+  bindPlanCard(a);
 }
 function proBlock(a){return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Compare quotes from local, rated appliance technicians. Free to ask.</p>
   <p class="disclose">We may earn a fee if you book through these links, at no cost to you. We don't sell your information.</p>
@@ -1122,7 +1141,7 @@ function viewTool(focus){
   else body=`<ul class="checks">${T.list.map((c,i)=>`<li><label><input type="checkbox" id="tl${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul>${T.buy?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts">${T.buy.map(([n,q])=>`<a class="btn sm" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${esc(n)}</a>`).join("")}</div>`:""}${k==="freeze"?proBlock({}):""}`;
   openFlow(`<div class="flow-head"><h2>${esc(T.t)}</h2></div><p class="muted">${esc(T.d)}</p>${body}`,focus);
   if(T.bind) T.bind();
-  if(T.seasons){const show=s=>{$("#seasonOut").innerHTML=`<ul class="checks">${T.seasons[s].map((c,i)=>`<li><label><input type="checkbox" id="ss${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul><div class="acts">${reminderButtons(s+" home checklist (PartSnap)",12)}</div>`;$$("[data-season]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.season===s))};$$("[data-season]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.season)));show(Object.keys(T.seasons)[0])}
+  if(T.seasons){const show=s=>{$("#seasonOut").innerHTML=`<ul class="checks">${T.seasons[s].map((c,i)=>`<li><label><input type="checkbox" id="ss${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul><div class="acts">${reminderButtons(s+" home checklist (Fixwise)",12)}</div>`;$$("[data-season]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.season===s))};$$("[data-season]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.season)));show(Object.keys(T.seasons)[0])}
   track("calc",{type:k});
 }
 function viewQuick(focus){
@@ -1131,6 +1150,64 @@ function viewQuick(focus){
   $$("[data-qk]").forEach(b=>b.addEventListener("click",()=>{S.app={brand:"",model:"",type:b.dataset.qk,fuel:"unknown"};S.symptom=null;go("symptom")}));
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(b){closeHome();S.tool=b.dataset.tool;go("tool")}});
+
+
+/* ================= paid repair plans (Payhip license keys; verified on the server) ================= */
+const PRICES={single:"$3.99",pack:"$12.99",year:"$29"};
+const savedKey=()=>store.get("ps-key","");
+function payLink(kind,label,primary){const u=CONFIG.PAYHIP[kind];return u?`<a class="btn ${primary?"signal":""}" href="${esc(u)}" target="_blank" rel="noopener" data-partner="payhip-${kind}">${label}</a>`:`<button class="btn" type="button" disabled title="Payments open at launch">${label}</button>`}
+function planCard(a){
+  const k=savedKey();
+  return `<div class="plancard" id="planCard">
+    <p class="stamp">Fixwise repair plan</p>
+    <h3>Get the full step-by-step plan for your ${esc(a.model||((TYPES[a.type]||PLUMB_TYPES[a.type]||"appliance").toLowerCase()))}</h3>
+    <ul class="planlist"><li>Every step in order, with how to check it worked</li><li>Tools list and the multimeter tests</li><li>Safety stops, and what to tell a technician if you hire one</li></ul>
+    <div class="grid3">${payLink("single",`1 plan · ${PRICES.single}`,true)}${payLink("pack",`5 plans · ${PRICES.pack}`)}${payLink("year",`Pro year · ${PRICES.year}`)}</div>
+    <p class="muted" style="font-size:13px">After paying you get a key by email and on the receipt page. Paste it below. Secure checkout by Payhip; refunds disable the key automatically.</p>
+    <div class="keyrow"><label class="sr" for="planKey">Plan key</label><input class="mono" type="text" id="planKey" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" value="${esc(k)}" autocomplete="off" spellcheck="false"><button class="btn signal" type="button" id="planGo">Get my plan</button></div>
+    <p class="err" role="alert" id="planErr" hidden></p>
+  </div>`}
+function bindPlanCard(a){
+  const go=$("#planGo");if(!go)return;
+  go.addEventListener("click",async()=>{const key=$("#planKey").value.trim();const e=$("#planErr");
+    if(key.length<8){e.hidden=false;e.textContent="Paste the key from your Payhip receipt.";return}
+    e.hidden=true;go.disabled=true;go.textContent="Writing your plan…";
+    try{const r=await api("/plan",{key,appliance:a,symptom:((SYMPTOMS[a.type]||[]).find(x=>x.id===S.symptom)||{}).label||"",details:S.details,image:S.partImg?{media_type:S.partImg.media_type,data:S.partImg.data}:undefined});
+      if(r.product!=="single") store.set("ps-key",key);
+      S.plan=r;track("pro",{type:a.type,src:r.product});go_("plan");
+    }catch(x){e.hidden=false;e.textContent=x.offline?"Plans open at launch. Your key is safe; try again then.":x.message}
+    finally{go.disabled=false;go.textContent="Get my plan"}});
+}
+const go_=v=>go(v);
+function viewPlan(focus){
+  const r=S.plan;if(!r)return go("parts",false);
+  const sev={diy:["ok","Safe to do yourself"],caution:["warn","Take care"],pro_only:["stop","Licensed technician needed"]}[r.safety_level]||["warn","Take care"];
+  openFlow(`<div class="flow-head"><h2>${esc(r.title)}</h2></div>
+   <div class="chips-row"><span>⏱ ${esc(r.time_estimate)}</span><span>Difficulty: ${esc(r.difficulty)}</span>${r.uses_left!=null?`<span>${r.uses_left} plan${r.uses_left===1?"":"s"} left on this key</span>`:r.product==="year"?`<span>Fixwise Pro</span>`:""}</div>
+   <div class="notice ${sev[0]}"><b>${sev[1]}</b><span>${esc(r.safety_note)}</span></div>
+   ${r.tools.length?`<div><h3>Tools</h3><ul class="checks">${r.tools.map((t,i)=>`<li><label><input type="checkbox" id="pt${i}"><span>${esc(t)}</span></label></li>`).join("")}</ul></div>`:""}
+   ${r.before_you_start.length?`<div><h3>Before you start</h3><ul class="checks">${r.before_you_start.map((t,i)=>`<li><label><input type="checkbox" id="pb${i}"><span>${esc(t)}</span></label></li>`).join("")}</ul></div>`:""}
+   <ol class="steps">${r.steps.map((st,i)=>`<li><label><input type="checkbox" id="ps${i}"><span><b>${esc(st.title)}</b><br>${esc(st.detail)}<br><span class="muted"><b>Check:</b> ${esc(st.check)}</span></span></label></li>`).join("")}</ol>
+   ${r.if_it_still_fails.length?`<div><h3>If it still doesn't work</h3><ul>${r.if_it_still_fails.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
+   <div class="notice info"><b>What to tell a technician</b><span id="techText">${esc(r.tell_the_technician)}</span><button class="btn sm" type="button" id="copyTech" style="justify-self:start;margin-top:6px">Copy</button></div>
+   ${proBlock(S.app||{})}
+   <button class="btn" type="button" id="backParts">Back to the parts</button>`,focus);
+  $("#copyTech").addEventListener("click",()=>{const t=$("#techText").textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copied.")).catch(()=>{const rg=document.createRange();rg.selectNodeContents($("#techText"));getSelection().removeAllRanges();getSelection().addRange(rg);toast("Selected. Copy it from the menu.")})});
+  $("#backParts").addEventListener("click",()=>go("parts"));
+}
+function viewProPlans(focus){
+  const a=S.app&&S.app.type?S.app:null;
+  openFlow(`<div class="flow-head"><h2>Fixwise Pro</h2></div>
+   <p class="muted">The free checks and likely parts stay free. Pay only when you want the full, step-by-step plan written for your exact model and symptom.</p>
+   <div class="grid3">
+     <div class="stat"><b>${PRICES.single}</b><span>1 repair plan</span></div>
+     <div class="stat"><b>${PRICES.pack}</b><span>5 plans, for every appliance in the house</span></div>
+     <div class="stat"><b>${PRICES.year}</b><span>Pro: unlimited plans for a year</span></div>
+   </div>
+   <div class="grid3">${payLink("single",`Buy 1 plan`,true)}${payLink("pack",`Buy 5 plans`)}${payLink("year",`Go Pro for a year`)}</div>
+   <p class="muted" style="font-size:13px">How it works: buy, copy the key from your receipt, then pick your appliance and symptom and paste the key on the results page. Re-opening a plan you already got never uses up a plan.</p>
+   <button class="btn signal wide" type="button" data-act="type">Start with my appliance</button>`,focus);
+}
 
 /* ================= label photo ================= */
 async function onLabel(file){
@@ -1171,11 +1248,11 @@ document.addEventListener("click",e=>{
 /* ================= reminders ================= */
 function nextDate(months){const d=new Date();d.setHours(12,0,0,0);const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+months);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d}
 const ymd=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
-function gcal(title,months){const d=nextDate(months),e=new Date(d);e.setDate(e.getDate()+1);return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&details=${enc("Reminder from PartSnap")}&dates=${ymd(d)}/${ymd(e)}&recur=${enc(`RRULE:FREQ=MONTHLY;INTERVAL=${months}`)}`}
+function gcal(title,months){const d=nextDate(months),e=new Date(d);e.setDate(e.getDate()+1);return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&details=${enc("Reminder from Fixwise")}&dates=${ymd(d)}/${ymd(e)}&recur=${enc(`RRULE:FREQ=MONTHLY;INTERVAL=${months}`)}`}
 function downloadICS(title,months){
   const d=nextDate(months),e=new Date(d);e.setDate(e.getDate()+1);
-  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PartSnap//Upkeep//EN","BEGIN:VEVENT",`UID:${Date.now()}@partsnap`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART;VALUE=DATE:${ymd(d)}`,`DTEND;VALUE=DATE:${ymd(e)}`,`RRULE:FREQ=MONTHLY;INTERVAL=${months}`,`SUMMARY:${title.replace(/[,;]/g," ")}`,"DESCRIPTION:Reminder from PartSnap","BEGIN:VALARM","TRIGGER:PT9H","ACTION:DISPLAY","DESCRIPTION:Reminder","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
-  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));const l=document.createElement("a");l.href=url;l.download="partsnap-reminder.ics";document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Fixwise//Upkeep//EN","BEGIN:VEVENT",`UID:${Date.now()}@fixwise`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART;VALUE=DATE:${ymd(d)}`,`DTEND;VALUE=DATE:${ymd(e)}`,`RRULE:FREQ=MONTHLY;INTERVAL=${months}`,`SUMMARY:${title.replace(/[,;]/g," ")}`,"DESCRIPTION:Reminder from Fixwise","BEGIN:VALARM","TRIGGER:PT9H","ACTION:DISPLAY","DESCRIPTION:Reminder","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));const l=document.createElement("a");l.href=url;l.download="fixwise-reminder.ics";document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   toast("Reminder file created. Open it to add it to your calendar.");
 }
 
@@ -1201,7 +1278,7 @@ $("#openHome").addEventListener("click",openHome);
 $("#closeHome").addEventListener("click",closeHome);
 $("#homeSheet").addEventListener("click",e=>{if(e.target.id==="homeSheet")closeHome()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHome()});
-$("#clearData").addEventListener("click",()=>{store.del("ps-home");store.del("ps-filter");renderHome();toast("Deleted. Nothing from PartSnap is stored on this device now.")});
+$("#clearData").addEventListener("click",()=>{store.del("ps-home");store.del("ps-filter");renderHome();toast("Deleted. Nothing from Fixwise is stored on this device now.")});
 
 /* ================= boot ================= */
 renderHome();heroParts(HERO_PARTS);

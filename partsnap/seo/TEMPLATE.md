@@ -12,7 +12,7 @@ Pages live in `seo/pages/fix/<slug>.html` and `seo/pages/guide/<slug>.html` as a
 7. Likely parts, ranked
 8. Multimeter test table (good vs bad readings, from a cited service manual)
 9. Where the label is for that brand
-10. PartSnap CTA link: `/?type=<appliance>&brand=<brand>&symptom=<id>`
+10. Fixwise CTA link: `/?type=<appliance>&brand=<brand>&symptom=<id>`
 11. FAQ: 3–4 real questions
 12. Sources, then related links
 

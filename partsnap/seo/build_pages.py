@@ -47,16 +47,16 @@ def build(root, dist, domain):
         robots = 'index,follow' if slug in verified else 'noindex,follow'
         ld = [
             {"@context": "https://schema.org", "@type": "Article", "headline": title[:110], "dateModified": "2026-11-23",
-             "author": {"@type": "Organization", "name": "PartSnap repair desk"}, "publisher": {"@type": "Organization", "name": "PartSnap"},
+             "author": {"@type": "Organization", "name": "Fixwise repair desk"}, "publisher": {"@type": "Organization", "name": "Fixwise"},
              "mainEntityOfPage": url + path},
             {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "PartSnap", "item": url + '/'},
+                {"@type": "ListItem", "position": 1, "name": "Fixwise", "item": url + '/'},
                 {"@type": "ListItem", "position": 2, "name": 'Fixes' if kind == 'fix' else 'Guides', "item": url + '/'},
                 {"@type": "ListItem", "position": 3, "name": title[:80], "item": url + path}]},
         ]
         page = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title[:60])} · PartSnap</title><meta name="description" content="{html.escape(desc)}">
+<title>{html.escape(title[:60])} · Fixwise</title><meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}{path}"><meta name="robots" content="{robots}"><link rel="icon" href="/icon-192.png">
 <meta property="og:type" content="article"><meta property="og:title" content="{html.escape(title)}"><meta property="og:image" content="{url}/og.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,600..800&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -74,9 +74,9 @@ article{{background:var(--panel);border:1px solid var(--line);border-radius:18px
 table{{border-collapse:collapse;width:100%;font-size:15px;display:block;overflow-x:auto}} th,td{{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}}
 a{{color:var(--scan)}} code{{font-family:"JetBrains Mono",monospace}} footer{{font-size:13px;color:var(--muted);padding:28px 0}}
 </style></head><body>
-<header><a href="/">PartSnap</a><a class="cta" href="/?v=confirm">Snap my model label</a></header>
+<header><a href="/">Fixwise</a><a class="cta" href="/?v=confirm">Snap my model label</a></header>
 <main>{body}</main>
-<footer>As an Amazon Associate I earn from qualifying purchases. PartSnap earns commissions from some links at no extra cost to you. Repair information is general guidance; unplug appliances and shut off water first, and leave gas, refrigerant and wiring to licensed pros. Brand names identify compatible parts only; PartSnap isn't affiliated with any manufacturer. <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></footer>
+<footer>As an Amazon Associate I earn from qualifying purchases. Fixwise earns commissions from some links at no extra cost to you. Repair information is general guidance; unplug appliances and shut off water first, and leave gas, refrigerant and wiring to licensed pros. Brand names identify compatible parts only; Fixwise isn't affiliated with any manufacturer. <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></footer>
 </body></html>
 '''
         dest = os.path.join(dist, kind)

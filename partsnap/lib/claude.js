@@ -1,4 +1,4 @@
-// Shared helpers for the PartSnap API (Cloudflare Pages Functions).
+// Shared helpers for the Fixwise API (Cloudflare Pages Functions).
 // Secrets: ANTHROPIC_API_KEY, TURNSTILE_SECRET. Bindings (optional): PS_KV (KV), EVENTS (Analytics Engine).
 import Anthropic from "@anthropic-ai/sdk";
 

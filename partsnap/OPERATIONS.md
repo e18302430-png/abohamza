@@ -1,4 +1,4 @@
-# PartSnap operations plan: AI employees and automation
+# Fixwise operations plan: AI employees and automation
 
 Summary in Arabic: the site and the business run themselves. The owner's minimum involvement is listed at the end.
 
@@ -14,7 +14,7 @@ Summary in Arabic: the site and the business run themselves. The owner's minimum
 | Compliance Officer | monthly | Audits FTC and Amazon disclosures, AI labels, recall data freshness | Reports only | Violations found and fixed |
 | Ads Analyst | daily, from January | Adjusts TikTok bids and kills losing ads | Hard daily budget; any increase needs the owner's approval | Spend, cost per scan, ROAS |
 
-Scheduled jobs need a small companion Cloudflare Worker (`partsnap-cron`), because Cron Triggers don't run on Pages.
+Scheduled jobs need a small companion Cloudflare Worker (`fixwise-cron`), because Cron Triggers don't run on Pages.
 
 ## Accountant: a human is legally required
 - **AI bookkeeper:** day-to-day bookkeeping and reports.

@@ -25,6 +25,25 @@
 
 في كل برنامج حتعبّي نموذج **W-8BEN**.
 
+
+## 💳 الدخل السريع: خطط الإصلاح المدفوعة عن طريق Payhip (فلوسها بتوصل خلال أيام)
+1. **افتح حساب في https://payhip.com** واربطه بـ **PayPal**، عشان الفلوس تنزل فوراً مع كل بيعة.
+2. **أنشئ 3 منتجات رقمية** (Digital product)، وفي كل واحد فعّل من Advanced Options الخيار **"Generate unique license keys for each sale"**:
+
+   | المنتج | السعر |
+   |---|---|
+   | Fixwise Repair Plan | 3.99$ |
+   | Fixwise 5 Plans | 12.99$ |
+   | Fixwise Pro (1 year) | 29$ |
+
+3. **من صفحة تعديل كل منتج انسخ «Product secret key»**، وحطّه في Cloudflare كسرّ (Secret) بالأسماء دي بالترتيب:
+   - `PAYHIP_SECRET_SINGLE` لمنتج الخطة الواحدة
+   - `PAYHIP_SECRET_PACK` لمنتج الخمس خطط
+   - `PAYHIP_SECRET_YEAR` لمنتج السنة
+4. **انسخ روابط الشراء الثلاثة** (شكلها `https://payhip.com/b/...`) وحطّها في `CONFIG.PAYHIP` في أول `index.html`. أو أرسلها لي وأنا أحطّها.
+
+الزبون يشتري ← يجيه مفتاح في الإيميل ← يلصقه في الموقع ← السيرفر يتأكد من المفتاح عند Payhip ويكتب ليه الخطة. ولو الزبون رجّع فلوسه، Payhip بتوقف المفتاح تلقائياً.
+
 ## بعد ما تفتح الحسابات
 1. **في Cloudflare Pages ← Settings ← Variables حطّ القيم دي:**
    - **أسرار:** `ANTHROPIC_API_KEY` و`TURNSTILE_SECRET`

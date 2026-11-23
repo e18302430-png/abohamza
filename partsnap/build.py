@@ -1,9 +1,9 @@
 """Build the deployable site into dist/ for Cloudflare Pages.
-Run:  python3 build.py partsnap.com      (then: npx wrangler pages deploy dist)
+Run:  python3 build.py fixwise.app      (then: npx wrangler pages deploy dist)
 Functions in functions/ are picked up by Pages automatically.
 """
 import os, re, shutil, sys, json
-DOMAIN = sys.argv[1] if len(sys.argv) > 1 else "partsnap.example"
+DOMAIN = sys.argv[1] if len(sys.argv) > 1 else "fixwise.example"
 ROOT = os.path.dirname(os.path.abspath(__file__)); DIST = os.path.join(ROOT, "dist"); PUB = os.path.join(ROOT, "public")
 body = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
 body = re.sub(r'<meta name="claude:viewport-fit-sides"[^>]*>\n?', "", body)
@@ -22,7 +22,7 @@ head = f"""<!doctype html>
 <meta name="theme-color" content="#0A0D10">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta property="og:type" content="website"><meta property="og:site_name" content="PartSnap">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Fixwise">
 <meta property="og:title" content="The exact part. Not a guess."><meta property="og:description" content="{desc}">
 <meta property="og:url" content="{url}"><meta property="og:image" content="{url}og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
