@@ -1,0 +1,1 @@
+# One slug per line. A page is indexed only after a person has checked every code, value and source on it.

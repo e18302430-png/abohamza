@@ -72,6 +72,7 @@ a{color:inherit}
 .svc span{font-size:14px;color:var(--muted)}
 .svc.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .svc.main span{color:inherit;opacity:.75}
+.svc-cat{grid-column:1/-1;font:600 12px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:var(--scan);margin-top:10px}
 .svc.main svg{color:var(--signal)}
 
 /* flow card */
@@ -379,10 +380,12 @@ const enc=encodeURIComponent;
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),3400)}
-function track(e,p={}){try{navigator.sendBeacon&&navigator.sendBeacon(CONFIG.API_BASE+"/event",new Blob([JSON.stringify({e,p})],{type:"application/json"}))}catch(x){}}
+const CLICKID=(()=>{try{const q=new URLSearchParams(location.search);const k=["gclid","ttclid","fbclid","epik"].find(x=>q.get(x));if(k){const v=k+":"+q.get(k).slice(0,80);sessionStorage.setItem("ps-cid",v);return v}return sessionStorage.getItem("ps-cid")||""}catch(e){return ""}})();
+function track(e,p={}){p={src:CLICKID.split(":")[0]||"organic",...p};try{navigator.sendBeacon&&navigator.sendBeacon(CONFIG.API_BASE+"/event",new Blob([JSON.stringify({e,p})],{type:"application/json"}))}catch(x){}}
 const amazon=q=>`https://www.amazon.com/s?k=${enc(q)}${CONFIG.AMAZON_TAG?`&tag=${enc(CONFIG.AMAZON_TAG)}`:""}`;
 const ebay=q=>`https://www.ebay.com/sch/i.html?_nkw=${enc(q)}${CONFIG.EBAY_CAMPID?`&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${enc(CONFIG.EBAY_CAMPID)}&toolid=10001&mkevt=1`:""}`;
-const wrap=(tpl,url)=>tpl?tpl.replace("{url}",enc(url)):url;
+// Affiliate deep-link template: {url} = destination, {subid} = ad click id (for attribution) or "organic"
+const wrap=(tpl,url)=>tpl?tpl.replace("{url}",enc(url)).replace("{subid}",enc(CLICKID||"organic")):url;
 const youtube=q=>`https://www.youtube.com/results?search_query=${enc(q)}`;
 const IN_APP=/BytedanceWebview|musical_ly|TikTok|Instagram|FBAN|FBAV/i.test(navigator.userAgent);
 
@@ -570,6 +573,7 @@ function syncURL(push){
   if(S.app&&S.app.type) q.set("t",S.app.type);
   if(S.app&&S.app.model){q.set("m",S.app.model);if(S.app.brand)q.set("b",S.app.brand);if(S.app.fuel==="gas")q.set("f","gas");if(S.app.demo)q.set("d","1")}
   if(S.symptom) q.set("s",S.symptom);
+  if(S.view==="tool"&&S.tool) q.set("k",S.tool);
   const url=location.pathname+(q.toString()?"?"+q:"");
   try{sessionStorage.setItem("ps-res:"+url,JSON.stringify({result:S.result,details:S.details}))}catch(e){}
   try{ push?history.pushState({...S,partImg:null,labelImg:null},"",url):history.replaceState({...S,partImg:null,labelImg:null},"",url) }catch(e){}
@@ -628,16 +632,28 @@ function heroSequence(a){ setPlate(a); }
 
 /* ================= services grid ================= */
 const SERVICES=[
-  {id:"fix",main:true,icon:"camera",t:"Fix an appliance",d:"Snap the label, pick the symptom, get the exact part and a how-to."},
-  {id:"filter",icon:"air",t:"AC & furnace filter",d:"Photo of your filter → the right size, plus a reminder every 90 days."},
-  {id:"recall",icon:"shield",t:"Recall check",d:"Search U.S. government safety recalls for your model."},
-  {id:"calc",icon:"scale",t:"Repair or replace?",d:"A quick, honest answer before you spend money."},
-  {id:"water",icon:"drop",t:"Fridge water filter",d:"The filter that fits your fridge, and a 6-month reminder."},
-  {id:"pro",icon:"pro",t:"Book a pro",d:"Gas, refrigerant or no time? Get quotes from local technicians."},
-  {id:"upkeep",icon:"calendar",t:"Home upkeep calendar",d:"Every reminder your home needs, on your own calendar."},
-  {id:"plumb",icon:"faucet",t:"Toilet & faucet fixes",d:"Running toilet, dripping faucet: the part and the fix."},
+  {cat:"Fix it",id:"fix",main:true,icon:"camera",t:"Fix an appliance",d:"Snap the label, pick the symptom, get the exact part and a how-to."},
+  {cat:"Fix it",id:"quick",icon:"wrench",t:"Fix something else",d:"Water heater, AC, garage door, mower, sump pump, grill and 8 more."},
+  {cat:"Fix it",id:"plumb",icon:"faucet",t:"Toilet & faucet fixes",d:"Running toilet, dripping faucet: the part and the fix."},
+  {cat:"Fix it",id:"pro",icon:"pro",t:"Book a pro",d:"Gas, refrigerant or no time? Get quotes from local technicians."},
+  {cat:"Save money",id:"calc",icon:"scale",t:"Repair or replace?",d:"A quick, honest answer before you spend money."},
+  {cat:"Save money",tool:"age",icon:"calendar",t:"How old is it?",d:"Serial number → age, and whether it's likely still under warranty."},
+  {cat:"Save money",tool:"energy",icon:"element",t:"Energy cost calculator",d:"What an old fridge or dryer really costs per year."},
+  {cat:"Save money",tool:"warranty",icon:"scale",t:"Extended warranty: worth it?",d:"The math on protection plans in 10 seconds."},
+  {cat:"Safety",id:"recall",icon:"shield",t:"Recall check",d:"Search U.S. government safety recalls for your model."},
+  {cat:"Safety",tool:"alarms",icon:"shield",t:"Smoke & CO alarm expiry",d:"The date on the back tells you when to replace it."},
+  {cat:"Safety",tool:"freeze",icon:"drop",t:"Freeze protection",d:"Before a hard freeze: the steps that stop burst pipes."},
+  {cat:"Upkeep",id:"filter",icon:"air",t:"AC & furnace filter",d:"Photo of your filter → the right size, plus a reminder every 90 days."},
+  {cat:"Upkeep",id:"water",icon:"drop",t:"Fridge water filter",d:"The filter that fits your fridge, and a 6-month reminder."},
+  {cat:"Upkeep",id:"upkeep",icon:"calendar",t:"Home upkeep calendar",d:"Every reminder your home needs, on your own calendar."},
+  {cat:"Upkeep",tool:"seasonal",icon:"calendar",t:"Seasonal checklists",d:"Fall, winter, spring and summer jobs, with reminders."},
+  {cat:"Upkeep",tool:"life",icon:"scale",t:"How long will it last?",d:"Typical lifespan of 16 home systems, and what's left."},
+  {cat:"Shop smart",tool:"fit",icon:"filter",t:"Replacement that fits",d:"Standard sizes so a new appliance fits the first time."},
+  {cat:"Shop smart",tool:"sizing",icon:"air",t:"Room sizing: AC & dehumidifier",d:"The right BTU or pint size for your room."},
+  {cat:"Shop smart",tool:"newhome",icon:"pro",t:"New home: first 30 days",d:"Shutoffs, locks, alarms, serials: the full checklist."},
 ];
-$("#services").innerHTML=SERVICES.map(s=>`<button class="svc ${s.main?"main":""}" type="button" data-svc="${s.id}">${ICON[s.icon]}<b>${esc(s.t)}</b><span>${esc(s.d)}</span></button>`).join("");
+const CATS=[...new Set(SERVICES.map(x=>x.cat))];
+$("#services").innerHTML=CATS.map(c=>`<h3 class="svc-cat">${esc(c)}</h3>`+SERVICES.filter(x=>x.cat===c).map(x=>`<button class="svc ${x.main?"main":""}" type="button" ${x.tool?`data-tool="${x.tool}"`:`data-svc="${x.id}"`}>${ICON[x.icon]}<b>${esc(x.t)}</b><span>${esc(x.d)}</span></button>`).join("")).join("");
 $("#services").addEventListener("click",e=>{const b=e.target.closest("[data-svc]");if(!b)return;const id=b.dataset.svc;
   if(id==="fix"){S.app=blankApp();return go("confirm")}
   if(id==="water"){const fr=store.get("ps-home",[]).find(a=>a.type==="refrigerator");if(fr){S.app={...fr};}else S.app=null;return go("water")}
@@ -654,8 +670,8 @@ function openFlow(html,focus=true){
 function render(focus=true){
   const v=S.view;
   if(v==="home"){$("#flow").hidden=true;$("#dock").hidden=false;return}
-  const views={confirm:viewConfirm,reading:viewReading,symptom:viewSymptom,parts:viewParts,filter:viewFilter,recall:viewRecall,calc:viewCalc,water:viewWater,pro:viewPro,upkeep:viewUpkeep,plumb:viewPlumb};
-  if(["symptom","parts"].includes(v)&&!(S.app&&S.app.model)&&!(S.app&&["toilet","faucet"].includes(S.app.type))){S.view="confirm"}
+  const views={confirm:viewConfirm,reading:viewReading,symptom:viewSymptom,parts:viewParts,filter:viewFilter,recall:viewRecall,calc:viewCalc,water:viewWater,pro:viewPro,upkeep:viewUpkeep,plumb:viewPlumb,tool:viewTool,quick:viewQuick};
+  if(["symptom","parts"].includes(v)&&!(S.app&&S.app.model)&&!(S.app&&isQuick(S.app.type))){S.view="confirm"}
   (views[S.view]||viewConfirm)(focus);
 }
 const blankApp=()=>({brand:"",model:"",serial:"",type:"",fuel:"unknown",alts:[]});
@@ -695,12 +711,12 @@ function defaultHeroParts(type){const s=SYMPTOMS[type];if(!s)return HERO_PARTS;c
 
 function viewSymptom(focus){
   const a=S.app;const list=SYMPTOMS[a.type]||[];const saved=store.get("ps-home",[]).some(x=>x.model===a.model);
-  const plumb=["toilet","faucet"].includes(a.type);
+  const plumb=isQuick(a.type);
   openFlow(`${plumb?"":rail(1)}
    <div class="flow-head"><h2>What's wrong with your ${esc((TYPES[a.type]||PLUMB_TYPES[a.type]||a.type).toLowerCase())}?</h2>${plumb||saved?"":`<button class="btn sm" type="button" id="quickSave">Save to My home</button>`}</div>
    ${plumb?"":`<p class="mono ai" style="font-size:14px">${esc(a.brand)} ${esc(a.model)}</p>`}
    <div class="chips" role="group" aria-label="Symptom">${list.map(s=>`<button type="button" class="chip" data-id="${s.id}" aria-pressed="${S.symptom===s.id}">${esc(s.label)}</button>`).join("")}${plumb?"":`<button type="button" class="chip" data-id="other" aria-pressed="${S.symptom==="other"}">Something else</button>`}</div>
-   ${plumb?`<label class="f" for="inBrand2">Brand (optional)<input type="text" id="inBrand2" value="${esc(a.brand)}" placeholder="Moen, Delta, Kohler, American Standard…"></label>`:`
+   ${plumb?`<label class="f" for="inBrand2">Brand (optional)<input type="text" id="inBrand2" value="${esc(a.brand)}" placeholder="Optional, e.g. the brand on the unit"></label>`:`
    <label class="f" for="inDetails">Describe it in your own words (optional)<textarea id="inDetails" placeholder="Example: water stays in the drum and it hums at the end of the cycle">${esc(S.details)}</textarea></label>
    <div class="thumb">${S.partImg?`<img src="${S.partImg.preview}" alt="Photo of the problem area">`:""}<button class="btn sm" type="button" id="addPhoto">${S.partImg?"Change photo":"Add a photo of the problem (optional)"}</button></div>
    <p class="muted" style="font-size:13px">Photos may show your room. Frame just the appliance part.</p>`}
@@ -743,7 +759,7 @@ function localResult(a,s){
 }
 
 function partLinks(a,part){
-  const plumb=["toilet","faucet"].includes(a.type);
+  const plumb=isQuick(a.type);
   const q=(a.demo?`${TYPES[a.type]} ${part}`:`${a.brand||""} ${plumb?"":a.model} ${part}`).replace(/\s+/g," ").trim();
   const psModel=String(a.model||"").split("/")[0];
   const primary=plumb||!a.model||a.demo
@@ -755,7 +771,7 @@ function partLinks(a,part){
 function viewParts(focus){
   const a=S.app,r=S.result;if(!r){return go("symptom",false)}
   const sev={diy:["ok","Safe to try yourself"],caution:["warn","Take care"],pro_only:["stop","Call a licensed technician"]}[r.safety_level]||["ok","Safe to try yourself"];
-  const pro=r.safety_level==="pro_only";const plumb=["toilet","faucet"].includes(a.type);
+  const pro=r.safety_level==="pro_only";const plumb=isQuick(a.type);
   const saved=store.get("ps-home",[]).some(x=>x.model===a.model);
   const lk={high:[92,"Most likely"],medium:[58,"Possible"],low:[28,"Less likely"]};
   track("results",{type:a.type,src:r.source});
@@ -929,6 +945,193 @@ function viewPlumb(focus){
   $$("[data-pl]").forEach(b=>b.addEventListener("click",()=>{S.app={brand:"",model:"",type:b.dataset.pl,fuel:"unknown"};S.symptom=null;go("symptom")}));
 }
 
+/* ================= more home fixes (no label needed) ================= */
+const QUICK_TYPES={toilet:"Toilet",faucet:"Faucet",water_heater:"Water heater",hvac:"AC & furnace",garage_door:"Garage door opener",lawn_mower:"Lawn mower",dehumidifier:"Dehumidifier",window_ac:"Window AC",ceiling_fan:"Ceiling fan",sump_pump:"Sump pump",grill:"Gas grill",pressure_washer:"Pressure washer",robot_vacuum:"Robot vacuum",smoke_alarm:"Smoke alarm"};
+const isQuick=t=>!!QUICK_TYPES[t];
+Object.assign(PLUMB_TYPES,QUICK_TYPES);
+Object.assign(SYMPTOMS,{
+ water_heater:[
+  {id:"no_hot",label:"No hot water",free:["Electric: turn the power off, remove the upper access panel and press the red reset button.","Gas: check the pilot light is lit. If you smell gas, leave the house and call the gas company from outside."],
+   parts:[P("Water heater heating element","high","Electric heaters have two elements and the lower one fails most often.","Power off, then test with a multimeter: most 4500W 240V elements read about 10–14 ohms.","moderate"),P("Water heater thermostat","medium","A failed thermostat or high-limit switch stops heating.","The reset button keeps tripping, or one element never gets power.","moderate")],
+   safety:{level:"caution",note:"Electric: 240V, so switch off the breaker and confirm with a tester. Gas pilot, thermocouple and gas valve repairs are for a licensed pro."}},
+  {id:"lukewarm",label:"Not enough hot water",free:["Check the thermostat setting (120°F is typical and safe).","Flush sediment from the tank through the drain valve."],
+   parts:[P("Water heater dip tube","medium","A broken dip tube mixes cold water into the hot.","Hot water runs out fast and you find plastic bits in faucet screens.","moderate"),P("Water heater heating element","medium","A failed lower element leaves only the top third of the tank hot.","Test the lower element for continuity.","moderate")]},
+  {id:"leak",label:"Leaking",free:["Find the source: a pipe fitting or the drain valve can be tightened.","Water coming from the tank body itself means the tank has failed."],
+   parts:[P("Water heater drain valve","medium","A worn drain valve drips at the bottom front.","The drip is only at the drain valve outlet.","easy"),P("Water heater (replacement)","high","A leaking tank can't be repaired.","Water seeps from the tank seam or jacket.","hard")],
+   safety:{level:"caution",note:"Never cap or plug the temperature-pressure relief valve. A leak from that valve needs a plumber."}},
+  {id:"noise",label:"Popping or rumbling",free:["Flush the tank to remove sediment.","Lower the temperature to 120°F."],
+   parts:[P("Water heater flush kit","high","Sediment on the bottom causes popping.","Noise drops after a flush.","easy"),P("Water heater anode rod","medium","A worn anode speeds up corrosion; replace every 3–5 years.","The rod is eaten down to the wire.","moderate")]},
+ ],
+ hvac:[
+  {id:"blank",label:"Thermostat screen is blank",free:["Replace the thermostat batteries.","Check the furnace power switch and breaker.","A full condensate pan can trip a float switch and cut power; empty it."],
+   parts:[P("Thermostat","medium","Old thermostats fail, especially after power surges.","Batteries and power are fine but the screen stays blank.","moderate")]},
+  {id:"no_cool",label:"AC runs but doesn't cool",free:["Replace a dirty air filter.","With the power off, hose off the outdoor unit's coils.","Open all supply vents and return grilles."],
+   parts:[P("Air filter","high","A clogged filter is the top cause of weak cooling.","The filter is gray or older than 90 days.","easy")],
+   safety:{level:"caution",note:"Capacitors, refrigerant and electrical work need a licensed HVAC technician."}},
+  {id:"frozen",label:"Ice on the AC lines",free:["Set the AC to off and the fan to on for 2–4 hours to thaw.","Replace the air filter; restricted airflow freezes the coil."],
+   parts:[P("Air filter","high","Low airflow freezes the evaporator coil.","Ice returns within a day with an old filter.","easy")],
+   safety:{level:"caution",note:"If it ices again with a new filter, low refrigerant is likely. That needs a licensed HVAC technician."}},
+  {id:"short",label:"Turns on and off a lot",free:["Replace the air filter.","Move the thermostat away from sun, lamps and supply vents."],
+   parts:[P("Thermostat","low","A faulty or badly placed thermostat short-cycles the system.","Cycling stops when the thermostat is shaded.","moderate")]},
+ ],
+ garage_door:[
+  {id:"no_close",label:"Won't close, light blinks",free:["Wipe the two safety-sensor lenses near the floor.","Align the sensors until both LEDs glow steadily.","Remove anything in the door's path."],
+   parts:[P("Garage door safety sensor kit","medium","A failed sensor stops the door from closing.","LEDs won't stay steady after cleaning and alignment.","easy")]},
+  {id:"remote",label:"Remote doesn't work",free:["Replace the remote's battery.","Re-pair it using the Learn button on the motor unit.","Check the wall control's lock button is off."],
+   parts:[P("Universal garage door remote","medium","Remotes wear out or get lost.","The wall button works but the remote doesn't after re-pairing.","easy")]},
+  {id:"noisy",label:"Loud or jerky",free:["Lubricate rollers, hinges and springs with garage-door lubricant (not WD-40).","Tighten loose hardware on the track."],
+   parts:[P("Nylon garage door rollers","medium","Worn steel rollers grind and jerk.","Rollers wobble or have flat spots.","moderate")]},
+  {id:"spring",label:"Spring broken or door very heavy",free:[],parts:[],
+   safety:{level:"pro_only",note:"Garage door springs hold extreme tension and cause serious injuries. Call a garage door technician."}},
+ ],
+ lawn_mower:[
+  {id:"no_start",label:"Won't start",free:["Use fresh gas (less than 30 days old).","Check the spark plug wire is attached.","Clean or replace the air filter."],
+   parts:[P("Lawn mower spark plug","high","A fouled plug is the most common no-start cause. Replace it yearly.","The plug tip is black or wet.","easy"),P("Lawn mower air filter","medium","A clogged filter chokes the engine.","The filter is dark and dusty.","easy"),P("Lawn mower carburetor","medium","Old fuel gums up the carburetor.","It starts with a little starter spray, then dies.","moderate")],
+   safety:{level:"caution",note:"Disconnect the spark plug wire before touching the blade or underside."}},
+  {id:"surge",label:"Runs rough or surges",free:["Drain old fuel and add fuel stabilizer to new gas."],
+   parts:[P("Lawn mower carburetor","high","Varnish in the carburetor causes surging.","Surging continues with fresh fuel.","moderate"),P("Lawn mower fuel filter","medium","A clogged filter starves the engine.","Fuel flows weakly through the filter.","easy")]},
+  {id:"cut",label:"Uneven or ragged cut",free:["Set all wheels to the same height and check tire pressure."],
+   parts:[P("Lawn mower blade","high","A dull blade tears grass. Sharpen or replace every 25 hours of use.","The blade edge is rounded or nicked.","easy")],
+   safety:{level:"caution",note:"Disconnect the spark plug wire and wear gloves before removing the blade."}},
+ ],
+ dehumidifier:[
+  {id:"no_water",label:"Runs but collects no water",free:["Below about 65°F the coil can freeze; move it somewhere warmer.","Clean the air filter."],
+   parts:[P("Dehumidifier (replacement)","medium","If the coil stays warm after 30 minutes, the sealed system has failed and can't be fixed at home.","The coil behind the filter isn't cold.","easy")]},
+  {id:"full",label:"Full light stays on",free:["Seat the bucket correctly and check the float moves freely."],
+   parts:[P("Dehumidifier bucket float","medium","A stuck or broken float keeps the full light on.","The light stays on with an empty, seated bucket.","easy")]},
+ ],
+ window_ac:[
+  {id:"no_cool",label:"Doesn't cool well",free:["Wash the front filter.","Seal gaps around the unit with foam strips.","Check the unit is the right size for the room (see Room sizing)."],
+   parts:[P("Window air conditioner","medium","An undersized or worn-out unit can't keep up.","It runs constantly and the room never cools.","easy")]},
+  {id:"drip",label:"Drips water inside",free:["Tilt the unit slightly toward the outside, about 1/4 inch.","Clear the drain hole at the back."],parts:[]},
+ ],
+ ceiling_fan:[
+  {id:"wobble",label:"Wobbles",free:["Tighten the blade screws and blade-iron screws.","Use a balancing kit clip to find the light blade."],
+   parts:[P("Ceiling fan balancing kit","high","Small weight differences make fans wobble.","Wobble drops when the clip is moved.","easy")]},
+  {id:"remote",label:"Remote doesn't work",free:["Replace the remote battery.","Make sure the dip switches in the remote and receiver match."],
+   parts:[P("Universal ceiling fan remote kit","medium","Receivers fail or remotes get lost.","Pull chains work but the remote doesn't.","moderate")],
+   safety:{level:"caution",note:"Switch off the breaker before opening the canopy. New wiring needs an electrician."}},
+ ],
+ sump_pump:[
+  {id:"not_running",label:"Doesn't turn on",free:["Check it's plugged into a working GFCI outlet and reset it.","Make sure the float moves freely.","Test by pouring a bucket of water into the pit."],
+   parts:[P("Sump pump float switch","medium","A stuck or failed float keeps the pump off.","The pump runs when you lift the float by hand.","easy"),P("Sump pump","high","Pumps last about 7–10 years.","The motor hums or stays silent with power and a free float.","moderate")]},
+  {id:"constant",label:"Runs all the time",free:["Check the float isn't stuck in the on position.","Listen for water flowing back after it stops (bad check valve)."],
+   parts:[P("Sump pump check valve","medium","A failed check valve lets water flow back into the pit.","Water rushes back down the pipe when the pump stops.","easy")]},
+ ],
+ grill:[
+  {id:"no_spark",label:"Igniter won't spark",free:["Replace the igniter battery (many push buttons take one AA).","Clean the electrode tip near the burner."],
+   parts:[P("Grill igniter kit","high","Igniters crack or corrode.","No click or spark with a new battery.","easy")]},
+  {id:"low_flame",label:"Low flame",free:["Reset the regulator: turn the tank off and all knobs off, disconnect, wait a minute, reconnect, open the tank slowly, then light."],
+   parts:[P("Propane regulator and hose","medium","A tripped or failed regulator limits gas flow.","Flame stays low after a reset.","easy")],
+   safety:{level:"caution",note:"Check for leaks with soapy water, never with a flame. If you smell gas, close the tank and stop."}},
+ ],
+ pressure_washer:[
+  {id:"pulsing",label:"Pressure pulses",free:["Open the water supply fully and clean the inlet screen.","Clear the nozzle with a pin."],
+   parts:[P("Pressure washer nozzle set","medium","A worn or clogged nozzle pulses.","Pulsing changes with a different nozzle.","easy"),P("Pressure washer unloader valve","medium","A sticking unloader valve causes surging.","Pulsing continues with good water flow and nozzle.","moderate")]},
+  {id:"no_start",label:"Engine won't start",free:["Use fresh gas and check the oil level (low oil shuts some engines off)."],
+   parts:[P("Small engine spark plug","high","A fouled plug is the usual cause.","The plug tip is black or wet.","easy")]},
+ ],
+ robot_vacuum:[
+  {id:"stuck",label:"Gets stuck or error codes",free:["Remove hair from the brushes and wheels.","Wipe the cliff sensors underneath with a dry cloth."],
+   parts:[P("Robot vacuum brush and filter kit","high","Worn brushes and clogged filters cause most errors.","Brushes are frayed or the filter is gray.","easy")]},
+  {id:"charge",label:"Won't charge",free:["Clean the charging contacts on the robot and the dock."],
+   parts:[P("Robot vacuum battery","medium","Batteries fade after about 2–3 years.","Runtime is a fraction of what it was.","easy")]},
+ ],
+ smoke_alarm:[
+  {id:"chirp",label:"Chirps",free:["A chirp about once a minute means a low battery; replace it.","Check the date on the back: replace alarms older than 10 years."],
+   parts:[P("10-year sealed smoke alarm","high","Old alarms lose sensitivity and chirp at end of life.","The back says it's over 10 years old.","easy")]},
+ ],
+});
+
+/* ================= calculators and checklists ================= */
+const LIFE={"Tank water heater":[8,12],"Tankless water heater":[18,20],"Furnace":[15,20],"Central AC or heat pump":[10,15],"Refrigerator":[12,13],"Washer":[10,11],"Dryer":[13,13],"Dishwasher":[9,10],"Range / oven":[13,15],"Microwave":[9,9],"Garbage disposal":[12,12],"Garage door opener":[10,15],"Sump pump":[7,10],"Water softener":[10,15],"Smoke alarm":[10,10],"CO alarm":[5,7]};
+const GE_M={A:1,D:2,F:3,G:4,H:5,L:6,M:7,R:8,S:9,T:10,V:11,Z:12};
+const GE_Y={A:2013,D:2014,F:2015,G:2016,H:2017,L:2018,M:2019,R:2020,S:2021,T:2022,V:2023,Z:2024};
+const WP_Y={"0":2010,"1":2011,"2":2012,"3":2013,"4":2014,"5":2015,"6":2016,"7":2017,"8":2018,"9":2019,X:2020,A:2021,B:2022,C:2023,D:2024,E:2025,F:2026};
+const SS_Y={Z:2010,B:2011,C:2012,D:2013,F:2014,G:2015,H:2016,J:2017,K:2018,M:2019,N:2020,R:2021,T:2022,W:2023,X:2024,Y:2025};
+function decodeSerial(brand,serial){
+  const b=brand.toLowerCase(),s=serial.toUpperCase().replace(/[^A-Z0-9]/g,""),now=new Date().getFullYear();
+  const back12=y=>{while(y>now)y-=12;return y};
+  if(/ge|cafe|café|monogram|hotpoint/.test(b)&&s.length>=2&&GE_M[s[0]]&&GE_Y[s[1]]) return {year:back12(GE_Y[s[1]]),month:GE_M[s[0]],alt:back12(GE_Y[s[1]])-12,how:"GE: 1st letter = month, 2nd letter = year (repeats every 12 years)"};
+  if(/whirlpool|maytag|kitchenaid|amana|jenn|roper|kenmore/.test(b)){const c=s.length>=10?s[2]:s[1];if(WP_Y[c]){const wk=parseInt((s.length>=10?s.slice(3,5):s.slice(2,4)),10);return {year:WP_Y[c],month:wk>0&&wk<=53?Math.min(12,Math.ceil(wk/4.35)):0,how:"Whirlpool family: year code in the 2nd or 3rd character, then the week"}}}
+  if(/samsung/.test(b)&&s.length>=9&&SS_Y[s[7]]){const m="123456789ABC".indexOf(s[8])+1;return {year:SS_Y[s[7]],month:m||0,how:"Samsung: 8th character = year, 9th = month"}}
+  if(/lg/.test(b)&&/^\d{3}/.test(s)){let y=Math.floor(now/10)*10+ +s[0];if(y>now)y-=10;const m=+s.slice(1,3);return {year:y,month:m>=1&&m<=12?m:0,alt:y-10,how:"LG: 1st digit = last digit of the year, next 2 = month"}}
+  return null;
+}
+const TOOLS={
+ age:{icon:"calendar",t:"How old is it? Warranty check",d:"Decode the serial number to find the age and if it's likely still under warranty.",render(){return `
+   <div class="grid2"><label class="f" for="agBrand">Brand<input type="text" id="agBrand" placeholder="e.g. GE, Whirlpool, Samsung, LG" value="${esc(S.app&&S.app.brand||"")}"></label>
+   <label class="f" for="agSer">Serial number<input class="mono" type="text" id="agSer" placeholder="from the same label" value="${esc(S.app&&S.app.serial||"")}"></label></div>
+   <button class="btn signal wide" type="button" id="agGo">Find the age</button><div id="agOut" aria-live="polite"></div>`},
+  bind(){ $("#agGo").addEventListener("click",()=>{const r=decodeSerial($("#agBrand").value,$("#agSer").value);const o=$("#agOut");
+    if(!r){o.innerHTML=`<div class="notice info"><b>We can't decode that one yet</b><span>We decode GE, Whirlpool-family, Samsung and LG serials. Check the brand's support site for others.</span></div>`;return}
+    const now=new Date();const age=Math.max(0,(now.getFullYear()-r.year)+((now.getMonth()+1)-(r.month||6))/12);const warr=age<1;
+    o.innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)"><p class="stamp">Approximate build date</p><p class="verdict">${r.month?String(r.month).padStart(2,"0")+"/":""}${r.year}${r.alt?` <span class="muted" style="font-size:18px">or ${r.alt}</span>`:""}</p>
+     <div class="grid2"><div class="stat"><b>~${age.toFixed(1)} yr</b><span>Age</span></div><div class="stat"><b>${warr?"Likely yes":"Likely no"}</b><span>Standard 1-year warranty</span></div></div>
+     <p class="muted" style="font-size:13px">${esc(r.how)}. Codes can repeat, so this is an estimate. Many brands cover motors or sealed systems longer; check your brand's warranty page.</p>
+     <div class="acts"><button class="btn sm" type="button" data-go="calc">Repair or replace?</button><button class="btn sm" type="button" data-tool="life">Typical lifespan</button></div></div>`})}},
+ life:{icon:"scale",t:"How long will it last?",d:"Typical lifespans for 16 home systems, and how much life is left.",render(){return `
+   <div class="grid2"><label class="f" for="lfSys">System<select id="lfSys">${Object.keys(LIFE).map(k=>`<option>${k}</option>`).join("")}</select></label>
+   <label class="f" for="lfAge">Age (years)<input type="number" id="lfAge" min="0" max="60" value="8" inputmode="numeric"></label></div><div id="lfOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const k=$("#lfSys").value,a=+$("#lfAge").value||0,[lo,hi]=LIFE[k];const left=Math.max(0,hi-a);const tone=a>=hi?"stop":a>=lo?"warn":"ok";
+    $("#lfOut").innerHTML=`<div class="notice ${tone}"><b>${a>=hi?"Past typical lifespan":a>=lo?"In its last years":"Plenty of life left"}</b><span>Typical life: ${lo===hi?lo:lo+"–"+hi} years. About ${left} year${left===1?"":"s"} left on average. US averages, not a guarantee.</span></div>
+     ${a>=lo?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm signal" href="${esc(amazon("new "+k.toLowerCase()))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Start comparing replacements</a><a class="btn sm" href="${esc(CONFIG.PRO.angi)}" target="_blank" rel="sponsored noopener" data-partner="angi">Get an install quote</a></div>`:""}`};
+   $$("#lfSys,#lfAge").forEach(e=>e.addEventListener("input",run));run()}},
+ alarms:{icon:"shield",t:"Smoke & CO alarm expiry",d:"Enter the date on the back of each alarm. We tell you when to replace it.",render(){return `
+   <div class="grid2"><label class="f" for="alType">Alarm<select id="alType"><option value="10">Smoke alarm (10 years)</option><option value="7">Carbon monoxide alarm (5–7 years)</option><option value="7">Combination smoke + CO (7 years, check yours)</option></select></label>
+   <label class="f" for="alYear">Year printed on the back<input type="number" id="alYear" min="1990" max="2030" value="2018" inputmode="numeric"></label></div><div id="alOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const life=+$("#alType").value,y=+$("#alYear").value||0,rep=y+life,now=new Date().getFullYear();const due=rep<=now;
+    $("#alOut").innerHTML=`<div class="notice ${due?"stop":"ok"}"><b>${due?"Replace it now":"Replace in "+rep}</b><span>${due?"Alarms past their life may not sound in a fire.":"Test it monthly with the test button."} The NFPA says smoke alarms should be replaced every 10 years.</span></div>
+     <p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm ${due?"signal":""}" href="${esc(amazon(life===10?"10 year sealed battery smoke alarm":"combination smoke carbon monoxide alarm"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">See replacement alarms</a>${reminderButtons("Test smoke and CO alarms",1)}</div>`};
+   $$("#alType,#alYear").forEach(e=>e.addEventListener("input",run));run()}},
+ energy:{icon:"element",t:"Energy cost calculator",d:"What an old appliance costs to run each year, and what you'd save.",render(){return `
+   <div class="grid2"><label class="f" for="enPre">Appliance<select id="enPre"><option value="1000|400">Refrigerator from before 2001</option><option value="650|400">Refrigerator 2001–2013</option><option value="700|300">Chest freezer (older)</option><option value="900|600">Electric dryer</option><option value="500|350">Dehumidifier (summer)</option><option value="350|260">Window AC (summer)</option><option value="1100|160">Second fridge in the garage</option></select></label>
+   <label class="f" for="enRate">Your electricity rate (¢ per kWh)<input type="number" id="enRate" min="5" max="60" step="0.1" value="17.5" inputmode="decimal"></label></div>
+   <p class="muted" style="font-size:13px">17.5¢ is roughly the US residential average (estimate). Your bill shows your real rate.</p><div id="enOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const [oldK,newK]=$("#enPre").value.split("|").map(Number),r=(+$("#enRate").value||17.5)/100;const c1=oldK*r,c2=newK*r;
+    $("#enOut").innerHTML=`<div class="grid3"><div class="stat"><b>$${c1.toFixed(0)}/yr</b><span>Now (~${oldK} kWh)</span></div><div class="stat"><b>$${c2.toFixed(0)}/yr</b><span>ENERGY STAR model (~${newK} kWh)</span></div><div class="stat"><b>$${(c1-c2).toFixed(0)}/yr</b><span>You'd save</span></div></div>
+     <p class="muted" style="font-size:13px">kWh figures are typical estimates. Check the yellow EnergyGuide label for exact numbers.</p>
+     <p class="disclose">Affiliate link: we may earn a commission.</p><a class="btn sm" href="${esc(amazon("energy star "+$("#enPre").selectedOptions[0].text.split(" (")[0].replace(/from before 2001|2001–2013|\(older\)/g,"")))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare efficient models</a>`};
+   $$("#enPre,#enRate").forEach(e=>e.addEventListener("input",run));run()}},
+ warranty:{icon:"scale",t:"Extended warranty: worth it?",d:"Simple math on a protection plan vs. paying for a repair if it breaks.",render(){return `
+   <div class="grid2"><label class="f" for="wPrice">Plan price ($)<input type="number" id="wPrice" value="129" inputmode="numeric"></label><label class="f" for="wYears">Years it covers<input type="number" id="wYears" value="3" inputmode="numeric"></label>
+   <label class="f" for="wRepair">Typical repair cost ($)<input type="number" id="wRepair" value="250" inputmode="numeric"></label><label class="f" for="wFail">Chance of a repair per year (%)<input type="number" id="wFail" value="12" inputmode="numeric"></label></div><div id="wOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const p=+$("#wPrice").value||0,y=+$("#wYears").value||1,c=+$("#wRepair").value||0,f=(+$("#wFail").value||0)/100;const exp=c*(1-Math.pow(1-f,y));const good=p<=exp*1.5;
+    $("#wOut").innerHTML=`<div class="notice ${good?"warn":"stop"}"><b>Expected repair cost over ${y} years: about $${exp.toFixed(0)}</b><span>${good?"The plan costs about what you'd expect to spend. It buys peace of mind more than savings.":"The plan costs well over the expected repair cost. Setting the money aside usually wins."} This is math, not financial advice; the failure rate is an estimate.</span></div>`};
+   $$("#wPrice,#wYears,#wRepair,#wFail").forEach(e=>e.addEventListener("input",run));run()}},
+ fit:{icon:"filter",t:"Replacement that fits",d:"Standard sizes so a new appliance fits your space the first time.",render(){return `
+   <label class="f" for="ftType">Replacing a<select id="ftType"><option value="30|range">Range (stove)</option><option value="24|dishwasher">Dishwasher</option><option value="30|over the range microwave">Over-the-range microwave</option><option value="36|refrigerator">Refrigerator (36" cutout)</option><option value="33|refrigerator">Refrigerator (33" cutout)</option><option value="30|refrigerator">Refrigerator (30" cutout)</option><option value="27|washer">Washer (side by side)</option><option value="24|stackable washer dryer">Stackable washer/dryer</option></select></label>
+   <label class="f" for="ftFuel">Power<select id="ftFuel"><option value="">Electric / not applicable</option><option value="gas">Gas</option></select></label><div id="ftOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const [w,type]=$("#ftType").value.split("|"),fuel=$("#ftFuel").value;const q=`${w} inch ${fuel?fuel+" ":""}${type}`;
+    $("#ftOut").innerHTML=`<div class="notice info"><b>Look for ${w}" wide ${esc(type)}s</b><span>Measure width, height and depth of the opening and leave about 1" of clearance. Check the outlet or gas line matches before buying.</span></div><p class="disclose">Affiliate link: we may earn a commission.</p><a class="btn sm signal" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">See ${esc(q)} models</a>`};
+   $$("#ftType,#ftFuel").forEach(e=>e.addEventListener("input",run));run()}},
+ sizing:{icon:"air",t:"Room sizing: AC & dehumidifier",d:"The right BTU or pint size for your room, so you don't overbuy or underbuy.",render(){return `
+   <div class="grid2"><label class="f" for="szFt">Room size (sq ft)<input type="number" id="szFt" value="350" inputmode="numeric"></label><label class="f" for="szSun">Room<select id="szSun"><option value="1">Normal</option><option value="1.1">Very sunny</option><option value="0.9">Heavily shaded</option></select></label></div><div id="szOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const ft=+$("#szFt").value||0,k=+$("#szSun").value;const T=[[150,5000],[250,6000],[350,8000],[450,10000],[550,12000],[700,14000],[1000,18000],[1400,24000]];let b=(T.find(x=>ft<=x[0])||T[T.length-1])[1];b=Math.round(b*k/500)*500;const pints=ft<=1500?35:ft<=2500?50:70;
+    $("#szOut").innerHTML=`<div class="grid2"><div class="stat"><b>${b.toLocaleString()} BTU</b><span>Window AC</span></div><div class="stat"><b>${pints} pints/day</b><span>Dehumidifier</span></div></div><p class="muted" style="font-size:13px">Based on ENERGY STAR room-size guidance.</p><p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm" href="${esc(amazon(b+" btu window air conditioner energy star"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${b.toLocaleString()} BTU window ACs</a><a class="btn sm" href="${esc(amazon(pints+" pint dehumidifier energy star"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${pints}-pint dehumidifiers</a></div>`};
+   $$("#szFt,#szSun").forEach(e=>e.addEventListener("input",run));run()}},
+ freeze:{icon:"drop",t:"Freeze protection",d:"What to do before a hard freeze so pipes don't burst.",list:["When the forecast hits 20°F or lower, let faucets on outside walls drip.","Open cabinet doors under sinks on outside walls.","Disconnect and drain garden hoses; close the indoor shutoff to outdoor spigots.","Insulate exposed pipes in the garage, crawlspace and attic.","Know where your main water shutoff is, and test that it turns.","Keep the heat at 55°F or higher, even when away."],buy:[["Outdoor faucet covers","outdoor faucet cover"],["Pipe insulation","foam pipe insulation"],["Heat tape for pipes","pipe heat cable"]]},
+ seasonal:{icon:"calendar",t:"Seasonal checklists",d:"Fall, winter, spring and summer jobs that prevent costly repairs.",seasons:{Fall:["Change the furnace filter and test the heat.","Clean the dryer vent all the way outside.","Drain and store garden hoses.","Flush the water heater."],Winter:["Test smoke and CO alarms.","Check the sump pump by pouring in water.","Keep vents and the outdoor heat pump clear of snow."],Spring:["Clean gutters and downspouts.","Service the lawn mower: new spark plug, sharp blade, fresh oil.","Hose off the AC condenser and change the filter.","Test the garage door auto-reverse."],Summer:["Change the AC filter monthly in heavy use.","Clean the fridge condenser coils.","Check the dehumidifier bucket and filter.","Clean grill burners and check the propane hose."]}},
+ newhome:{icon:"pro",t:"New home: first 30 days",d:"The checklist inspectors wish every new owner followed, plus a move-out list.",list:["Find and label the main water shutoff, the gas shutoff and the electrical panel.","Change or rekey the exterior locks.","Photograph every appliance's model and serial label (save them in My home).","Test smoke and CO alarms; replace any older than 10 years.","Change the HVAC filter and note its size.","Check the water heater's age from its serial number.","Check appliances for recalls.","Set calendar reminders for filters and upkeep."],buy:[["Smart leak detectors","water leak detector"],["10-year smoke alarms","10 year sealed battery smoke alarm"],["Rekey kit","door lock rekey kit"]]},
+};
+function viewTool(focus){
+  const k=S.tool,T=TOOLS[k];if(!T)return go("home",false);
+  let body="";
+  if(T.render) body=T.render();
+  else if(T.seasons) body=`<div class="chips" role="tablist">${Object.keys(T.seasons).map((s,i)=>`<button type="button" class="chip" role="tab" data-season="${s}" aria-pressed="${i===0}">${s}</button>`).join("")}</div><div id="seasonOut"></div>`;
+  else body=`<ul class="checks">${T.list.map((c,i)=>`<li><label><input type="checkbox" id="tl${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul>${T.buy?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts">${T.buy.map(([n,q])=>`<a class="btn sm" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${esc(n)}</a>`).join("")}</div>`:""}${k==="freeze"?proBlock({}):""}`;
+  openFlow(`<div class="flow-head"><h2>${esc(T.t)}</h2></div><p class="muted">${esc(T.d)}</p>${body}`,focus);
+  if(T.bind) T.bind();
+  if(T.seasons){const show=s=>{$("#seasonOut").innerHTML=`<ul class="checks">${T.seasons[s].map((c,i)=>`<li><label><input type="checkbox" id="ss${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul><div class="acts">${reminderButtons(s+" home checklist (PartSnap)",12)}</div>`;$$("[data-season]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.season===s))};$$("[data-season]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.season)));show(Object.keys(T.seasons)[0])}
+  track("calc",{type:k});
+}
+function viewQuick(focus){
+  openFlow(`<div class="flow-head"><h2>Fix something else</h2></div><p class="muted">No label needed. Pick what's acting up.</p>
+   <div class="services" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">${Object.entries(QUICK_TYPES).map(([k,v])=>`<button class="svc" style="min-height:0" type="button" data-qk="${k}"><b>${esc(v)}</b><span>${(SYMPTOMS[k]||[]).length} common problems</span></button>`).join("")}</div>`,focus);
+  $$("[data-qk]").forEach(b=>b.addEventListener("click",()=>{S.app={brand:"",model:"",type:b.dataset.qk,fuel:"unknown"};S.symptom=null;go("symptom")}));
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(b){closeHome();S.tool=b.dataset.tool;go("tool")}});
+
 /* ================= label photo ================= */
 async function onLabel(file){
   closeHome();flash();track("label_start");
@@ -1004,8 +1207,9 @@ $("#clearData").addEventListener("click",()=>{store.del("ps-home");store.del("ps
 renderHome();heroParts(HERO_PARTS);
 (function restore(){
   const q=new URLSearchParams(location.search);const m=q.get("m"),t=q.get("t"),v=q.get("v");
-  if(m||v){const plumbT=["toilet","faucet"].includes(t);
-    S.app=m?{demo:q.get("d")==="1",brand:q.get("b")||"",model:m,type:TYPES[t]?t:"",fuel:q.get("f")==="gas"?"gas":"electric",alts:[]}:plumbT?{brand:"",model:"",type:t,fuel:"unknown"}:null;S.symptom=q.get("s");
+  S.tool=q.get("k")||null;
+  if(m||v){const plumbT=isQuick(t);
+    S.app=m?{demo:q.get("d")==="1",brand:q.get("b")||"",model:m,type:TYPES[t]?t:"",fuel:q.get("f")==="gas"?"gas":"electric",alts:[]}:plumbT?{brand:"",model:"",type:t,fuel:"unknown"}:(TYPES[t]||q.get("b"))?{brand:q.get("b")||"",model:"",type:TYPES[t]?t:"",fuel:"unknown",alts:[]}:null;S.symptom=q.get("s");
     let saved=null;try{saved=JSON.parse(sessionStorage.getItem("ps-res:"+location.pathname+location.search)||"null")}catch(e){}
     if(saved){S.details=saved.details||"";if(saved.result)S.result=saved.result}
     if(S.app&&S.app.model)setPlate(S.app);

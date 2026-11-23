@@ -13,7 +13,7 @@ Quality gates before you open the pull request — a page that fails any gate is
 - no invented part numbers or prices; affiliate disclosure above the first link;
 - title ≤ 60 chars, meta description ≤ 155, one H1, FAQ, internal links to 3 related pages;
 - noindex any page under 400 words of genuinely useful content.
-Open one pull request per batch with a checklist of the gates. Report Search Console clicks, impressions and average position for the last 28 days, and which pages to refresh next.
+Pages go in seo/pages/fix/ or seo/pages/guide/ as an <article> body (see seo/TEMPLATE.md). Never edit seo/verified.txt: a person adds a slug there after checking it, and only then is the page indexed. Open one pull request per batch with a checklist of the gates. Report Search Console clicks, impressions and average position for the last 28 days, and which pages to refresh next.
 
 ## Rules that apply to every PartSnap employee
 - PartSnap is a free US web app: photo of an appliance label → AI reads the model → free fixes first → the exact part via affiliate links. Revenue is affiliate commissions and referral fees only.

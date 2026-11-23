@@ -1,0 +1,10 @@
+agent: ./agent.md
+environment_id: ./environment.yaml
+vault_ids: []          # filled in after the owner adds ad-platform credentials (see agents/README-AR.md)
+schedule: {type: cron, expression: "0 6 * * *", timezone: Asia/Riyadh}
+budget: {type: limit, max_list_cost: {amount: "300", currency: USD}}   # US cents per run (AI cost, not ad spend)
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: Run today's media-buying routine. Remember the first 14 days are propose-only.

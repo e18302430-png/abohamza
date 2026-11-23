@@ -1,0 +1,10 @@
+agent: ./agent.md
+environment_id: ./environment.yaml
+vault_ids: []
+schedule: {type: cron, expression: "0 9 * * 0", timezone: Asia/Riyadh}
+budget: {type: limit, max_list_cost: {amount: "300", currency: USD}}
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: Write this week's ads report for the owner in the required format.

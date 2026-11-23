@@ -34,6 +34,11 @@ head = f"""<!doctype html>
 if os.path.isdir(DIST): shutil.rmtree(DIST)
 shutil.copytree(PUB, DIST)
 open(os.path.join(DIST, "index.html"), "w", encoding="utf-8").write(head + body + "\n</body>\n</html>\n")
+import importlib.util
+_spec = importlib.util.spec_from_file_location("build_pages", os.path.join(ROOT, "seo", "build_pages.py"))
+_bp = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_bp)
+SEO = _bp.build(ROOT, DIST, DOMAIN)
+INDEXED = [p.lstrip("/") for p, r in SEO if r.startswith("index")]
 open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: {url}sitemap.xml\n")
-open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{url}{p}</loc></url>\n" for p in ["", "privacy.html", "terms.html"]) + "</urlset>\n")
+open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{url}{p}</loc></url>\n" for p in ["", "privacy.html", "terms.html"] + INDEXED) + "</urlset>\n")
 print("built", DIST, "for", DOMAIN)
