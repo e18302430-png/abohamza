@@ -5,9 +5,10 @@
 import { HttpError, sha256 } from "./claude.js";
 
 export const PACKS = {
-  p3: { n: 3, egp: 49, label: "٣ تشخيصات" },
-  p10: { n: 10, egp: 129, label: "١٠ تشخيصات" },
-  p30: { n: 30, egp: 299, label: "٣٠ تشخيص (للعيلة والصنايعي)" },
+  p3: { n: 3, egp: 49, label: "3 نقاط" },
+  p10: { n: 10, egp: 129, label: "10 نقاط" },
+  p30: { n: 30, egp: 299, label: "30 نقطة" },
+  p80: { n: 80, egp: 699, label: "80 نقطة (للصنايعي والمكاتب)" },
 };
 const DEV = /^[a-z0-9]{24,40}$/;
 const day = () => new Date().toISOString().slice(0, 10);
@@ -27,29 +28,29 @@ export async function balance(env, dev) {
 }
 const freeCap = (env) => Number(env.FREE_PER_DAY || 3);
 
-// Takes one unit (free first, then a paid credit). Returns a receipt for refund().
-export async function spend(env, request, dev) {
+// Takes `cost` points (free daily points only for 1-point basic tools). Returns a receipt for refund().
+export async function spend(env, request, dev, cost = 1, free = true) {
   if (!env.PS_KV) return { src: "open" }; // local development without KV
   const ip = (await sha256((request.headers.get("cf-connecting-ip") || "anon") + (env.IP_SALT || "yo"))).slice(0, 16);
   const fk = `fr:${day()}:${dev}`, ik = `fri:${day()}:${ip}`;
   const used = await num(env, fk), ipUsed = await num(env, ik);
-  if (used < freeCap(env) && ipUsed < freeCap(env) * 3) {
+  if (free && cost === 1 && used < freeCap(env) && ipUsed < freeCap(env) * 3) {
     await put(env, fk, used + 1, 172800); await put(env, ik, ipUsed + 1, 172800);
     return { src: "free", fk, ik, free_left: freeCap(env) - used - 1 };
   }
   const ck = `cr:${dev}`, c = await num(env, ck);
-  if (c <= 0) throw new HttpError(402, "خلصت التشخيصات المجانية بتاعة النهارده. اشحن رصيد صغير أو استنى لبكرة.");
-  await put(env, ck, c - 1);
-  return { src: "credit", ck, credits: c - 1 };
+  if (c < cost) throw new HttpError(402, cost > 1 ? `التقرير ده محتاج ${cost} نقاط ورصيدك ${c}. اشحن وكمّل.` : "خلصت النقاط المجانية بتاعة النهارده. اشحن رصيد صغير أو استنى لبكرة.");
+  await put(env, ck, c - cost);
+  return { src: "credit", ck, cost, credits: c - cost };
 }
 export async function refund(env, r) {
   if (!r || !env.PS_KV) return;
   if (r.src === "free") { await put(env, r.fk, Math.max(0, (await num(env, r.fk)) - 1), 172800); await put(env, r.ik, Math.max(0, (await num(env, r.ik)) - 1), 172800); }
-  if (r.src === "credit") await put(env, r.ck, (await num(env, r.ck)) + 1);
+  if (r.src === "credit") await put(env, r.ck, (await num(env, r.ck)) + (r.cost || 1));
 }
 // Runs fn() only on a cache miss, charging one unit and refunding it if the AI call fails.
-export async function metered(env, request, dev, meter, fn) {
-  const r = await spend(env, request, dev);
+export async function metered(env, request, dev, meter, fn, cost = 1, free = true) {
+  const r = await spend(env, request, dev, cost, free);
   Object.assign(meter, { charged: r.src, free_left: r.free_left, credits: r.credits });
   try { return await fn(); } catch (e) { await refund(env, r); meter.charged = "refunded"; throw e; }
 }
