@@ -104,6 +104,12 @@ a{color:inherit}
 .ptile.hot svg{color:var(--signal)}
 .leaders{position:absolute;inset:0;pointer-events:none;overflow:visible}
 .leaders path{fill:none;stroke:var(--blueprint);stroke-width:1.2;stroke-dasharray:4 4}
+.film{position:absolute;top:0;left:0;right:0;aspect-ratio:1/1;max-width:100%;z-index:3;border-radius:16px;overflow:hidden;background:#0A0D10;box-shadow:var(--shadow);transition:opacity .6s ease}
+.film video{width:100%;height:100%;object-fit:cover;display:block}
+.film.gone{opacity:0;pointer-events:none}
+.film .skip{position:absolute;right:12px;bottom:12px;background:rgba(10,13,16,.6);color:#E7EBEE;border-color:rgba(231,235,238,.25);backdrop-filter:blur(6px)}
+.film .prog{position:absolute;left:0;bottom:0;height:3px;background:#3FD8F2;width:0}
+.film .tag{position:absolute;left:12px;top:12px;font:600 11px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:#3FD8F2;background:rgba(10,13,16,.6);padding:7px 9px;border-radius:6px}
 .stage-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;font-size:13px;color:var(--muted)}
 
 /* section blocks */
@@ -247,6 +253,7 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
       </div>
 
       <div class="stage" id="stage" aria-label="Example: a scanned Whirlpool washer label and the parts that usually fail">
+        <div class="film" id="film" hidden><video id="filmV" muted playsinline preload="none" poster="assets/poster.jpg" aria-label="12-second film: the label is scanned, the washer opens up, and the drain pump is identified"><source src="assets/hero.mp4" type="video/mp4"><source src="assets/hero.webm" type="video/webm"></video><span class="tag">How PartSnap sees it</span><button class="btn sm skip" type="button" id="filmSkip">Skip</button><span class="prog" id="filmProg"></span></div>
         <div class="vf" id="vf"><i></i><i></i><i></i><i></i>
           <div class="plate" id="plate">
             <span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span>
@@ -262,7 +269,7 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
         </div>
         <svg class="leaders" id="leaders" aria-hidden="true"></svg>
         <div class="parts-row" id="partsRow"></div>
-        <div class="stage-cap"><span id="stageCap">Example label · <span class="ai">cyan = read by AI</span></span><button class="link" type="button" data-act="sample">Try this example</button></div>
+        <div class="stage-cap"><span id="stageCap">Example label · <span class="ai">cyan = read by AI</span></span><span class="acts" style="gap:14px"><button class="link" type="button" id="filmPlay">▶ Play film</button><button class="link" type="button" data-act="sample">Try this example</button></span></div>
       </div>
     </section>
 
@@ -1016,5 +1023,13 @@ renderHome();heroParts(HERO_PARTS);
   } else syncURL(false);
 })();
 track("view",{src:IN_APP?"inapp":"web"});
-if("IntersectionObserver" in window){new IntersectionObserver((en,o)=>{if(en[0].isIntersecting){o.disconnect();heroSequence(S.app&&S.app.model?S.app:null)}},{threshold:.35}).observe($("#stage"))} else heroSequence(null);
+/* hero film → hands off to the live scan */
+const film=$("#film"),fv=$("#filmV");let filmDone=false;
+function endFilm(){if(filmDone)return;filmDone=true;fv.pause();film.classList.add("gone");setTimeout(()=>{film.hidden=true},650);heroSequence(S.app&&S.app.model?S.app:null)}
+function playFilm(){if(RM){return heroSequence(S.app&&S.app.model?S.app:null)}filmDone=false;film.hidden=false;film.classList.remove("gone");fv.preload="auto";try{fv.currentTime=0}catch(e){}const pr=fv.play();if(pr&&pr.catch)pr.catch(()=>endFilm())}
+fv.addEventListener("ended",endFilm);fv.addEventListener("error",endFilm);const filmSrcs=$$("source",fv);filmSrcs[filmSrcs.length-1].addEventListener("error",endFilm);
+fv.addEventListener("timeupdate",()=>{if(fv.duration)$("#filmProg").style.width=(fv.currentTime/fv.duration*100)+"%"});
+$("#filmSkip").addEventListener("click",endFilm);
+$("#filmPlay").addEventListener("click",()=>{playFilm();track("view",{src:"film"})});
+if("IntersectionObserver" in window){new IntersectionObserver((en,o)=>{if(en[0].isIntersecting){o.disconnect();(S.view==="home"&&!RM)?playFilm():heroSequence(S.app&&S.app.model?S.app:null)}},{threshold:.35}).observe($("#stage"))} else heroSequence(null);
 </script>
