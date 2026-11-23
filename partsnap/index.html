@@ -104,12 +104,6 @@ a{color:inherit}
 .ptile.hot svg{color:var(--signal)}
 .leaders{position:absolute;inset:0;pointer-events:none;overflow:visible}
 .leaders path{fill:none;stroke:var(--blueprint);stroke-width:1.2;stroke-dasharray:4 4}
-.film{position:absolute;inset:0;z-index:3;border-radius:16px;overflow:hidden;background:#0A0D10;box-shadow:var(--shadow);transition:opacity .6s ease}
-.film video{width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block;transform:scale(1.05)}
-.film.gone{opacity:0;pointer-events:none}
-.film .skip{position:absolute;right:12px;bottom:12px;background:rgba(10,13,16,.6);color:#E7EBEE;border-color:rgba(231,235,238,.25);backdrop-filter:blur(6px)}
-.film .prog{position:absolute;left:0;bottom:0;height:3px;background:#3FD8F2;width:0}
-.film .tag{position:absolute;left:12px;top:12px;font:600 11px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:#3FD8F2;background:rgba(10,13,16,.6);padding:7px 9px;border-radius:6px}
 .stage-cap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;font-size:13px;color:var(--muted)}
 
 /* section blocks */
@@ -223,6 +217,33 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
 .file-in{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60}
 
+
+/* immersive burst section: one committed dark stage in both themes */
+html{overflow-x:clip}
+.burst{position:relative;height:320vh;width:100vw;margin-left:calc(50% - 50vw);background:#07090B;color:#E7EBEE}
+.burst-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(60% 50% at 50% 50%,rgba(63,216,242,.10),transparent 70%),radial-gradient(40% 40% at 70% 60%,rgba(255,107,44,.10),transparent 70%),#07090B}
+.burst-pin::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(231,235,238,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(231,235,238,.05) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 50%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 30%,transparent 75%)}
+#burstCv{position:relative;width:min(94vw,80vh,820px);height:auto;aspect-ratio:1/1;max-width:100%;transform:translateX(min(18vw,230px))}
+.beats{position:absolute;left:max(24px,calc(50% - 560px));top:50%;transform:translateY(-50%);width:min(360px,34vw);display:grid}
+.beat{grid-area:1/1;display:grid;gap:12px;align-content:start;opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease;pointer-events:none}
+.beat.on{opacity:1;transform:none;pointer-events:auto}
+.beat .stamp{color:#3FD8F2}
+.beat h2{color:#E7EBEE;font-size:clamp(36px,5vw,60px)}
+.beat p{color:#A7B0B9;font-size:17px}
+.beat .btn{justify-self:start;margin-top:6px}
+.burst-prog{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(240px,50vw);height:3px;border-radius:2px;background:rgba(231,235,238,.15);overflow:hidden}
+.burst-prog i{display:block;height:100%;background:#3FD8F2;transform-origin:left;transform:scaleX(0)}
+.burst-hint{position:absolute;right:24px;top:50%;transform:translateY(-50%);font:600 11px/1.6 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:#6E7A86;writing-mode:vertical-rl}
+.burst.static{height:auto}.burst.static .burst-pin{position:relative;height:auto;padding-block:48px;gap:24px}.burst.static .beats{position:relative;left:auto;top:auto;transform:none;width:min(560px,92vw);gap:28px}.burst.static .beat{opacity:1;transform:none;grid-area:auto;pointer-events:auto}.burst.static .burst-prog,.burst.static .burst-hint{display:none}
+@media (max-width:900px){
+  #burstCv{width:min(100vw,58vh);margin-top:-24vh;transform:none}
+  .beats{left:16px;right:16px;width:auto;top:auto;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:none}
+  .burst-prog{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .beat .btn{display:none}
+  .beat h2{font-size:clamp(32px,9vw,44px)}.beat p{font-size:16px}
+  .burst-hint{display:none}
+}
 @media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:8px}.services{grid-template-columns:repeat(2,minmax(0,1fr))}.where{grid-template-columns:repeat(2,minmax(0,1fr))}.how,.honest{grid-template-columns:minmax(0,1fr)}.dock{display:flex}.dock[hidden]{display:none}.hero .cta-row{display:none}}
 @media (max-width:480px){.sheet{padding-inline:0;padding-bottom:0}.sheet .card{position:absolute;left:0;right:0;bottom:0;margin:0;border-radius:18px 18px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}.grid2,.grid3{grid-template-columns:minmax(0,1fr)}.card{padding:16px}.shell{gap:44px}.ticket{grid-template-columns:minmax(0,1fr)}.ticket .ic{width:48px;height:48px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -255,7 +276,6 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
       </div>
 
       <div class="stage" id="stage" aria-label="Example: a scanned washer label (made-up brand) and the parts that usually fail">
-        <div class="film" id="film" hidden><video id="filmV" muted playsinline preload="none" poster="assets/poster.jpg" aria-label="12-second film: the label is scanned, the washer opens up, and the drain pump is identified"><source src="assets/hero.mp4" type="video/mp4"><source src="assets/hero.webm" type="video/webm"></video><span class="tag">How PartSnap sees it</span><button class="btn sm skip" type="button" id="filmSkip">Skip</button><span class="prog" id="filmProg"></span></div>
         <div class="vf" id="vf"><i></i><i></i><i></i><i></i>
           <div class="plate" id="plate">
             <span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span>
@@ -271,11 +291,24 @@ footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:c
         </div>
         <svg class="leaders" id="leaders" aria-hidden="true"></svg>
         <div class="parts-row" id="partsRow"></div>
-        <div class="stage-cap"><span id="stageCap">Example label · <span class="ai">cyan = read by AI</span></span><span class="acts" style="gap:14px"><button class="link" type="button" id="filmPlay">▶ Play film</button><button class="link" type="button" data-act="sample">Try this example</button></span></div>
+        <div class="stage-cap"><span id="stageCap">Example label · <span class="ai">cyan = read by AI</span></span><button class="link" type="button" data-act="sample">Try this example</button></div>
       </div>
     </section>
 
     <section class="card" id="flow" tabindex="-1" hidden></section>
+
+    <section class="burst" id="burst" aria-labelledby="burstH">
+      <div class="burst-pin">
+        <canvas id="burstCv" width="640" height="640" role="img" aria-label="A washer drain pump comes apart into its housing, orange impeller, motor, seal and screws while water bursts out"></canvas>
+        <div class="beats">
+          <div class="beat on"><p class="stamp">01 · Snap</p><h2 id="burstH">One photo of the label.</h2><p>We read your exact model number in seconds, suffix included.</p></div>
+          <div class="beat"><p class="stamp">02 · See inside</p><h2>Free fixes first.</h2><p>Then the parts that usually fail, each with a test to confirm before you buy.</p></div>
+          <div class="beat"><p class="stamp">03 · Fix it</p><h2>The exact part.</h2><p>The one that fits your model, plus a how-to video. Gas or refrigerant? We send you to a pro.</p><button class="btn signal" type="button" data-act="snap">Snap my model label</button></div>
+        </div>
+        <span class="burst-hint" aria-hidden="true">Scroll to take it apart</span>
+        <div class="burst-prog" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
 
     <section class="block" aria-labelledby="svcH">
       <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">What PartSnap does for your home</h2></div>
@@ -1054,13 +1087,24 @@ renderHome();heroParts(HERO_PARTS);
   } else syncURL(false);
 })();
 track("view",{src:IN_APP?"inapp":"web"});
-/* hero film → hands off to the live scan */
-const film=$("#film"),fv=$("#filmV");let filmDone=false;
-function endFilm(){if(filmDone)return;filmDone=true;fv.pause();film.classList.add("gone");setTimeout(()=>{film.hidden=true},650);if(window.gsap)gsap.set("#leaders",{opacity:1});heroSequence(S.app&&S.app.model?S.app:null)}
-function playFilm(){if(RM){return heroSequence(S.app&&S.app.model?S.app:null)}filmDone=false;if(window.gsap)gsap.set("#plate,.ptile,#leaders",{opacity:0});film.hidden=false;film.classList.remove("gone");fv.preload="auto";try{fv.currentTime=0}catch(e){}const pr=fv.play();if(pr&&pr.catch)pr.catch(()=>endFilm())}
-fv.addEventListener("ended",endFilm);fv.addEventListener("error",endFilm);const filmSrcs=$$("source",fv);filmSrcs[filmSrcs.length-1].addEventListener("error",endFilm);
-fv.addEventListener("timeupdate",()=>{if(fv.duration)$("#filmProg").style.width=(fv.currentTime/fv.duration*100)+"%"});
-$("#filmSkip").addEventListener("click",endFilm);
-$("#filmPlay").addEventListener("click",()=>{playFilm();track("view",{src:"film"})});
-if("IntersectionObserver" in window){new IntersectionObserver((en,o)=>{if(en[0].isIntersecting){o.disconnect();(S.view==="home"&&!RM)?playFilm():heroSequence(S.app&&S.app.model?S.app:null)}},{threshold:.35}).observe($("#stage"))} else heroSequence(null);
+if("IntersectionObserver" in window){new IntersectionObserver((en,o)=>{if(en[0].isIntersecting){o.disconnect();heroSequence(S.app&&S.app.model?S.app:null)}},{threshold:.35}).observe($("#stage"))} else heroSequence(null);
+
+/* ================= immersive burst: scroll-scrubbed exploded view ================= */
+(function(){
+  const sec=$("#burst"),cv=$("#burstCv");if(!sec||!cv)return;
+  const g=cv.getContext("2d"),N=61,frames=new Array(N),src=i=>`assets/burst/${String(i).padStart(2,"0")}.webp`;
+  let shown=-1,want=0,loadedAll=false;
+  function load(i){if(frames[i]!==undefined)return;frames[i]=null;const im=new Image();im.decoding="async";im.onload=()=>{frames[i]=im;draw()};im.src=src(i)}
+  function loadAll(){if(loadedAll)return;loadedAll=true;for(let i=0;i<N;i+=6)load(i);for(let i=0;i<N;i++)load(i)}
+  function nearest(i){for(let d=0;d<N;d++){if(frames[i-d])return i-d;if(frames[i+d])return i+d}return -1}
+  function draw(){const k=nearest(want);if(k<0||k===shown)return;shown=k;g.clearRect(0,0,cv.width,cv.height);g.drawImage(frames[k],0,0,cv.width,cv.height)}
+  if(RM){sec.classList.add("static");want=N-1;load(N-1);return}
+  load(0);
+  new IntersectionObserver(en=>{if(en[0].isIntersecting)loadAll()},{rootMargin:"900px 0px"}).observe(sec);
+  const beats=$$(".beat",sec),bar=$(".burst-prog i",sec);let raf=0;
+  function onScroll(){raf=0;const r=sec.getBoundingClientRect();const span=r.height-innerHeight;const p=Math.max(0,Math.min(1,-r.top/Math.max(1,span)));
+    want=Math.round(p*(N-1));draw();bar.style.transform=`scaleX(${p})`;
+    const b=p<.34?0:p<.68?1:2;beats.forEach((el,k)=>el.classList.toggle("on",k===b))}
+  addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(onScroll)},{passive:true});addEventListener("resize",onScroll);onScroll();
+})();
 </script>
