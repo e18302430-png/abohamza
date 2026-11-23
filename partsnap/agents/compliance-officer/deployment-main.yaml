@@ -1,0 +1,10 @@
+agent: ./agent.md
+environment_id: ./environment.yaml
+vault_ids: []          # filled in after the owner adds credentials to the vault (see agents/README-AR.md)
+schedule: {type: cron, expression: "0 11 1 * *", timezone: America/New_York}
+budget: {type: limit, max_list_cost: {amount: "150", currency: USD}}   # US cents per run
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: Do today's run as described in your instructions, then write your report.
