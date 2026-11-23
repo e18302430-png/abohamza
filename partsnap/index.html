@@ -1,548 +1,1020 @@
 <title>PartSnap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Snap the model label on your washer, dryer, dishwasher or fridge. PartSnap reads it, finds the likely broken part and shows where to buy the exact one for your model.">
+<meta name="description" content="Photograph the model label on your washer, dryer, dishwasher, fridge, range, microwave or disposal. PartSnap reads it, shows free fixes first, then the exact part that fits.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: a single working column. The rating plate is the hero; each step of the repair is a card in the same column. */
+/* Layout: "Service Manual". Desktop: asymmetric 7/5 hero (copy left, scanned plate + exploded parts right); mobile: one column with a sticky action dock. */
 :root{
-  --bg:#EEF0F2; --panel:#FFFFFF; --ink:#14181D; --muted:#58616C; --line:#D5DAE0;
-  --steel-a:#D9DDE2; --steel-b:#B9C0C8; --plate-ink:#1E242B;
-  --accent:#E2560B; --accent-ink:#FFFFFF; --accent-soft:#FCE6D9;
-  --ok:#23784A; --ok-soft:#DDF0E5; --warn:#9A6400; --warn-soft:#F8EBCB; --stop:#B42318; --stop-soft:#FBE1DE;
-  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
-  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  --r:10px;
+  --bg:#E8EBED; --panel:#F7F8F9; --panel-2:#DDE2E6; --line:#C6CDD3; --ink:#0D1115; --muted:#4B545D;
+  --signal:#FF5A14; --on-signal:#0D1115; --scan:#007E9C; --scan-soft:rgba(0,126,156,.12);
+  --ok:#1F7A4A; --ok-soft:#DCEFE3; --warn:#8A5A00; --warn-soft:#F6E9C8; --stop:#B42318; --stop-soft:#FBE0DC;
+  --blueprint:rgba(13,17,21,.5); --steel-a:#E3E7EA; --steel-b:#B8C0C7; --plate-ink:#141A20; --shadow:0 1px 2px rgba(13,17,21,.08),0 8px 24px rgba(13,17,21,.06);
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#101317; --panel:#171B20; --ink:#E8EBEE; --muted:#9AA3AD; --line:#2A3139;
-  --steel-a:#3C434B; --steel-b:#2A3037; --plate-ink:#E9ECEF;
-  --accent:#FF7631; --accent-ink:#1A0E06; --accent-soft:#3A2214;
-  --ok:#55C98A; --ok-soft:#15301F; --warn:#E5B04F; --warn-soft:#352812; --stop:#F2796C; --stop-soft:#3A1916;
+  --bg:#0A0D10; --panel:#11161B; --panel-2:#182027; --line:#24303A; --ink:#E7EBEE; --muted:#8D97A1;
+  --signal:#FF6B2C; --on-signal:#0D1115; --scan:#3FD8F2; --scan-soft:rgba(63,216,242,.12);
+  --ok:#5BD08F; --ok-soft:#12291C; --warn:#E8B450; --warn-soft:#2E2412; --stop:#F2796C; --stop-soft:#341714;
+  --blueprint:rgba(63,216,242,.45); --steel-a:#47505A; --steel-b:#252C33; --plate-ink:#EEF1F3; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#101317; --panel:#171B20; --ink:#E8EBEE; --muted:#9AA3AD; --line:#2A3139;
-  --steel-a:#3C434B; --steel-b:#2A3037; --plate-ink:#E9ECEF;
-  --accent:#FF7631; --accent-ink:#1A0E06; --accent-soft:#3A2214;
-  --ok:#55C98A; --ok-soft:#15301F; --warn:#E5B04F; --warn-soft:#352812; --stop:#F2796C; --stop-soft:#3A1916;
+  --bg:#0A0D10; --panel:#11161B; --panel-2:#182027; --line:#24303A; --ink:#E7EBEE; --muted:#8D97A1;
+  --signal:#FF6B2C; --on-signal:#0D1115; --scan:#3FD8F2; --scan-soft:rgba(63,216,242,.12);
+  --ok:#5BD08F; --ok-soft:#12291C; --warn:#E8B450; --warn-soft:#2E2412; --stop:#F2796C; --stop-soft:#341714;
+  --blueprint:rgba(63,216,242,.45); --steel-a:#47505A; --steel-b:#252C33; --plate-ink:#EEF1F3; --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
   color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:720px;margin:0 auto;padding-block:12px 56px;display:grid;gap:20px}
-h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.05}
-h1{font-size:clamp(40px,9vw,64px);text-transform:uppercase}
-h2{font-size:28px;text-transform:uppercase}
-h3{font-size:22px}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;background-position:-1px -1px;background-attachment:fixed}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,transparent 0%,var(--bg) 70%);pointer-events:none;z-index:-1}
+.shell{max-width:1120px;margin:0 auto;padding-block:8px 120px;display:grid;gap:56px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:.98;text-wrap:balance}
+h1{font-size:clamp(46px,9.6vw,92px);font-weight:800;font-stretch:62%;text-transform:uppercase;letter-spacing:-.005em}
+h2{font-size:clamp(32px,5.4vw,48px);font-weight:800;font-stretch:62%;text-transform:uppercase}
+h3{font-size:22px;font-weight:700;font-stretch:80%;line-height:1.1}
 p{margin:0}
 a{color:inherit}
-.muted{color:var(--muted)}
+.stamp{font:600 12px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .mono{font-family:var(--mono)}
-.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.ai{color:var(--scan)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons */
+.btn{appearance:none;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font:600 15px/1.1 var(--body);padding:13px 18px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;min-height:48px;transition:transform .12s,border-color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.btn:hover{border-color:var(--ink)}
+.btn:active{transform:scale(.97)}
+.btn.signal{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.btn.signal:hover{filter:brightness(1.05);border-color:var(--signal)}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn.sm{min-height:44px;padding:10px 14px;font-size:14px}
+.btn svg{width:20px;height:20px;flex:none}
+.link{background:none;border:0;padding:0;font:inherit;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+:focus-visible{outline:3px solid var(--scan);outline-offset:3px;border-radius:6px}
 
 /* header */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:8px}
-.brand{display:flex;align-items:center;gap:10px;font:700 26px/1 var(--display);text-transform:uppercase;letter-spacing:.02em;text-decoration:none}
-.brand i{width:26px;height:26px;border-radius:6px;background:var(--accent);display:grid;place-items:center}
-.brand i::after{content:"";width:12px;height:12px;border:2.5px solid var(--accent-ink);border-radius:50%}
-.btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:600 15px/1 var(--body);padding:12px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:44px}
-.btn:hover{border-color:var(--muted)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.primary:hover{filter:brightness(1.06)}
-.btn.big{font-size:17px;padding:16px 22px;width:100%}
-.btn.small{font-size:14px;padding:9px 13px;min-height:38px}
-.btn:focus-visible,.chip:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.count{background:var(--accent);color:var(--accent-ink);border-radius:999px;font:600 12px/1 var(--mono);padding:4px 7px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font:800 26px/1 var(--display);font-stretch:62%;text-transform:uppercase;letter-spacing:.02em;text-decoration:none}
+.brand svg{width:30px;height:30px}
+.count{background:var(--signal);color:var(--on-signal);border-radius:999px;font:700 12px/1 var(--mono);padding:4px 7px}
 
 /* hero */
-.hero{display:grid;gap:18px}
-.lede{font-size:18px;color:var(--muted);max-width:56ch}
+.hero{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:40px;align-items:center}
+.hero-copy{display:grid;gap:22px}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:44ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.trust{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+.trust span{display:inline-flex;gap:6px;align-items:center}
+.trust svg{width:16px;height:16px;color:var(--ok)}
 
-/* the rating plate */
-.plate{position:relative;border-radius:8px;padding:22px 26px 18px;color:var(--plate-ink);
-  background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px),linear-gradient(160deg,var(--steel-a),var(--steel-b));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.12);overflow:hidden}
-.plate .rv{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.8),rgba(0,0,0,.35) 70%)}
-.plate .rv:nth-child(1){top:8px;left:8px}.plate .rv:nth-child(2){top:8px;right:8px}.plate .rv:nth-child(3){bottom:8px;left:8px}.plate .rv:nth-child(4){bottom:8px;right:8px}
-.plate .pbrand{font:700 22px/1 var(--display);text-transform:uppercase;letter-spacing:.08em}
-.plate dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;margin:12px 0 0;font-family:var(--mono)}
-.plate dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75;align-self:center}
-.plate dd{margin:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
-.plate dd.model{font-size:clamp(22px,6vw,30px);letter-spacing:.04em}
-.plate .fine{margin-top:10px;font:500 10.5px/1.4 var(--mono);opacity:.7;letter-spacing:.04em}
-.plate .hl{position:absolute;left:-4px;right:-4px;height:3px;top:0;background:var(--accent);box-shadow:0 0 14px 2px var(--accent);opacity:.9;animation:sweep 2.6s ease-in-out 0.4s 2 both}
-@keyframes sweep{0%{top:0;opacity:0}10%{opacity:.9}90%{opacity:.9}100%{top:100%;opacity:0}}
-.plate.scanning .hl{animation:sweep 1.6s ease-in-out infinite}
-.mark{background:var(--accent);color:var(--accent-ink);border-radius:3px;padding:0 4px}
-.plate-cap{font-size:13px;color:var(--muted)}
-.plate-cap b{color:var(--ink);font-weight:600}
+/* stage: plate + exploded parts */
+.stage{position:relative;display:grid;gap:18px;padding:18px 0}
+.vf{position:relative;padding:14px}
+.vf i{position:absolute;width:22px;height:22px;border:2.5px solid var(--scan);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.vf i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0}.vf i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0}
+.vf i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0}.vf i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0}
+.vf.snap i:nth-child(1){transform:translate(8px,8px)}.vf.snap i:nth-child(2){transform:translate(-8px,8px)}.vf.snap i:nth-child(3){transform:translate(8px,-8px)}.vf.snap i:nth-child(4){transform:translate(-8px,-8px)}
+.plate{position:relative;border-radius:8px;padding:22px 24px 18px;color:var(--plate-ink);transform-origin:50% 100%;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 1px,transparent 1px 3px),linear-gradient(160deg,var(--steel-a),var(--steel-b));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.2),var(--shadow);overflow:hidden;will-change:transform}
+.plate::before{content:"";position:absolute;inset:-40% -60%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.28) 50%,transparent 60%);transform:translateX(-60%);animation:glint 6s ease-in-out 1.2s infinite;pointer-events:none}
+@keyframes glint{0%,60%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
+.screw{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.85),rgba(0,0,0,.4) 72%)}
+.screw::after{content:"";position:absolute;left:2px;right:2px;top:5px;height:1.2px;background:rgba(0,0,0,.45)}
+.screw.a{top:9px;left:9px}.screw.b{top:9px;right:9px}.screw.c{bottom:9px;left:9px}.screw.d{bottom:9px;right:9px}
+.pbrand{font:800 22px/1 var(--display);font-stretch:110%;text-transform:uppercase;letter-spacing:.1em}
+.plate dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:14px 0 0;font-family:var(--mono)}
+.plate dt{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.72;align-self:center}
+.plate dd{margin:0;font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.plate dd.model{font-size:clamp(22px,4.6vw,30px);letter-spacing:.06em;position:relative;display:inline-block;justify-self:start}
+.plate dd.model .box{position:absolute;inset:-4px -8px;border:2px solid var(--scan);border-radius:4px;opacity:0}
+.plate .glyph{display:inline-block;transition:color .2s}
+.plate .glyph.lock{color:var(--scan);text-shadow:0 0 12px var(--scan-soft)}
+.plate .fine{margin-top:10px;font:500 10px/1.4 var(--mono);opacity:.68;letter-spacing:.05em}
+.scanline{position:absolute;left:-2px;right:-2px;top:0;height:2px;background:var(--scan);box-shadow:0 0 18px 3px var(--scan);opacity:0;pointer-events:none}
+.parts-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;position:relative;z-index:1}
+.ptile{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;justify-items:center;text-align:center;font-size:12.5px;font-weight:600;line-height:1.2}
+.ptile svg{width:44px;height:44px;color:var(--ink)}
+.ptile .cn{font:700 11px/1 var(--mono);color:var(--scan)}
+.ptile.hot{border-color:var(--signal)}
+.ptile.hot svg{color:var(--signal)}
+.leaders{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.leaders path{fill:none;stroke:var(--blueprint);stroke-width:1.2;stroke-dasharray:4 4}
+.stage-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;font-size:13px;color:var(--muted)}
 
-.ctas{display:grid;gap:10px}
-.ctas .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.file-in{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* section blocks */
+.block{display:grid;gap:20px}
+.block-head{display:grid;gap:8px;max-width:640px}
 
-/* cards */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px;min-width:0}
+/* services grid */
+.services{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.svc{appearance:none;text-align:left;font:inherit;color:inherit;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;align-content:start;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;min-height:150px}
+.svc:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow)}
+.svc svg{width:30px;height:30px;color:var(--scan)}
+.svc b{font:700 19px/1.1 var(--display);font-stretch:80%}
+.svc span{font-size:14px;color:var(--muted)}
+.svc.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.svc.main span{color:inherit;opacity:.75}
+.svc.main svg{color:var(--signal)}
+
+/* flow card */
+.card{background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:16px;min-width:0;box-shadow:var(--shadow)}
 .card>*{min-width:0}
-.steps{display:flex;gap:6px;flex-wrap:wrap}
-.steps span{font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-.steps span.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.steps span.done{color:var(--ok);border-color:var(--ok)}
-
+#flow{scroll-margin-top:12px}
+.rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.rail div{display:grid;gap:6px;font:600 11px/1 var(--display);font-stretch:125%;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rail div::before{content:"";height:3px;border-radius:2px;background:var(--line)}
+.rail div.done::before,.rail div.on::before{background:var(--scan)}
+.rail div.on{color:var(--ink)}
+.flow-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 label.f{display:grid;gap:6px;font-weight:600;font-size:14px}
-input[type=text],select,textarea{font:16px/1.4 var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:12px;width:100%}
-input.mono{font-family:var(--mono);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-textarea{min-height:84px;resize:vertical}
+input[type=text],input[type=number],select,textarea{font:16px/1.4 var(--body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;width:100%;min-height:48px}
+input.mono{font-family:var(--mono);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+input[aria-invalid="true"],select[aria-invalid="true"]{border-color:var(--stop)}
+.err{color:var(--stop);font-size:14px;font-weight:500}
+textarea{min-height:88px;resize:vertical}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 15px/1.2 var(--body);padding:11px 14px;border-radius:999px;cursor:pointer;min-height:44px;text-align:left}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:500 15px/1.2 var(--body);padding:12px 15px;border-radius:999px;cursor:pointer;min-height:46px;text-align:left;transition:transform .15s}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-
-.thumb{display:flex;gap:12px;align-items:center}
-.thumb img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-
-.notice{border-radius:var(--r);padding:12px 14px;font-size:15px;display:grid;gap:4px}
+.alts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.alts button{font-family:var(--mono);font-weight:700}
+.thumb{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.thumb img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1.5px solid var(--line)}
+.notice{border-radius:12px;padding:13px 15px;font-size:15px;display:grid;gap:3px}
 .notice b{font-weight:600}
-.notice.ok{background:var(--ok-soft);color:var(--ink)} .notice.ok b{color:var(--ok)}
+.notice.ok{background:var(--ok-soft)} .notice.ok b{color:var(--ok)}
 .notice.warn{background:var(--warn-soft)} .notice.warn b{color:var(--warn)}
 .notice.stop{background:var(--stop-soft)} .notice.stop b{color:var(--stop)}
-.notice.info{background:var(--accent-soft)}
+.notice.info{background:var(--scan-soft)} .notice.info b{color:var(--scan)}
+.checks{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.checks label{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;cursor:pointer;padding:8px 0;min-height:44px}
+.checks input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--ok)}
+.checks input:checked+span{text-decoration:line-through;color:var(--muted)}
 
-.checks{margin:0;padding:0;list-style:none;display:grid;gap:8px}
-.checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px}
-.how{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:n}
-.how li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;counter-increment:n}
-.how li::before{content:counter(n);font:700 20px/28px var(--display);width:28px;height:28px;text-align:center;border-radius:50%;background:var(--accent-soft);color:var(--ink)}
-.checks li::before{content:"";width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;margin-top:3px}
-
-.part{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px}
-.part-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
-.pill{font:600 11.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;border-radius:999px;white-space:nowrap}
-.pill.high{background:var(--accent);color:var(--accent-ink)}
-.pill.medium{background:var(--accent-soft);color:var(--ink)}
-.pill.low{border:1px solid var(--line);color:var(--muted)}
+/* part tickets */
+.ticket{border:1.5px solid var(--line);border-radius:14px;padding:16px;display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px;background:var(--bg)}
+.ticket.first{border-color:var(--signal)}
+.ticket .ic{width:56px;height:56px;border-radius:12px;background:var(--panel);border:1.5px solid var(--line);display:grid;place-items:center;position:relative}
+.ticket .ic svg{width:38px;height:38px}
+.ticket.first .ic svg{color:var(--signal)}
+.ticket .ic b{position:absolute;top:-8px;left:-8px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 11px/22px var(--mono);text-align:center}
+.ticket .body{display:grid;gap:9px;min-width:0}
+.lk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;font:600 12px/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.lk .bar{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.lk .bar i{display:block;height:100%;background:var(--scan);border-radius:3px;transform-origin:left;animation:fill .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fill{from{transform:scaleX(0)}}
+.ticket.first .lk .bar i{background:var(--signal)}
 .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-.buy{display:grid;gap:8px}
-.buy a.btn{justify-content:space-between;border-radius:var(--r)}
-.buy a.btn small{font:500 12px var(--mono);color:var(--muted)}
-.buy a.btn.primary small{color:inherit;opacity:.85}
+.compare{display:flex;flex-wrap:wrap;gap:8px}
+.compare a{font-size:14px}
 .disclose{font-size:13px;color:var(--muted)}
+.loading{display:flex;gap:12px;align-items:center;color:var(--muted)}
+.scanbar{width:120px;height:4px;border-radius:2px;background:var(--panel-2);overflow:hidden;position:relative}
+.scanbar::after{content:"";position:absolute;inset:0;width:40%;background:var(--scan);animation:slide 1.1s ease-in-out infinite;border-radius:2px}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+.stagger>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+.stagger>*:nth-child(2){animation-delay:.05s}.stagger>*:nth-child(3){animation-delay:.1s}.stagger>*:nth-child(4){animation-delay:.15s}.stagger>*:nth-child(5){animation-delay:.2s}.stagger>*:nth-child(6){animation-delay:.25s}.stagger>*:nth-child(7){animation-delay:.3s}.stagger>*:nth-child(8){animation-delay:.35s}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+.verdict{font:800 40px/1 var(--display);font-stretch:62%;text-transform:uppercase}
+.stat{display:grid;gap:4px;border:1.5px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.stat b{font:700 24px/1 var(--mono)}
+.stat span{font-size:13px;color:var(--muted)}
 
-.loading{display:flex;gap:10px;align-items:center;color:var(--muted)}
-.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--accent);animation:rot .8s linear infinite}
-@keyframes rot{to{transform:rotate(360deg)}}
-
-/* where is my label */
-.where{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.where div{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:4px;background:var(--panel)}
-.where b{font:700 18px/1 var(--display);text-transform:uppercase}
+/* where + how */
+.where{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.where div{border:1.5px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:4px;background:var(--panel)}
+.where b{font:700 18px/1 var(--display);font-stretch:80%;text-transform:uppercase}
 .where span{font-size:14px;color:var(--muted)}
+.how{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:n}
+.how li{counter-increment:n;display:grid;gap:8px;border-top:3px solid var(--scan);padding-top:14px}
+.how li::before{content:counter(n,decimal-leading-zero);font:700 13px/1 var(--mono);color:var(--scan)}
+.honest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.honest div{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:grid;gap:6px}
 
-details{border-top:1px solid var(--line);padding-top:12px}
-summary{cursor:pointer;font-weight:600}
-
-/* my appliances sheet */
-.sheet{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.45);padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:40;display:none;background:rgba(5,8,10,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
 .sheet.open{display:block}
-.sheet .card{max-width:640px;margin:24px auto}
-.app-row{border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px}
-.app-row .mono{font-size:15px}
-.app-row .acts{display:flex;gap:8px;flex-wrap:wrap}
+.sheet .card{max-width:680px;margin:20px auto;animation:rise .3s cubic-bezier(.2,.8,.2,1)}
+.app-row{border:1.5px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;background:var(--bg)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:10px;font-size:15px;z-index:30;max-width:calc(100% - 32px);opacity:0;pointer-events:none;transition:opacity .2s}
+/* dock (mobile) */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:none;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.dock .btn.signal{flex:1}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:10px;font-size:15px;z-index:50;max-width:calc(100% - 32px);opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
+footer{display:grid;gap:10px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+footer nav{display:flex;gap:4px 18px;flex-wrap:wrap}
+footer nav a,footer nav button{min-height:44px;display:inline-flex;align-items:center}
+.file-in{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60}
 
-footer{display:grid;gap:10px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
-footer nav{display:flex;gap:16px;flex-wrap:wrap}
-
-@media (max-width:460px){.grid2,.ctas .row{grid-template-columns:minmax(0,1fr)}.card{padding:16px}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.plate .hl{display:none}}
+@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:8px}.services{grid-template-columns:repeat(2,minmax(0,1fr))}.where{grid-template-columns:repeat(2,minmax(0,1fr))}.how,.honest{grid-template-columns:minmax(0,1fr)}.dock{display:flex}.dock[hidden]{display:none}.hero .cta-row{display:none}}
+@media (max-width:480px){.grid2,.grid3{grid-template-columns:minmax(0,1fr)}.card{padding:16px}.shell{gap:44px}.ticket{grid-template-columns:minmax(0,1fr)}.ticket .ic{width:48px;height:48px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
-<div class="wrap">
-  <header class="top">
-    <a class="brand" href="#" aria-label="PartSnap home"><i aria-hidden="true"></i>PartSnap</a>
-    <button class="btn small" id="openHome" type="button">My appliances <span class="count" id="homeCount" hidden>0</span></button>
+<div class="shell">
+  <header class="top" id="top">
+    <a class="brand" href="./" aria-label="PartSnap home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="var(--signal)"/><path d="M8 12V8h4M24 12V8h-4M8 20v4h4M24 20v4h-4" stroke="var(--on-signal)" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 16h14" stroke="var(--on-signal)" stroke-width="2.4" stroke-linecap="round"/></svg>
+      PartSnap
+    </a>
+    <button class="btn sm" id="openHome" type="button">My home <span class="count" id="homeCount" hidden>0</span></button>
   </header>
 
-  <main id="main" class="wrap" style="padding:0">
+  <main id="main" class="shell" style="padding:0;gap:inherit">
     <section class="hero" aria-labelledby="h1">
-      <p class="eyebrow">Washers · Dryers · Dishwashers · Fridges</p>
-      <h1 id="h1">Snap the label.<br>Get the exact part.</h1>
-      <p class="lede">The model sticker on your appliance tells us everything. We read it, help you pin down the broken part, and show where to buy the one that fits your model, with a how-to video.</p>
-
-      <div class="plate" id="plate" aria-label="Appliance rating label">
-        <span class="rv"></span><span class="rv"></span><span class="rv"></span><span class="rv"></span>
-        <span class="hl" aria-hidden="true"></span>
-        <div class="pbrand" id="pBrand">Whirlpool</div>
-        <dl>
-          <dt>Model No.</dt><dd class="model" id="pModel"><span class="mark">WTW5000DW1</span></dd>
-          <dt>Serial No.</dt><dd id="pSerial">C91234567</dd>
-          <dt>Rating</dt><dd id="pRating">120V~ 60Hz 10A</dd>
-        </dl>
-        <div class="fine" id="pFine">AUTOMATIC WASHER · READ ALL INSTRUCTIONS BEFORE USE</div>
-      </div>
-      <p class="plate-cap" id="plateCap"><span>Example label.</span> <b>The model number, suffix included, decides which parts fit.</b></p>
-
-      <div class="ctas">
-        <label class="btn primary big" for="labelFile">Photograph your model label</label>
-        <input class="file-in" id="labelFile" type="file" accept="image/*" capture="environment">
-        <div class="row">
-          <button class="btn" type="button" id="typeModel">Type the model number</button>
-          <button class="btn" type="button" id="trySample">Try the example</button>
+      <div class="hero-copy">
+        <p class="stamp">US home appliances · Free</p>
+        <h1 id="h1">The exact part.<br>Not a guess.</h1>
+        <p class="lede">Snap the model sticker on your appliance. We read it, show you the free fixes first, then the one part that fits your model, with a how-to video.</p>
+        <div class="cta-row">
+          <button class="btn signal" type="button" data-act="snap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Snap my model label</button>
+          <button class="btn ghost" type="button" data-act="type">Type the model number</button>
+        </div>
+        <div class="trust">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Free, no sign-up</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Photo only used to read the label, never stored</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Free checks before you buy anything</span>
         </div>
       </div>
-    </section>
 
-    <section class="card" id="flow" aria-live="polite" hidden></section>
-
-    <section aria-labelledby="whereH" style="display:grid;gap:12px">
-      <h2 id="whereH">Where's my label?</h2>
-      <div class="where">
-        <div><b>Washer</b><span>Top-load: under the lid or on the back of the console. Front-load: around the door frame.</span></div>
-        <div><b>Dryer</b><span>Inside the door frame, or on the back panel.</span></div>
-        <div><b>Dishwasher</b><span>On the edge of the inner door or the side of the tub opening.</span></div>
-        <div><b>Fridge</b><span>Inside the fresh-food section on a side wall or the ceiling, or behind the crisper drawer.</span></div>
+      <div class="stage" id="stage" aria-label="Example: a scanned Whirlpool washer label and the parts that usually fail">
+        <div class="vf" id="vf"><i></i><i></i><i></i><i></i>
+          <div class="plate" id="plate">
+            <span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span>
+            <span class="scanline" id="scanline"></span>
+            <div class="pbrand" id="pBrand">Whirlpool</div>
+            <dl>
+              <dt>Model No.</dt><dd class="model" id="pModel"><span id="pModelText">WTW5000DW1</span><span class="box" id="pBox"></span></dd>
+              <dt>Serial No.</dt><dd id="pSerial">C91234567</dd>
+              <dt>Rating</dt><dd id="pRating">120V~ 60Hz 10A</dd>
+            </dl>
+            <div class="fine" id="pFine">AUTOMATIC WASHER · READ ALL INSTRUCTIONS BEFORE USE</div>
+          </div>
+        </div>
+        <svg class="leaders" id="leaders" aria-hidden="true"></svg>
+        <div class="parts-row" id="partsRow"></div>
+        <div class="stage-cap"><span id="stageCap">Example label · <span class="ai">cyan = read by AI</span></span><button class="link" type="button" data-act="sample">Try this example</button></div>
       </div>
-      <p class="muted" style="font-size:14px">Tip: fill the frame with the sticker, tilt the phone a little to kill glare, and make sure the full model number is sharp.</p>
     </section>
 
-    <section class="card" aria-labelledby="howH">
-      <h2 id="howH">How PartSnap finds the right part</h2>
+    <section class="card" id="flow" tabindex="-1" hidden></section>
+
+    <section class="block" aria-labelledby="svcH">
+      <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">What PartSnap does for your home</h2></div>
+      <div class="services" id="services"></div>
+    </section>
+
+    <section class="block" aria-labelledby="whereH">
+      <div class="block-head"><p class="stamp">Before you snap</p><h2 id="whereH">Where's my label?</h2></div>
+      <div class="where">
+        <div><b>Washer</b><span>Top-load: under the lid or back of the console. Front-load: around the door frame.</span></div>
+        <div><b>Dryer</b><span>Inside the door frame, or on the back panel.</span></div>
+        <div><b>Dishwasher</b><span>Edge of the inner door, or the side of the tub opening.</span></div>
+        <div><b>Fridge</b><span>Inside the fresh-food section on a side wall or ceiling, or behind the crisper.</span></div>
+        <div><b>Range</b><span>Open the oven door or the storage drawer and look at the frame.</span></div>
+        <div><b>Microwave</b><span>Inside the door frame, or on the back or bottom.</span></div>
+        <div><b>Disposal</b><span>Sticker on the bottom or side of the unit under the sink.</span></div>
+        <div><b>Tip</b><span>Fill the frame with the sticker and tilt the phone a little to kill glare.</span></div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="howH">
+      <div class="block-head"><p class="stamp">How it works</p><h2 id="howH">Why the label matters</h2></div>
       <ol class="how">
-        <li><span><b>We read your label.</b> Looks alone can't tell two parts apart, but the model number can. One letter in the suffix can change the part.</span></li>
-        <li><span><b>You tell us the symptom.</b> Won't drain, no heat, leaking. We list the parts that usually cause it, with a test to confirm before you buy.</span></li>
-        <li><span><b>We send you to the exact part.</b> The parts diagram for your model, price comparisons, and a video of the repair.</span></li>
+        <li><h3>We read your label</h3><p class="muted">Two parts can look identical and still not fit. The model number, down to the last character, decides. We show what we read so you can check it.</p></li>
+        <li><h3>Free fixes first</h3><p class="muted">Clogged filter, tripped breaker, kinked hose. Then the parts that usually cause your symptom, each with a test to confirm before you spend a dollar.</p></li>
+        <li><h3>The part that fits</h3><p class="muted">We open the parts diagram for your exact model, compare prices, and point you to a repair video. Gas or refrigerant? We send you to a licensed pro.</p></li>
       </ol>
-      <p class="disclose">We never invent part numbers. Exact part numbers come from the retailer's diagram for your model.</p>
+    </section>
+
+    <section class="block" aria-labelledby="honH">
+      <div class="block-head"><p class="stamp">Straight answers</p><h2 id="honH">What we promise</h2></div>
+      <div class="honest">
+        <div><h3>No invented part numbers</h3><p class="muted">Exact part numbers come from the retailer's diagram for your model, never from the AI.</p></div>
+        <div><h3>Your photo isn't kept</h3><p class="muted">It's shrunk on your phone, location data is stripped, and it's used only to read the label.</p></div>
+        <div><h3>Ranked by fix, not commission</h3><p class="muted">Parts are ordered by how often they cause your symptom. We earn from some links; that never changes the order.</p></div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p><b>Safety:</b> unplug the appliance and shut off the water before any repair. Gas, refrigerant and microwave repairs belong to a licensed technician. Repair advice is general guidance; you are responsible for your repair.</p>
-    <p><b>We earn from qualifying purchases.</b> Some links are affiliate links (Amazon, eBay, PartSelect and others). It never changes your price, and we rank parts by how likely they are to fix your problem, not by commission.</p>
-    <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="#" id="clearData">Delete my data on this device</a></nav>
+  <footer id="foot">
+    <p><b>Affiliate disclosure:</b> PartSnap earns commissions from some links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases.</p>
+    <p><b>Safety:</b> unplug the appliance and shut off water before any repair. Gas, refrigerant and microwave internals are for licensed technicians. Repair information is general guidance; you're responsible for your repair. Electrical parts are often non-returnable, so confirm the fault first and check the seller's return policy.</p>
+    <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><button class="link" type="button" id="clearData">Delete my data on this device</button></nav>
   </footer>
+</div>
+
+<div class="dock" id="dock">
+  <button class="btn signal" type="button" data-act="snap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Snap my model label</button>
+  <button class="btn" type="button" data-act="type" aria-label="Type the model number"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h10"/></svg></button>
 </div>
 
 <div class="sheet" id="homeSheet" role="dialog" aria-modal="true" aria-labelledby="homeH">
   <div class="card">
-    <div class="part-head"><h2 id="homeH">My appliances</h2><button class="btn small" type="button" id="closeHome">Close</button></div>
-    <p class="muted">Save each appliance once. Next time something breaks you skip the label, and we remind you about filters and upkeep.</p>
+    <div class="flow-head"><h2 id="homeH">My home</h2><button class="btn sm" type="button" id="closeHome">Close</button></div>
+    <p class="muted">Saved on this device only. Next time something breaks, skip the label. We also keep your upkeep reminders and recall checks here.</p>
     <div id="homeList" style="display:grid;gap:10px"></div>
-    <label class="btn" for="labelFile" id="homeAdd">Scan another appliance</label>
+    <div class="acts"><button class="btn" type="button" data-act="snap">Scan another appliance</button><button class="btn" type="button" data-act="upkeep">Home upkeep calendar</button></div>
   </div>
 </div>
-<div class="toast" id="toast" role="status"></div>
 
+<input class="file-in" id="labelFile" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+<input class="file-in" id="partFile" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+<input class="file-in" id="filterFile" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="flash" id="flash"></div>
+<div id="ts" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-/* ===== settings: fill these in before launch ===== */
+/* ================= settings: fill in before launch ================= */
 const CONFIG = {
-  API_BASE: "/api",                 // Cloudflare Pages Functions in /functions/api
-  AMAZON_TAG: "",                   // Amazon Associates tracking id, e.g. "partsnap-20"
-  EBAY_CAMPID: "",                  // eBay Partner Network campaign id
-  PARTSELECT_WRAP: "",              // affiliate deep-link template with {url}, e.g. from Impact; empty = plain link
+  API_BASE: "/api",
+  AMAZON_TAG: "",            // Amazon Associates id, e.g. "partsnap-20"
+  EBAY_CAMPID: "",           // eBay Partner Network campaign id
+  PARTSELECT_WRAP: "",       // affiliate deep-link template containing {url} (Impact); empty = plain link
+  FILTERBUY_WRAP: "",        // Filterbuy affiliate template containing {url}
+  PRO: {                     // lead-gen links for jobs that need a technician (replace with affiliate links)
+    sears: "https://www.searshomeservices.com/",
+    angi: "https://www.angi.com/",
+    thumbtack: "https://www.thumbtack.com/k/appliance-repair/near-me/",
+  },
 };
 
-const $=(s,r=document)=>r.querySelector(s);
+/* ================= helpers ================= */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const enc=encodeURIComponent;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),3200)}
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),3400)}
+function track(e,p={}){try{navigator.sendBeacon&&navigator.sendBeacon(CONFIG.API_BASE+"/event",new Blob([JSON.stringify({e,p})],{type:"application/json"}))}catch(x){}}
+const amazon=q=>`https://www.amazon.com/s?k=${enc(q)}${CONFIG.AMAZON_TAG?`&tag=${enc(CONFIG.AMAZON_TAG)}`:""}`;
+const ebay=q=>`https://www.ebay.com/sch/i.html?_nkw=${enc(q)}${CONFIG.EBAY_CAMPID?`&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${enc(CONFIG.EBAY_CAMPID)}&toolid=10001&mkevt=1`:""}`;
+const wrap=(tpl,url)=>tpl?tpl.replace("{url}",enc(url)):url;
+const youtube=q=>`https://www.youtube.com/results?search_query=${enc(q)}`;
+const IN_APP=/BytedanceWebview|musical_ly|TikTok|Instagram|FBAN|FBAV/i.test(navigator.userAgent);
 
-const TYPES={washer:"Washer",dryer:"Dryer",dishwasher:"Dishwasher",refrigerator:"Refrigerator"};
+/* ================= icons (line drawings in the service-manual style) ================= */
+const sv=(d,vb="0 0 48 48")=>`<svg viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICON={
+  pump:sv('<circle cx="22" cy="27" r="13"/><circle cx="22" cy="27" r="4"/><path d="M22 23v-7M26 28l6 4M18 28l-6 4M32 20h10v6H34"/>'),
+  lock:sv('<rect x="8" y="14" width="24" height="22" rx="3"/><path d="M32 22h8v6h-8M14 22h8M14 28h8"/><circle cx="20" cy="40" r="0"/>'),
+  belt:sv('<circle cx="13" cy="30" r="6"/><circle cx="34" cy="20" r="10"/><path d="M8.5 26 29 11M17.5 34.5 40 27"/>'),
+  element:sv('<path d="M6 34h6l3-20 4 20 4-20 4 20 4-20 3 20h8"/>'),
+  valve:sv('<rect x="14" y="16" width="20" height="16" rx="2"/><path d="M4 24h10M34 24h10M20 16V8h8v8M20 12h8"/>'),
+  seal:sv('<rect x="6" y="6" width="36" height="36" rx="18"/><rect x="13" y="13" width="22" height="22" rx="11"/>'),
+  fan:sv('<circle cx="24" cy="24" r="3"/><path d="M24 21c-2-9 8-12 9-6s-6 6-9 6M27 25c8 4 5 14-1 12s-3-9-2-12M21 25c-7 6-15-1-11-6s9 2 11 6"/>'),
+  fuse:sv('<rect x="12" y="18" width="24" height="12" rx="6"/><path d="M4 24h8M36 24h8M18 24h12"/>'),
+  switch:sv('<rect x="10" y="12" width="28" height="24" rx="3"/><path d="M18 30l10-12M16 40v-4M32 40v-4"/>'),
+  spring:sv('<path d="M24 4v6l-8 3 16 5-16 5 16 5-16 5 8 3v8"/>'),
+  board:sv('<rect x="6" y="10" width="36" height="28" rx="2"/><rect x="14" y="17" width="10" height="10"/><path d="M30 18h6M30 24h6M30 30h6M12 34h24"/>'),
+  hose:sv('<path d="M6 12c14 0 6 24 20 24h16M6 18c10 0 4 24 20 24h16"/>'),
+  filter:sv('<rect x="8" y="8" width="32" height="32" rx="2"/><path d="M16 8v32M24 8v32M32 8v32M8 16h32M8 24h32M8 32h32"/>'),
+  roller:sv('<circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="5"/><path d="M24 8v6M24 34v6M8 24h6M34 24h6"/>'),
+  bulb:sv('<path d="M18 30c-4-3-6-7-6-11a12 12 0 0 1 24 0c0 4-2 8-6 11v4H18z"/><path d="M19 38h10M21 42h6"/>'),
+  sensor:sv('<path d="M10 38V18M18 38V10M10 18h8"/><path d="M28 16c4 3 4 13 0 16M34 12c7 5 7 19 0 24"/>'),
+  arm:sv('<rect x="4" y="21" width="40" height="6" rx="3"/><circle cx="24" cy="24" r="5"/><path d="M10 21v-3M17 21v-3M31 21v-3M38 21v-3"/>'),
+  unit:sv('<rect x="12" y="6" width="24" height="10" rx="2"/><path d="M14 16v18a10 6 0 0 0 20 0V16"/><path d="M20 44h8"/>'),
+  wrench:sv('<path d="M30 6a10 10 0 0 0-9 14L6 35l7 7 15-15a10 10 0 0 0 14-9l-6 6-6-2-2-6z"/>'),
+  camera:sv('<path d="M6 16h7l3-5h16l3 5h7v22H6z"/><circle cx="24" cy="26" r="7"/>'),
+  air:sv('<rect x="6" y="8" width="36" height="32" rx="2"/><path d="M6 16h36M14 24c4-3 8 3 12 0s8 3 12 0M14 32c4-3 8 3 12 0s8 3 12 0"/>'),
+  shield:sv('<path d="M24 4 8 10v12c0 10 7 18 16 22 9-4 16-12 16-22V10z"/><path d="M24 16v10M24 32h.01"/>'),
+  scale:sv('<path d="M24 6v36M10 42h28M8 14h32M8 14l-6 14h12zM40 14l-6 14h12z"/>'),
+  drop:sv('<path d="M24 6c8 10 14 17 14 24a14 14 0 0 1-28 0c0-7 6-14 14-24z"/><path d="M18 32a6 6 0 0 0 6 6"/>'),
+  pro:sv('<circle cx="24" cy="14" r="7"/><path d="M10 42c0-9 6-15 14-15s14 6 14 15"/><path d="M30 34l3 3 6-7"/>'),
+  calendar:sv('<rect x="6" y="10" width="36" height="32" rx="3"/><path d="M6 20h36M16 6v8M32 6v8M14 28h4M22 28h4M30 28h4M14 35h4M22 35h4"/>'),
+  faucet:sv('<path d="M6 20h18a8 8 0 0 1 8 8v4h-6v-4a2 2 0 0 0-2-2H6zM14 20v-6h6v6M10 14h14"/><path d="M29 38c0 2 1 4 0 4s0-2 0-4z"/>'),
+};
+function iconFor(name){const n=name.toLowerCase();
+  for(const [k,v] of [["pump","pump"],["lock","lock"],["latch","lock"],["belt","belt"],["pulley","roller"],["roller","roller"],["glide","roller"],["element","element"],["heater","element"],["igniter","element"],["valve","valve"],["gasket","seal"],["seal","seal"],["boot","seal"],["flapper","seal"],["fan","fan"],["fuse","fuse"],["thermostat","sensor"],["sensor","sensor"],["switch","switch"],["relay","switch"],["spring","spring"],["shock","spring"],["board","board"],["control","board"],["hose","hose"],["filter","filter"],["bulb","bulb"],["light","bulb"],["arm","arm"],["coupler","roller"],["disposal","unit"],["ice maker","unit"],["cartridge","faucet"],["bearing","roller"],["cover","filter"]]) if(n.includes(k)) return ICON[v];
+  return ICON.wrench}
 
-/* ===== symptom → likely parts. Common US failures; part names as retailers list them, never part numbers. ===== */
+/* ================= repair knowledge (common US failures; names as retailers list them) ================= */
 const P=(name,like,why,confirm,diff)=>({part_name:name,likelihood:like,why,how_to_confirm:confirm,difficulty:diff});
+const TYPES={washer:"Washer",dryer:"Dryer",dishwasher:"Dishwasher",refrigerator:"Refrigerator",range:"Range / oven",microwave:"Microwave",disposal:"Garbage disposal"};
 const SYMPTOMS={
  washer:[
-  {id:"no_drain",label:"Won't drain",free:["Check the drain hose for kinks, and make sure it isn't pushed more than about 8 inches into the standpipe.","Front-load: open the small door at the bottom front and clean the drain pump filter (have towels ready)."],
-   parts:[P("Drain pump","high","The most common cause when water stays in the tub at the end of a cycle.","During the drain step, a hum with no water moving usually means a jammed or failed pump.","moderate"),
-          P("Lid switch / door lock assembly","medium","If the washer can't sense the lid or door is locked, it skips draining and spinning.","Does it also refuse to spin? Press the lid switch by hand and listen for a click.","easy")]},
+  {id:"no_drain",label:"Won't drain",free:["Check the drain hose for kinks; it shouldn't be pushed more than about 8 inches into the standpipe.","Front-load: open the small door at the bottom front and clean the drain pump filter (have towels ready)."],
+   parts:[P("Drain pump","high","The most common cause when water stays in the tub after a cycle.","During the drain step, a hum with no water moving usually means a jammed or failed pump.","moderate"),P("Lid switch / door lock assembly","medium","If the washer can't sense the lid or door is locked, it skips draining and spinning.","Does it also refuse to spin? Press the lid switch by hand and listen for a click.","easy")]},
   {id:"no_spin",label:"Won't spin",free:["Rebalance the load. An off-balance load stops the spin.","Run a drain & spin cycle with the tub empty."],
-   parts:[P("Lid switch / door lock assembly","high","The washer won't spin unless it detects a closed, locked lid or door.","Listen for the lock click when the cycle starts. No click points to the lock.","easy"),
-          P("Drive belt","medium","Front-loaders and many older top-loaders turn the drum with a belt that stretches or snaps.","With the washer unplugged, look behind the back panel: a loose or missing belt is obvious.","easy"),
-          P("Motor coupling","medium","Older direct-drive top-loaders use a plastic coupling between motor and transmission that wears out.","The motor hums but the basket doesn't move, and you may find plastic bits under the washer.","moderate")]},
-  {id:"leak",label:"Leaking water",free:["Tighten both fill hoses at the back of the washer.","Use HE detergent only, in the right amount. Too many suds can overflow."],
-   parts:[P("Fill hoses","high","Rubber hoses crack with age. Replace both every 5 years.","Run a fill with the washer pulled out and look for drips at the hose ends.","easy"),
-          P("Door boot seal","medium","Front-loaders leak at the door when the rubber seal tears or gets a hole.","Look for a tear or a worn spot in the fold of the seal at the bottom.","moderate"),
-          P("Water inlet valve","medium","A cracked valve leaks at the back, near where the hoses connect.","Water only appears at the back top corner while the washer fills.","moderate")]},
+   parts:[P("Lid switch / door lock assembly","high","The washer won't spin unless it detects a closed, locked lid or door.","Listen for the lock click when the cycle starts. No click points to the lock.","easy"),P("Drive belt","medium","Front-loaders and many older top-loaders turn the drum with a belt that stretches or snaps.","Unplugged, look behind the back panel: a loose or missing belt is obvious.","easy"),P("Motor coupling","medium","Older direct-drive top-loaders use a plastic coupling that wears out.","The motor hums but the basket doesn't move; plastic bits under the washer.","moderate")]},
+  {id:"leak",label:"Leaking water",free:["Tighten both fill hoses at the back.","Use HE detergent only, in the right amount. Too many suds can overflow."],
+   parts:[P("Fill hoses","high","Rubber hoses crack with age. Replace both every 5 years.","Run a fill with the washer pulled out and look for drips at the hose ends.","easy"),P("Door boot seal","medium","Front-loaders leak at the door when the rubber seal tears.","Look for a tear in the fold of the seal at the bottom.","moderate"),P("Water inlet valve","medium","A cracked valve leaks at the back where the hoses connect.","Water only appears at the back top corner while filling.","moderate")]},
   {id:"no_fill",label:"Won't fill",free:["Make sure both taps behind the washer are fully open.","Unscrew the hoses and clean the small screen filters at the inlet."],
-   parts:[P("Water inlet valve","high","The valve opens to let water in. When its coil fails, nothing flows.","Screens are clean and taps are open but no water enters: the valve is the usual suspect.","moderate"),
-          P("Lid switch / door lock assembly","low","Some washers won't fill until the lid or door is locked.","Does the start sequence stop right after you press start?","easy")]},
+   parts:[P("Water inlet valve","high","When the valve coil fails, no water flows in.","Screens clean, taps open, still no water: the valve is the usual suspect.","moderate"),P("Lid switch / door lock assembly","low","Some washers won't fill until the lid or door is locked.","The cycle stops right after you press start.","easy")]},
   {id:"noisy",label:"Loud or shaking",free:["Level the washer by adjusting the feet until it doesn't rock.","New front-loader? Remove the shipping bolts on the back."],
-   parts:[P("Suspension springs / shock absorbers","high","Worn springs or dampers let the tub bang against the cabinet during spin.","Push down on the tub (top-load) or drum (front-load): it should bounce once and stop.","moderate"),
-          P("Tub bearing","medium","A roar during spin that gets louder over weeks points to bearings.","Spin the empty drum by hand: grinding or play means bearings. This is a big job.","hard")]},
+   parts:[P("Suspension springs / shock absorbers","high","Worn springs or dampers let the tub bang the cabinet during spin.","Push down on the tub or drum: it should bounce once and stop.","moderate"),P("Tub bearing","medium","A roar during spin that gets louder over weeks points to bearings.","Spin the empty drum by hand: grinding or play means bearings. A big job.","hard")]},
   {id:"no_start",label:"Won't start",free:["Check the outlet and the breaker.","Check for a control-lock or child-lock setting."],
-   parts:[P("Lid switch / door lock assembly","high","The most common reason a washer with power refuses to start.","Lights come on but nothing happens after you press start.","easy"),
-          P("Main control board","low","Rare, and expensive. Rule out everything else first.","No lights or response at all with a working outlet.","hard")]},
+   parts:[P("Lid switch / door lock assembly","high","The most common reason a washer with power refuses to start.","Lights come on but nothing happens after you press start.","easy"),P("Main control board","low","Rare and expensive. Rule out everything else first.","No lights or response at all with a working outlet.","hard")]},
  ],
  dryer:[
   {id:"no_heat",label:"Runs but no heat",free:["Clean the whole vent duct to the outside wall. A clogged vent blows the thermal fuse again.","Electric dryers need both halves of a 240V breaker. Reset it fully."],
-   parts:[P("Thermal fuse","high","A blown thermal fuse is the top cause, usually because the vent is clogged.","Unplugged, test the fuse with a multimeter for continuity.","easy"),
-          P("Heating element","high","Electric dryers heat with a coil that can break.","Test the element for continuity, or look for a visible break in the coil.","moderate"),
-          P("High-limit thermostat","medium","It cuts the heat when it overheats and can fail open.","Test for continuity at room temperature.","easy")],
-   gas:[P("Igniter","high","On gas dryers the igniter glows to light the gas and is the most common failure.","Watch through the small burner window: no orange glow at the start means the igniter.","moderate"),
-        P("Gas valve solenoid coils","medium","The igniter glows but the flame never lights.","The igniter glows, then goes out with no flame.","moderate")]},
+   parts:[P("Thermal fuse","high","A blown thermal fuse is the top cause, usually from a clogged vent.","Unplugged, test the fuse with a multimeter for continuity.","easy"),P("Heating element","high","Electric dryers heat with a coil that can break.","Test the element for continuity, or look for a break in the coil.","moderate"),P("High-limit thermostat","medium","It cuts the heat when overheated and can fail open.","Test for continuity at room temperature.","easy")],
+   gas:[P("Igniter","high","On gas dryers the igniter is the most common failure.","Through the burner window: no orange glow at start means the igniter.","moderate"),P("Gas valve solenoid coils","medium","The igniter glows but the flame never lights.","The igniter glows, then goes out with no flame.","moderate")]},
   {id:"no_tumble",label:"Motor runs, drum doesn't turn",free:[],
-   parts:[P("Drive belt","high","The belt wraps the drum. A snapped belt leaves the motor running alone.","Turn the drum by hand. If it spins freely with no resistance, the belt is broken.","easy"),
-          P("Idler pulley","medium","The pulley keeps the belt tight. When it fails the belt slips off.","Squealing before it stopped turning points to the pulley.","easy")]},
+   parts:[P("Drive belt","high","A snapped belt leaves the motor running alone.","Turn the drum by hand. If it spins freely with no resistance, the belt is broken.","easy"),P("Idler pulley","medium","The pulley keeps the belt tight; when it fails the belt slips off.","Squealing before it stopped points to the pulley.","easy")]},
   {id:"no_start",label:"Won't start at all",free:["Check the breaker and the plug.","Make sure the door closes firmly."],
-   parts:[P("Thermal fuse","high","On many models a blown thermal fuse also stops the motor.","Test the fuse for continuity.","easy"),
-          P("Door switch","medium","If the dryer can't sense the door is shut, it won't start.","Press the switch by hand and listen for a click.","easy"),
-          P("Start switch","low","The push-to-start switch can wear out.","The drum light works but pressing start does nothing.","easy")]},
+   parts:[P("Thermal fuse","high","On many models a blown thermal fuse also stops the motor.","Test the fuse for continuity.","easy"),P("Door switch","medium","If the dryer can't sense the door is shut, it won't start.","Press the switch by hand and listen for a click.","easy"),P("Start switch","low","The push-to-start switch can wear out.","The drum light works but start does nothing.","easy")]},
   {id:"noisy",label:"Squeaking or thumping",free:["Check the drum for coins, buttons or a stuck item."],
-   parts:[P("Drum support rollers","high","Worn rollers make a rhythmic thump or rumble.","Remove the belt and spin the drum: rough or flat-spotted rollers are obvious.","moderate"),
-          P("Idler pulley","high","A worn pulley squeals, especially at startup.","Spin the pulley by hand. It should turn smoothly and quietly.","easy"),
-          P("Drum glides / bearing","medium","Scraping or squeaking at the front or back of the drum.","Look for worn felt or plastic glides at the drum's front edge.","moderate")]},
+   parts:[P("Drum support rollers","high","Worn rollers make a rhythmic thump or rumble.","Remove the belt and spin the drum: rough rollers are obvious.","moderate"),P("Idler pulley","high","A worn pulley squeals, especially at startup.","Spin the pulley by hand. It should turn smoothly and quietly.","easy"),P("Drum glides / bearing","medium","Scraping at the front or back of the drum.","Look for worn felt or plastic glides at the drum's front edge.","moderate")]},
   {id:"slow",label:"Takes too long to dry",free:["Wash the lint screen with soap and water to remove dryer-sheet film.","Clean the vent duct. This fixes most slow-drying problems."],
-   parts:[P("Moisture sensor bars","medium","Dirty sensor bars end cycles early and leave clothes damp. Clean them before buying.","Wipe the two metal strips inside the drum with rubbing alcohol and retry.","easy"),
-          P("Heating element","medium","A failing element gives weak heat.","Clothes come out warm but not hot after a timed cycle.","moderate"),
-          P("Cycling thermostat","low","It controls air temperature and can drift.","Heat cycles on and off too quickly.","easy")]},
+   parts:[P("Moisture sensor bars","medium","Dirty sensor bars end cycles early. Clean them before buying.","Wipe the two metal strips inside the drum with rubbing alcohol and retry.","easy"),P("Heating element","medium","A failing element gives weak heat.","Clothes come out warm but not hot after a timed cycle.","moderate"),P("Cycling thermostat","low","It controls air temperature and can drift.","Heat cycles on and off too quickly.","easy")]},
  ],
  dishwasher:[
-  {id:"no_drain",label:"Won't drain",free:["Remove and rinse the filter at the bottom of the tub.","New install? Check the garbage-disposal knockout plug was removed."],
-   parts:[P("Drain pump","high","Water left in the bottom after a cycle usually means the pump.","You hear a hum at the end of the cycle but water doesn't go down.","moderate"),
-          P("Drain check valve","medium","A stuck check valve blocks drain water or lets it flow back.","Water returns to the tub after it drains.","easy")]},
-  {id:"not_clean",label:"Dishes not clean",free:["Clean the filter.","Clear the spray-arm holes with a toothpick.","Run the kitchen tap hot before you start the dishwasher."],
-   parts:[P("Spray arm","medium","Cracked or clogged spray arms leave dirty spots.","Spin the arm by hand and look for cracks or blocked holes.","easy"),
-          P("Circulation pump / wash motor","low","Weak pressure everywhere points to the wash motor.","You hear the motor but little water noise during wash.","hard")]},
+  {id:"no_drain",label:"Won't drain",free:["Remove and rinse the filter at the bottom of the tub.","New install? Check the disposal knockout plug was removed."],
+   parts:[P("Drain pump","high","Water left in the bottom after a cycle usually means the pump.","A hum at the end of the cycle but the water doesn't go down.","moderate"),P("Drain check valve","medium","A stuck check valve blocks drain water or lets it flow back.","Water returns to the tub after it drains.","easy")]},
+  {id:"not_clean",label:"Dishes not clean",free:["Clean the filter.","Clear the spray-arm holes with a toothpick.","Run the kitchen tap hot before you start."],
+   parts:[P("Spray arm","medium","Cracked or clogged spray arms leave dirty spots.","Spin the arm by hand and look for cracks or blocked holes.","easy"),P("Circulation pump / wash motor","low","Weak pressure everywhere points to the wash motor.","You hear the motor but little water noise.","hard")]},
   {id:"leak",label:"Leaking water",free:["Use dishwasher detergent only. Dish soap causes sudsy leaks.","Check that the dishwasher is level."],
-   parts:[P("Door gasket","high","A worn or torn door seal is the usual leak point.","Look for drips at the front edge and run a finger along the seal for tears.","easy"),
-          P("Water inlet valve","medium","A cracked valve leaks under the front, behind the kick plate.","Remove the kick plate during fill and look for drips.","moderate")]},
+   parts:[P("Door gasket","high","A worn or torn door seal is the usual leak point.","Look for drips at the front edge and feel the seal for tears.","easy"),P("Water inlet valve","medium","A cracked valve leaks under the front, behind the kick plate.","Remove the kick plate during fill and look for drips.","moderate")]},
   {id:"no_fill",label:"Won't fill",free:["Check the water supply valve under the sink.","Make sure the float in the tub moves freely."],
-   parts:[P("Water inlet valve","high","No water at the start of a cycle usually means the valve.","You hear the cycle start but no water flows in.","moderate"),
-          P("Float switch","medium","A stuck float tells the dishwasher it's already full.","Lift the float. It should click and move freely.","easy")]},
+   parts:[P("Water inlet valve","high","No water at the start of a cycle usually means the valve.","The cycle starts but no water flows in.","moderate"),P("Float switch","medium","A stuck float tells the dishwasher it's already full.","Lift the float. It should click and move freely.","easy")]},
   {id:"not_dry",label:"Not drying",free:["Fill the rinse-aid dispenser.","Turn on heated dry."],
-   parts:[P("Heating element","medium","Models that dry with a heating element leave dishes wet when it fails.","Test the element for continuity.","moderate"),
-          P("Rinse aid dispenser","low","A broken dispenser doesn't release rinse aid.","The rinse-aid level never drops.","easy")]},
+   parts:[P("Heating element","medium","Models with a heating element leave dishes wet when it fails.","Test the element for continuity.","moderate"),P("Rinse aid dispenser","low","A broken dispenser doesn't release rinse aid.","The rinse-aid level never drops.","easy")]},
  ],
  refrigerator:[
   {id:"warm_fridge",label:"Fridge warm, freezer cold",free:["Make sure food isn't blocking the vents inside.","Check the temperature setting."],
-   parts:[P("Evaporator fan motor","high","It pushes cold air from the freezer into the fridge.","Open the freezer and press the door switch. You should hear and feel a fan.","moderate"),
-          P("Defrost heater / defrost thermostat","high","Frost builds up on the freezer back panel and blocks airflow.","Look for heavy frost on the back wall of the freezer.","moderate"),
-          P("Damper control","medium","The damper opens to let cold air into the fridge section.","Some air flows, but very weakly, from the vents.","easy")]},
+   parts:[P("Evaporator fan motor","high","It pushes cold air from the freezer into the fridge.","Open the freezer and press the door switch: you should hear and feel a fan.","moderate"),P("Defrost heater / defrost thermostat","high","Frost builds up on the freezer back panel and blocks airflow.","Look for heavy frost on the freezer's back wall.","moderate"),P("Damper control","medium","The damper lets cold air into the fridge section.","Air flows only weakly from the vents.","easy")]},
   {id:"warm_all",label:"Fridge and freezer both warm",free:["Vacuum the condenser coils (bottom front grille or back).","Check that the condenser fan at the back spins."],
-   parts:[P("Condenser fan motor","medium","The fan cools the compressor. If it stops, cooling fails.","With the fridge running, the fan near the compressor should spin.","moderate"),
-          P("Compressor start relay","medium","A failed relay makes the compressor click on and off without running.","Listen for a click every few minutes from the back bottom.","easy")],
-   safety:{level:"caution",note:"Never cut or open refrigerant lines. If the compressor or sealed system has failed, that needs an EPA-certified technician."}},
+   parts:[P("Condenser fan motor","medium","The fan cools the compressor. If it stops, cooling fails.","With the fridge running, the fan near the compressor should spin.","moderate"),P("Compressor start relay","medium","A failed relay makes the compressor click on and off without running.","A click every few minutes from the back bottom.","easy")],
+   safety:{level:"caution",note:"Never cut or open refrigerant lines. A failed compressor or sealed system needs an EPA-certified technician."}},
   {id:"ice",label:"Ice maker not working",free:["Check the ice maker's on/off arm or switch.","Replace an old water filter. A clogged filter slows ice."],
-   parts:[P("Ice maker assembly","high","The ice maker unit itself is the most common failure.","Water reaches the tray but it never ejects, or nothing happens at all.","easy"),
-          P("Water inlet valve","medium","No water reaches the ice maker or dispenser.","Both the dispenser and the ice maker stopped at the same time.","moderate"),
-          P("Water filter","medium","An old filter restricts water flow.","The filter is more than 6 months old.","easy")]},
-  {id:"water",label:"Water slow or tastes off",free:["Check the filter date. Filters should be changed about every 6 months."],
-   parts:[P("Water filter","high","Slow flow and bad taste are classic signs of an old filter.","Flow improves right after the old filter is removed.","easy"),
-          P("Water inlet valve","low","A weak valve slows water even with a new filter.","Still slow with a new filter.","moderate")]},
+   parts:[P("Ice maker assembly","high","The ice maker unit itself is the most common failure.","Water reaches the tray but never ejects, or nothing happens.","easy"),P("Water inlet valve","medium","No water reaches the ice maker or dispenser.","Dispenser and ice maker stopped at the same time.","moderate"),P("Water filter","medium","An old filter restricts water flow.","The filter is more than 6 months old.","easy")]},
+  {id:"water",label:"Water slow or tastes off",free:["Check the filter date. Change it about every 6 months."],
+   parts:[P("Water filter","high","Slow flow and bad taste are classic signs of an old filter.","Flow improves right after the old filter is removed.","easy"),P("Water inlet valve","low","A weak valve slows water even with a new filter.","Still slow with a new filter.","moderate")]},
   {id:"leak",label:"Leaking water",free:["Clear the defrost drain at the back of the freezer with warm water.","Check the water line behind the fridge."],
-   parts:[P("Water filter housing","medium","Cracked housings leak inside the fridge near the filter.","Water pools under the filter location.","easy"),
-          P("Water inlet valve","medium","Leaks at the back bottom where the water line connects.","Water appears behind the fridge, not inside.","moderate")]},
+   parts:[P("Water filter housing","medium","Cracked housings leak inside near the filter.","Water pools under the filter location.","easy"),P("Water inlet valve","medium","Leaks at the back bottom where the water line connects.","Water appears behind the fridge, not inside.","moderate")]},
   {id:"noisy",label:"Loud or buzzing",free:["Make sure the fridge is level and not touching the wall."],
-   parts:[P("Evaporator fan motor","high","Squealing or buzzing from inside the freezer gets louder when the door opens.","The noise changes when you open the freezer door.","moderate"),
-          P("Condenser fan motor","medium","Rattling or buzzing from the back bottom.","The noise is behind the fridge, near the floor.","moderate")]},
+   parts:[P("Evaporator fan motor","high","Squealing from inside the freezer that gets louder when the door opens.","The noise changes when you open the freezer door.","moderate"),P("Condenser fan motor","medium","Rattling or buzzing from the back bottom.","The noise is behind the fridge, near the floor.","moderate")]},
+ ],
+ range:[
+  {id:"no_bake",label:"Oven won't heat",free:["Check the breaker (electric ranges use a double 240V breaker).","Make sure the oven isn't set to delay start or Sabbath mode."],
+   parts:[P("Bake element","high","On electric ovens the bottom element burns out, often with a visible blister or break.","Look for a break or bubble on the element; test it for continuity.","easy"),P("Oven temperature sensor","medium","A bad sensor stops heating or shows an error code.","Error codes like F3/F4 or the oven heating far off temperature.","easy"),P("Broil element","low","If baking works but broil doesn't, it's the top element.","Only broil fails.","easy")],
+   gas:[P("Oven igniter","high","On gas ovens a weak igniter glows but never opens the gas valve.","The igniter glows for minutes with no flame.","moderate")]},
+  {id:"burner",label:"Burner won't heat",free:["Coil tops: unplug the coil and plug it back in firmly.","Swap the coil with one that works to see if the problem follows it."],
+   parts:[P("Surface element (coil)","high","Coils burn out and are the cheapest fix.","Swap with a working coil. If the problem follows the coil, replace the coil.","easy"),P("Surface element receptacle","medium","Burnt receptacle terminals stop power reaching the coil.","Look for scorching where the coil plugs in.","moderate"),P("Infinite switch","medium","The knob switch can fail and leave the burner off or stuck on high.","The burner only works on high, or not at all, with a good coil.","moderate")],
+   gas:[P("Spark igniter / burner","high","Gas burners that click but won't light need inspection.","Clicking with no flame, or a gas smell.","moderate")]},
+  {id:"temp",label:"Oven temperature is off",free:["Use an oven thermometer to measure the real temperature.","Many ovens let you calibrate the temperature by up to 35°F in settings."],
+   parts:[P("Oven temperature sensor","high","A drifting sensor makes the oven run hot or cold.","The sensor reads about 1,100 ohms at room temperature on most models.","easy")]},
+  {id:"door",label:"Door locked after self-clean",free:["Turn off the breaker for 5 minutes, then back on, to reset the lock.","Wait until the oven is fully cool."],
+   parts:[P("Door lock motor and switch assembly","high","The lock motor fails, often right after a self-clean cycle.","The lock light stays on and the door won't open when cool.","moderate")]},
+ ],
+ microwave:[
+  {id:"turntable",label:"Turntable won't spin",free:["Seat the glass tray on the roller ring and the center coupler.","Clean food out of the track under the tray."],
+   parts:[P("Turntable coupler","high","The small plastic coupler in the center wears or cracks.","The coupler spins but the tray doesn't, or the coupler is cracked.","easy"),P("Roller ring","medium","A broken roller ring makes the tray stall or wobble.","Look for broken or flat wheels on the ring.","easy")]},
+  {id:"sparks",label:"Sparks inside",free:["Remove any metal: foil, twist ties, gold-rimmed plates.","Clean grease off the walls and the ceiling."],
+   parts:[P("Waveguide cover","high","The small card-like cover on the inside wall gets greasy or burnt and arcs.","Look for a burnt spot on the cover inside the cavity.","easy")]},
+  {id:"light",label:"Light is out",free:["Check the light works in both door-open and running modes."],
+   parts:[P("Light bulb","high","The bulb just burns out.","The microwave works, only the light is out.","easy")],
+   safety:{level:"caution",note:"Unplug first. Change only bulbs reachable from outside or under the vent grille, and never open the outer cabinet."}},
+  {id:"no_heat",label:"Runs but doesn't heat",free:["Test with a cup of water for 1 minute to confirm."],parts:[],
+   safety:{level:"pro_only",note:"Microwaves store lethal voltage inside even when unplugged. Heating problems need a technician."}},
+ ],
+ disposal:[
+  {id:"hums",label:"Hums but won't spin",free:["Turn off the power. Put a 1/4-inch hex key in the socket on the bottom center and work it back and forth.","Press the red reset button on the bottom, then try again."],
+   parts:[P("Disposal hex wrench (jam-buster)","medium","Most units ship with one; any 1/4-inch hex key works.","The flywheel turns freely after you work it.","easy"),P("Garbage disposal unit","low","If it still hums after clearing the jam, the motor is failing.","Hums with a free-turning flywheel.","moderate")]},
+  {id:"no_power",label:"Won't turn on at all",free:["Press the reset button on the bottom of the unit.","Check the breaker and the wall switch or air switch."],
+   parts:[P("Disposal air switch or wall switch","low","Worn switches stop power reaching the unit.","Reset and breaker are fine but the unit is dead.","moderate"),P("Garbage disposal unit","medium","A dead motor after a reset usually means replacement.","No hum at all with power confirmed.","moderate")]},
+  {id:"leak",label:"Leaking",free:["Find where it leaks: top (sink flange), side (dishwasher or drain hose), or bottom (internal seal)."],
+   parts:[P("Sink flange gasket and plumber's putty","medium","Leaks at the top come from the sink flange seal.","Water drips from where the disposal meets the sink.","moderate"),P("Discharge tube gasket","medium","Side leaks are often a worn gasket on the drain tube.","Drips at the side outlet.","easy"),P("Garbage disposal unit","medium","Bottom leaks mean the internal seal failed. Replace the unit.","Water drips from the bottom or the reset button.","moderate")]},
+ ],
+ toilet:[
+  {id:"running",label:"Keeps running",free:["Lift the lid: is the chain too tight or tangled?","Check the water level. It should be about 1 inch below the overflow tube."],
+   parts:[P("Toilet flapper","high","A worn flapper lets water leak into the bowl and the tank refills.","Put a few drops of food coloring in the tank; if color shows in the bowl in 15 minutes, it's the flapper.","easy"),P("Fill valve","medium","A worn fill valve keeps hissing or overfills into the overflow tube.","Water keeps flowing into the overflow tube.","easy")]},
+  {id:"weak",label:"Weak flush",free:["Make sure the chain has only a little slack.","Make sure the shut-off valve behind the toilet is fully open."],
+   parts:[P("Toilet flapper","medium","A flapper that closes too early cuts the flush short.","Hold the handle down; if the flush improves, adjust the chain or replace the flapper.","easy"),P("Flush valve","low","A warped flush valve seat leaks and weakens the flush.","A new flapper didn't fix it.","moderate")]},
+  {id:"base",label:"Leaks at the base",free:["Tighten the two bolts at the base gently, alternating sides."],
+   parts:[P("Wax ring","high","Leaks at the floor mean the wax ring seal failed.","Water appears at the base after flushing.","moderate")],
+   safety:{level:"caution",note:"A toilet weighs 60–120 lb. Shut off and drain the water first, and lift with help."}},
+ ],
+ faucet:[
+  {id:"drip",label:"Drips from the spout",free:["Note the brand (it's usually on the handle or base) before buying parts."],
+   parts:[P("Faucet cartridge","high","Most modern faucets drip because the cartridge wears out.","Turn off the water under the sink and pull the cartridge; take it to compare.","easy"),P("Faucet O-rings and seats","medium","Older compression faucets drip from worn washers and seats.","The handle turns several times to shut off.","easy")]},
+  {id:"base",label:"Leaks around the handle or base",free:["Tighten the handle set screw or the packing nut a quarter turn."],
+   parts:[P("Faucet O-rings","high","Worn O-rings leak at the base of the spout or handle.","Water pools only when the faucet is on.","easy")]},
  ],
 };
+const LIFESPAN={washer:11,dryer:13,dishwasher:10,refrigerator:13,range:15,microwave:9,disposal:12};
+const NEWPRICE={washer:750,dryer:700,dishwasher:650,refrigerator:1600,range:900,microwave:250,disposal:180};
 const UPKEEP={
-  washer:[{t:"Run a washer cleaning cycle",m:1}],
-  dryer:[{t:"Clean the dryer vent duct",m:12}],
-  dishwasher:[{t:"Clean the dishwasher filter",m:1}],
-  refrigerator:[{t:"Replace the fridge water filter",m:6,buy:"water filter"},{t:"Vacuum the condenser coils",m:6}],
+  washer:[{t:"Run a washer cleaning cycle",m:1,buy:"washing machine cleaner tablets"}],
+  dryer:[{t:"Clean the dryer vent duct",m:12,buy:"dryer vent cleaning kit"}],
+  dishwasher:[{t:"Clean the dishwasher filter",m:1,buy:"dishwasher cleaner"}],
+  refrigerator:[{t:"Replace the fridge water filter",m:6,buy:"water filter",partselect:true},{t:"Vacuum the condenser coils",m:6,buy:"refrigerator coil brush"}],
+  range:[{t:"Wipe the oven and check door gasket",m:3}],
+  microwave:[{t:"Clean the waveguide cover and walls",m:3}],
+  disposal:[{t:"Clean the disposal",m:1,buy:"garbage disposal cleaner"}],
 };
+const HOME_UPKEEP=[
+  {t:"Change the AC / furnace filter",m:3,buy:"air filter"},
+  {t:"Test smoke and CO alarms",m:1},
+  {t:"Flush the water heater",m:12,buy:"water heater flush kit"},
+  {t:"Clean the gutters",m:6},
+  {t:"Replace smoke alarm batteries",m:12,buy:"9V batteries"},
+];
+const FILTER_SIZES=["10x20x1","12x24x1","14x20x1","14x24x1","14x25x1","15x20x1","16x20x1","16x24x1","16x25x1","18x24x1","20x20x1","20x24x1","20x25x1","20x30x1","24x24x1","25x25x1","16x25x4","20x20x4","20x25x4"];
 
-/* ===== state ===== */
-const S={step:0,app:null,symptom:null,details:"",partImg:null,result:null,labelImg:null};
-const SAMPLE={brand:"Whirlpool",model:"WTW5000DW1",serial:"C91234567",type:"washer",fuel:"electric",confidence:"high",unclear:""};
-let API_OK=null; // null = unknown, false = not reachable (preview mode)
+/* ================= state, URL sync ================= */
+const S={view:"home",app:null,symptom:null,details:"",partImg:null,result:null,labelImg:null,filter:null};
+const SAMPLE={brand:"Whirlpool",model:"WTW5000DW1",serial:"C91234567",type:"washer",fuel:"electric",confidence:"high",unclear:"",alts:[]};
+function syncURL(push){
+  const q=new URLSearchParams();
+  if(S.view!=="home") q.set("v",S.view);
+  if(S.app&&S.app.model){q.set("m",S.app.model);q.set("t",S.app.type||"");if(S.app.brand)q.set("b",S.app.brand);if(S.app.fuel==="gas")q.set("f","gas")}
+  if(S.symptom) q.set("s",S.symptom);
+  const url=location.pathname+(q.toString()?"?"+q:"");
+  try{ push?history.pushState({...S,partImg:null,labelImg:null},"",url):history.replaceState({...S,partImg:null,labelImg:null},"",url) }catch(e){}
+}
+function go(view,push=true){S.view=view;syncURL(push);render()}
+addEventListener("popstate",e=>{const st=e.state;if(st){Object.assign(S,st,{partImg:null,labelImg:null})}else{S.view="home"}render(false)});
 
-/* ===== images: resize on the device; re-encoding also strips location data ===== */
+/* ================= API: timeout, bot check, friendly errors ================= */
+let TS_KEY="", tsReady=null;
+fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).then(c=>{TS_KEY=c.turnstile||""}).catch(()=>{});
+function turnstileToken(){
+  if(!TS_KEY) return Promise.resolve("");
+  if(!tsReady) tsReady=new Promise((ok)=>{const s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";s.async=true;s.onload=()=>ok();s.onerror=()=>ok();document.head.append(s)});
+  return tsReady.then(()=>new Promise(ok=>{ if(!window.turnstile) return ok("");
+    const el=$("#ts");el.hidden=false;el.innerHTML="";
+    const t=setTimeout(()=>ok(""),12000);
+    window.turnstile.render(el,{sitekey:TS_KEY,size:"flexible",appearance:"interaction-only",callback:tok=>{clearTimeout(t);el.hidden=true;ok(tok)},"error-callback":()=>{clearTimeout(t);ok("")}});
+  }));
+}
+async function api(path,body,method="POST"){
+  const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),40000);
+  try{
+    const headers={"content-type":"application/json"};
+    if(method==="POST"){const tok=await turnstileToken();if(tok)headers["x-turnstile"]=tok}
+    const r=await fetch(CONFIG.API_BASE+path,{method,headers,body:method==="POST"?JSON.stringify(body):undefined,signal:ctl.signal});
+    let j=null;try{j=await r.json()}catch(e){}
+    if(r.ok&&j) return j;
+    throw new Error(j&&j.error?j.error:(r.status===404?"offline":"This is taking longer than usual. Try again in a moment."));
+  }catch(err){
+    if(err.name==="AbortError") throw new Error("That took too long. Check your connection and try again.");
+    if(err.message==="offline"||err instanceof TypeError){const e=new Error("offline");e.offline=true;throw e}
+    throw err;
+  }finally{clearTimeout(timer)}
+}
+
+/* ================= images ================= */
 async function shrink(file,max=1568){
-  let bmp; try{bmp=await createImageBitmap(file)}catch(e){bmp=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=URL.createObjectURL(file)})}
-  const w=bmp.width,h=bmp.height,k=Math.min(1,max/Math.max(w,h));
+  let src;try{src=await createImageBitmap(file,{imageOrientation:"from-image"})}catch(e){src=await new Promise((ok,no)=>{const i=new Image();const u=URL.createObjectURL(file);i.onload=()=>{URL.revokeObjectURL(u);ok(i)};i.onerror=no;i.src=u})}
+  const w=src.width,h=src.height,k=Math.min(1,max/Math.max(w,h));
   const c=document.createElement("canvas");c.width=Math.round(w*k);c.height=Math.round(h*k);
-  c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
-  const url=c.toDataURL("image/jpeg",.86);
+  const g=c.getContext("2d");g.filter="contrast(1.12)";g.drawImage(src,0,0,c.width,c.height);
+  if(src.close) src.close();
+  const url=c.toDataURL("image/jpeg",.88);
   return {preview:url,media_type:"image/jpeg",data:url.split(",")[1]};
 }
-async function api(path,body){
-  const r=await fetch(CONFIG.API_BASE+path,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
-  let j=null; try{j=await r.json()}catch(e){}
-  if(!r.ok||!j){ const err=new Error(j&&j.error||"unreachable"); err.unreachable=!j; throw err }
-  return j;
-}
+function flash(){if(RM)return;const f=$("#flash");f.animate([{opacity:.7},{opacity:0}],{duration:160})}
 
-/* ===== plate ===== */
-function setPlate(a,scanning){
+/* ================= hero: scan → decode → leaders ================= */
+const HERO_PARTS=[["Drain pump","pump"],["Door lock","lock"],["Drive belt","belt"]];
+function heroParts(list,hot=0){
+  $("#partsRow").innerHTML=list.map(([n,k],i)=>`<div class="ptile ${i===hot?"hot":""}"><span class="cn">0${i+1}</span>${ICON[k]||iconFor(n)}<span>${esc(n)}</span></div>`).join("");
+  drawLeaders();
+}
+function drawLeaders(progress=1){
+  const st=$("#stage"),svg=$("#leaders"),m=$("#pModel");if(!st||!m)return;
+  const sb=st.getBoundingClientRect(),mb=m.getBoundingClientRect();
+  const pb=$("#plate").getBoundingClientRect();const x0=mb.left-sb.left+mb.width/2,y0=pb.bottom-sb.top+2;
+  svg.setAttribute("viewBox",`0 0 ${sb.width} ${sb.height}`);
+  svg.innerHTML=$$(".ptile",st).map(t=>{const b=t.getBoundingClientRect();const x1=b.left-sb.left+b.width/2,y1=b.top-sb.top;const my=(y0+y1)/2;return `<path d="M${x0} ${y0} C ${x0} ${my}, ${x1} ${my}, ${x1} ${y1}"/>`}).join("");
+}
+addEventListener("resize",()=>drawLeaders());
+const GL="ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
+function decodeTo(el,text,dur=900){
+  return new Promise(res=>{
+    const chars=[...text];el.innerHTML=chars.map(()=>`<span class="glyph">·</span>`).join("");
+    const gs=$$(".glyph",el);if(RM){gs.forEach((g,i)=>{g.textContent=chars[i];g.classList.add("lock")});return res()}
+    const step=dur/chars.length;let t0=performance.now();
+    (function tick(now){const n=Math.floor((now-t0)/step);
+      gs.forEach((g,i)=>{if(i<n){if(!g.classList.contains("lock")){g.textContent=chars[i];g.classList.add("lock")}}else g.textContent=GL[Math.random()*GL.length|0]});
+      if(n<chars.length) requestAnimationFrame(tick); else res();
+    })(t0);
+  });
+}
+async function heroSequence(a){
+  const plate=$("#plate"),line=$("#scanline"),box=$("#pBox"),txt=$("#pModelText");
+  const model=(a&&a.model)||"WTW5000DW1";
+  $("#vf").classList.add("snap");
+  if(window.gsap&&!RM){
+    gsap.fromTo(plate,{rotateX:18,y:24,opacity:0},{rotateX:4,y:0,opacity:1,duration:.8,ease:"power3.out",transformPerspective:900});
+    gsap.fromTo(".screw",{rotate:-180,scale:.4},{rotate:0,scale:1,duration:.6,stagger:.07,delay:.3,ease:"back.out(2)"});
+    gsap.fromTo(line,{top:"0%",opacity:0},{top:"100%",opacity:1,duration:1.2,delay:.6,ease:"power1.inOut",onComplete:()=>gsap.to(line,{opacity:0,duration:.2})});
+    await new Promise(r=>setTimeout(r,900));
+  }
+  box.style.opacity=0;
+  await decodeTo(txt,model,RM?0:900);
+  if(window.gsap&&!RM){gsap.fromTo(box,{opacity:0,scale:1.25},{opacity:1,scale:1,duration:.35,ease:"back.out(3)"});gsap.to(plate,{rotateX:0,duration:.6,ease:"power2.out"})} else box.style.opacity=1;
+  $("#vf").classList.remove("snap");
+  drawLeaders();
+  if(window.gsap&&!RM){
+    const paths=$$("#leaders path");paths.forEach(p=>{const L=p.getTotalLength();p.style.strokeDasharray=`${L}`;p.style.strokeDashoffset=L});
+    gsap.to(paths,{strokeDashoffset:0,duration:.7,stagger:.12,ease:"power2.out",onComplete:()=>paths.forEach(p=>{p.style.strokeDasharray="4 4";p.style.strokeDashoffset=0})});
+    gsap.fromTo(".ptile",{y:16,opacity:0},{y:0,opacity:1,duration:.5,stagger:.12,delay:.25,ease:"power3.out"});
+  }
+}
+function setPlate(a){
   $("#pBrand").textContent=a?(a.brand||"Brand"):"Whirlpool";
-  $("#pModel").innerHTML=a?`<span class="mark">${esc(a.model||"———")}</span>`:'<span class="mark">WTW5000DW1</span>';
+  $("#pModelText").textContent=a?(a.model||"—"):"WTW5000DW1";
   $("#pSerial").textContent=a?(a.serial||"—"):"C91234567";
   $("#pRating").textContent=a?(a.fuel==="gas"?"Gas":a.fuel==="electric"?"Electric":"—"):"120V~ 60Hz 10A";
   $("#pFine").textContent=a?`${(TYPES[a.type]||"Appliance").toUpperCase()} · READ FROM YOUR LABEL`:"AUTOMATIC WASHER · READ ALL INSTRUCTIONS BEFORE USE";
-  $("#plate").classList.toggle("scanning",!!scanning);
-  $("#plateCap").innerHTML=a?`<span>Your label.</span> <b>Check every character of the model number.</b>`:`<span>Example label.</span> <b>The model number, suffix included, decides which parts fit.</b>`;
+  $("#stageCap").innerHTML=a?`Your label · <span class="ai">check every character</span>`:`Example label · <span class="ai">cyan = read by AI</span>`;
+  $("#pBox").style.opacity=1;$$("#pModelText .glyph").forEach(g=>g.classList.add("lock"));
 }
+// tilt with pointer
+(function(){const st=$("#stage"),pl=$("#plate");if(RM||!st)return;st.addEventListener("pointermove",e=>{if(!window.gsap)return;const b=st.getBoundingClientRect();const x=(e.clientX-b.left)/b.width-.5,y=(e.clientY-b.top)/b.height-.5;gsap.to(pl,{rotateY:x*6,rotateX:-y*6,duration:.5,ease:"power2.out",transformPerspective:900})});st.addEventListener("pointerleave",()=>window.gsap&&gsap.to(pl,{rotateX:0,rotateY:0,duration:.6}))})();
 
-/* ===== flow rendering ===== */
-function stepsBar(){const n=["Label","Symptom","Parts"];return `<div class="steps">${n.map((t,i)=>`<span class="${i===S.step?"on":i<S.step?"done":""}">${i+1} · ${t}</span>`).join("")}</div>`}
-function show(){const f=$("#flow");f.hidden=false;return f}
-function scrollFlow(){const f=$("#flow");f.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
+/* ================= services grid ================= */
+const SERVICES=[
+  {id:"fix",main:true,icon:"camera",t:"Fix an appliance",d:"Snap the label, pick the symptom, get the exact part and a how-to."},
+  {id:"filter",icon:"air",t:"AC & furnace filter",d:"Photo of your filter → the right size, plus a reminder every 90 days."},
+  {id:"recall",icon:"shield",t:"Recall check",d:"Search U.S. government safety recalls for your model."},
+  {id:"calc",icon:"scale",t:"Repair or replace?",d:"A quick, honest answer before you spend money."},
+  {id:"water",icon:"drop",t:"Fridge water filter",d:"The filter that fits your fridge, and a 6-month reminder."},
+  {id:"pro",icon:"pro",t:"Book a pro",d:"Gas, refrigerant or no time? Get quotes from local technicians."},
+  {id:"upkeep",icon:"calendar",t:"Home upkeep calendar",d:"Every reminder your home needs, on your own calendar."},
+  {id:"plumb",icon:"faucet",t:"Toilet & faucet fixes",d:"Running toilet, dripping faucet: the part and the fix."},
+];
+$("#services").innerHTML=SERVICES.map(s=>`<button class="svc ${s.main?"main":""}" type="button" data-svc="${s.id}">${ICON[s.icon]}<b>${esc(s.t)}</b><span>${esc(s.d)}</span></button>`).join("");
+$("#services").addEventListener("click",e=>{const b=e.target.closest("[data-svc]");if(!b)return;const id=b.dataset.svc;
+  if(id==="fix") return actSnapOrType();
+  if(id==="water"){const fr=store.get("ps-home",[]).find(a=>a.type==="refrigerator");if(fr){S.app={...fr};}else S.app=null;return go("water")}
+  if(id==="recall"&&!S.app){const first=store.get("ps-home",[])[0];if(first)S.app={...first}}
+  go(id)});
 
-function renderReading(){
-  S.step=0;const f=show();
-  f.innerHTML=`${stepsBar()}<div class="thumb">${S.labelImg?`<img src="${S.labelImg}" alt="Your label photo">`:""}<div class="loading"><span class="spin"></span>Reading your label…</div></div>`;
+/* ================= flow rendering ================= */
+function rail(i){return `<div class="rail" aria-label="Progress">${["Label","Symptom","Parts"].map((t,k)=>`<div class="${k===i?"on":k<i?"done":""}" ${k===i?'aria-current="step"':""}>${t}</div>`).join("")}</div>`}
+function openFlow(html,focus=true){
+  const f=$("#flow");f.hidden=false;f.innerHTML=html;f.classList.remove("stagger");void f.offsetWidth;f.classList.add("stagger");
+  $("#dock").hidden=true;
+  if(focus){const h=f.querySelector("h2");if(h){h.tabIndex=-1;h.focus({preventScroll:true})}f.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"})}
 }
+function render(focus=true){
+  const v=S.view;
+  if(v==="home"){$("#flow").hidden=true;$("#dock").hidden=false;return}
+  const views={confirm:viewConfirm,reading:viewReading,symptom:viewSymptom,parts:viewParts,filter:viewFilter,recall:viewRecall,calc:viewCalc,water:viewWater,pro:viewPro,upkeep:viewUpkeep,plumb:viewPlumb};
+  if(["symptom","parts"].includes(v)&&!(S.app&&S.app.model)&&!(S.app&&["toilet","faucet"].includes(S.app.type))){S.view="confirm"}
+  (views[S.view]||viewConfirm)(focus);
+}
+const blankApp=()=>({brand:"",model:"",serial:"",type:"",fuel:"unknown",alts:[]});
 
-function renderConfirm(msg){
-  S.step=0;const a=S.app||{brand:"",model:"",serial:"",type:"",fuel:"unknown"};const f=show();
-  f.innerHTML=`${stepsBar()}
-   <h2>Check your model number</h2>
+function viewReading(){openFlow(`${rail(0)}<h2>Reading your label</h2><div class="thumb">${S.labelImg?`<img src="${S.labelImg}" alt="Your label photo">`:""}<div class="loading"><span class="scanbar"></span>Finding the model number…</div></div>`)}
+
+function viewConfirm(focus,msg){
+  const a=S.app||blankApp();
+  openFlow(`${rail(0)}
+   <div class="flow-head"><h2>Check your model number</h2></div>
    ${msg?`<div class="notice ${msg.kind}"><b>${esc(msg.title)}</b><span>${esc(msg.text)}</span></div>`:""}
    <div class="grid2">
      <label class="f" for="inBrand">Brand<input type="text" id="inBrand" value="${esc(a.brand)}" placeholder="Whirlpool" autocomplete="off"></label>
-     <label class="f" for="inType">Appliance<select id="inType"><option value="">Choose…</option>${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?"selected":""}>${v}</option>`).join("")}<option value="other" ${a.type==="other"?"selected":""}>Something else</option></select></label>
+     <label class="f" for="inType">Appliance<select id="inType"><option value="">Choose…</option>${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?"selected":""}>${v}</option>`).join("")}</select></label>
    </div>
-   <label class="f" for="inModel">Model number<input class="mono" type="text" id="inModel" value="${esc(a.model)}" placeholder="WTW5000DW1" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+   <label class="f" for="inModel">Model number <span class="muted" style="font-weight:400">(every character counts)</span><input class="mono ${a.model?"ai":""}" type="text" id="inModel" value="${esc(a.model)}" placeholder="WTW5000DW1" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="modelErr"></label>
+   <p class="err" id="modelErr" hidden></p>
+   ${a.alts&&a.alts.length?`<div class="alts"><span class="muted" style="font-size:14px">Or did your label say:</span>${a.alts.map(m=>`<button class="btn sm" type="button" data-alt="${esc(m)}">${esc(m)}</button>`).join("")}</div>`:""}
    ${a.unclear?`<p class="muted" style="font-size:14px">Double-check: ${esc(a.unclear)}</p>`:""}
-   <label class="f" id="fuelWrap" for="inFuel" ${a.type==="dryer"?"":"hidden"}>Power<select id="inFuel"><option value="electric" ${a.fuel!=="gas"?"selected":""}>Electric</option><option value="gas" ${a.fuel==="gas"?"selected":""}>Gas</option></select></label>
-   <button class="btn primary big" type="button" id="toSymptom">This is right, next</button>
-   <label class="btn" for="labelFile">Retake the label photo</label>`;
-  $("#inType").addEventListener("change",e=>{$("#fuelWrap").hidden=e.target.value!=="dryer"});
-  $("#inModel").addEventListener("input",e=>{const v=e.target.value.toUpperCase().replace(/\s+/g,"");setPlate({...(S.app||{}),brand:$("#inBrand").value,model:v,type:$("#inType").value,fuel:$("#inFuel").value})});
+   <label class="f" id="fuelWrap" for="inFuel" ${["dryer","range"].includes(a.type)?"":"hidden"}>Power<select id="inFuel"><option value="electric" ${a.fuel!=="gas"?"selected":""}>Electric</option><option value="gas" ${a.fuel==="gas"?"selected":""}>Gas</option></select></label>
+   <button class="btn signal wide" type="button" id="toSymptom">This is right. Next</button>
+   <div class="acts"><button class="btn sm" type="button" data-act="snap">Retake the photo</button><button class="link" type="button" id="noLabel">I can't find the label</button></div>`,focus);
+  const t=$("#inType");t.addEventListener("change",()=>{$("#fuelWrap").hidden=!["dryer","range"].includes(t.value)});
+  $("#inModel").addEventListener("input",e=>{e.target.classList.remove("ai");e.target.removeAttribute("aria-invalid");$("#modelErr").hidden=true});
+  $$("[data-alt]").forEach(b=>b.addEventListener("click",()=>{$("#inModel").value=b.dataset.alt;$("#inModel").classList.add("ai")}));
+  $("#noLabel").addEventListener("click",()=>{const el=$("#modelErr");el.hidden=false;el.textContent="Check the label locations listed further down this page. Without the model we can still show common causes, but not the exact part.";});
   $("#toSymptom").addEventListener("click",()=>{
-    const model=$("#inModel").value.toUpperCase().replace(/\s+/g,""),type=$("#inType").value;
-    if(model.length<4){toast("Enter the full model number from the label.");$("#inModel").focus();return}
-    if(!type){toast("Choose the type of appliance.");$("#inType").focus();return}
-    if(type==="other"){toast("Right now we cover washers, dryers, dishwashers and fridges.");return}
-    S.app={...(S.app||{}),brand:$("#inBrand").value.trim(),model,type,fuel:type==="dryer"?$("#inFuel").value:"electric"};
-    setPlate(S.app);S.symptom=null;S.details="";S.partImg=null;renderSymptom();scrollFlow();
+    const model=$("#inModel").value.toUpperCase().replace(/\s+/g,""),type=t.value;const err=$("#modelErr");
+    if(model.length<4){err.hidden=false;err.textContent="Enter the full model number from the label.";$("#inModel").setAttribute("aria-invalid","true");$("#inModel").focus();return}
+    if(!type){err.hidden=false;err.textContent="Choose the type of appliance.";t.setAttribute("aria-invalid","true");t.focus();return}
+    S.app={...(S.app||{}),brand:$("#inBrand").value.trim(),model,type,fuel:["dryer","range"].includes(type)?$("#inFuel").value:"electric"};
+    setPlate(S.app);heroParts(defaultHeroParts(type));S.symptom=null;S.details="";S.partImg=null;
+    track("label_confirm",{type});go("symptom");
   });
 }
+function defaultHeroParts(type){const s=SYMPTOMS[type];if(!s)return HERO_PARTS;const seen=new Set(),out=[];for(const x of s)for(const p of x.parts){if(!seen.has(p.part_name)&&out.length<3){seen.add(p.part_name);out.push([p.part_name.split(" / ")[0],null])}}return out}
 
-function renderSymptom(){
-  S.step=1;const a=S.app;const list=SYMPTOMS[a.type];const f=show();
-  f.innerHTML=`${stepsBar()}
-   <h2>What's wrong with your ${esc(TYPES[a.type].toLowerCase())}?</h2>
-   <p class="muted mono" style="font-size:14px">${esc(a.brand)} ${esc(a.model)}</p>
-   <div class="chips" role="group" aria-label="Symptom">${list.map(s=>`<button type="button" class="chip" data-id="${s.id}" aria-pressed="${S.symptom===s.id}">${esc(s.label)}</button>`).join("")}<button type="button" class="chip" data-id="other" aria-pressed="${S.symptom==="other"}">Something else</button></div>
-   <label class="f" for="inDetails">Describe it in your words (optional)<textarea id="inDetails" placeholder="Example: water stays in the drum and it hums at the end of the cycle">${esc(S.details)}</textarea></label>
-   <div class="thumb" id="partThumb">${S.partImg?`<img src="${S.partImg.preview}" alt="Photo of the problem area">`:""}<label class="btn small" for="partFile">${S.partImg?"Change photo":"Add a photo of the problem (optional)"}</label><input class="file-in" id="partFile" type="file" accept="image/*" capture="environment"></div>
-   <button class="btn primary big" type="button" id="toParts">Find the likely parts</button>
-   <button class="btn small" type="button" id="backLabel">Back to the label</button>`;
-  f.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{S.symptom=b.dataset.id;f.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b))}));
-  $("#inDetails").addEventListener("input",e=>S.details=e.target.value);
-  $("#partFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{S.partImg=await shrink(file,1280);renderSymptom()}catch(err){toast("We couldn't open that photo. Try another one.")}});
-  $("#backLabel").addEventListener("click",()=>{renderConfirm();scrollFlow()});
+function viewSymptom(focus){
+  const a=S.app;const list=SYMPTOMS[a.type]||[];const saved=store.get("ps-home",[]).some(x=>x.model===a.model);
+  const plumb=["toilet","faucet"].includes(a.type);
+  openFlow(`${plumb?"":rail(1)}
+   <div class="flow-head"><h2>What's wrong with your ${esc((TYPES[a.type]||a.type).toLowerCase())}?</h2>${plumb||saved?"":`<button class="btn sm" type="button" id="quickSave">Save to My home</button>`}</div>
+   ${plumb?"":`<p class="mono ai" style="font-size:14px">${esc(a.brand)} ${esc(a.model)}</p>`}
+   <div class="chips" role="group" aria-label="Symptom">${list.map(s=>`<button type="button" class="chip" data-id="${s.id}" aria-pressed="${S.symptom===s.id}">${esc(s.label)}</button>`).join("")}${plumb?"":`<button type="button" class="chip" data-id="other" aria-pressed="${S.symptom==="other"}">Something else</button>`}</div>
+   ${plumb?`<label class="f" for="inBrand2">Brand (optional)<input type="text" id="inBrand2" value="${esc(a.brand)}" placeholder="Moen, Delta, Kohler, American Standard…"></label>`:`
+   <label class="f" for="inDetails">Describe it in your own words (optional)<textarea id="inDetails" placeholder="Example: water stays in the drum and it hums at the end of the cycle">${esc(S.details)}</textarea></label>
+   <div class="thumb">${S.partImg?`<img src="${S.partImg.preview}" alt="Photo of the problem area">`:""}<button class="btn sm" type="button" id="addPhoto">${S.partImg?"Change photo":"Add a photo of the problem (optional)"}</button></div>
+   <p class="muted" style="font-size:13px">Photos may show your room. Frame just the appliance part.</p>`}
+   <p class="err" id="symErr" hidden></p>
+   <button class="btn signal wide" type="button" id="toParts">Show free fixes &amp; likely parts</button>
+   ${plumb?"":`<button class="link" type="button" id="backLabel">Back to the label</button>`}`,focus);
+  $$(".chip").forEach(b=>b.addEventListener("click",()=>{S.symptom=b.dataset.id;$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));if(window.gsap&&!RM)gsap.fromTo(b,{scale:.92},{scale:1,duration:.5,ease:"elastic.out(1,.5)"});$("#symErr").hidden=true}));
+  $("#inDetails")&&$("#inDetails").addEventListener("input",e=>S.details=e.target.value);
+  $("#inBrand2")&&$("#inBrand2").addEventListener("input",e=>S.app.brand=e.target.value.trim());
+  $("#addPhoto")&&$("#addPhoto").addEventListener("click",()=>$("#partFile").click());
+  $("#quickSave")&&$("#quickSave").addEventListener("click",e=>{saveAppliance(a);e.target.remove()});
+  $("#backLabel")&&$("#backLabel").addEventListener("click",()=>go("confirm"));
   $("#toParts").addEventListener("click",findParts);
 }
+$("#partFile").addEventListener("change",async e=>{const file=e.target.files[0];e.target.value="";if(!file)return;try{S.partImg=await shrink(file,1280);viewSymptom(false)}catch(x){toast("We couldn't open that photo. Try another one.")}});
 
 async function findParts(){
-  const a=S.app;
-  if(!S.symptom){toast("Pick the symptom that fits best.");return}
-  const local=SYMPTOMS[a.type].find(s=>s.id===S.symptom);
-  const wantAI=S.symptom==="other"||S.details.trim().length>8||S.partImg;
-  if(S.symptom==="other"&&!S.details.trim()&&!S.partImg){toast("Describe the problem in a few words.");$("#inDetails").focus();return}
-  if(wantAI&&API_OK!==false){
-    const f=show();f.innerHTML=`${stepsBar()}<div class="loading"><span class="spin"></span>Working out the likely parts for your ${esc(a.model)}…</div>`;
+  const a=S.app;const err=$("#symErr");
+  if(!S.symptom){err.hidden=false;err.textContent="Pick the symptom that fits best.";return}
+  const local=(SYMPTOMS[a.type]||[]).find(s=>s.id===S.symptom);
+  const custom=S.symptom==="other";
+  if(custom&&!S.details.trim()&&!S.partImg){err.hidden=false;err.textContent="Describe the problem in a few words, or add a photo.";$("#inDetails").focus();return}
+  track("symptom",{type:a.type});
+  const wantAI=custom||S.partImg||(S.details.trim().length>40);
+  if(wantAI){
+    openFlow(`${rail(2)}<h2>Working it out</h2><div class="loading"><span class="scanbar"></span>Checking what usually fails on your ${esc(a.model)}…</div>`);
     try{
       const r=await api("/diagnose",{appliance:a,symptom:local?local.label:"Other",details:S.details,image:S.partImg?{media_type:S.partImg.media_type,data:S.partImg.data}:undefined});
-      API_OK=true;S.result={...r,source:"ai"};renderParts();scrollFlow();return;
-    }catch(err){ if(err.unreachable) API_OK=false; else {toast(err.message)} }
+      S.result={...r,source:"ai"};return go("parts");
+    }catch(x){ if(!local){viewSymptom(false);const e2=$("#symErr");e2.hidden=false;e2.textContent=x.offline?"Free-text diagnosis isn't available right now. Pick one of the listed symptoms.":x.message;return} }
   }
-  if(!local){S.result=null;renderParts();return}
-  S.result=localResult(a,local);renderParts();scrollFlow();
+  S.result=localResult(a,local);go("parts");
 }
 function localResult(a,s){
   let parts=s.parts,safety={level:"diy",note:"Unplug the appliance and turn off the water before you start."};
-  if(a.type==="dryer"&&a.fuel==="gas"&&s.gas){parts=s.gas;safety={level:"pro_only",note:"Gas dryer heat problems involve the gas valve and igniter. Have a licensed technician do this repair."}}
+  if(a.fuel==="gas"&&s.gas){parts=s.gas;safety={level:"pro_only",note:"This involves gas parts. Have a licensed technician do this repair."}}
   else if(s.safety) safety=s.safety;
   return {safety_level:safety.level,safety_note:safety.note,free_checks:s.free,candidates:parts,follow_up_question:"",source:"guide"};
 }
 
-/* ===== links to the exact part ===== */
-function wrapPS(url){return CONFIG.PARTSELECT_WRAP?CONFIG.PARTSELECT_WRAP.replace("{url}",enc(url)):url}
 function partLinks(a,part){
-  const q=`${a.brand} ${a.model} ${part}`.replace(/\s+/g," ").trim();
-  const ebay=CONFIG.EBAY_CAMPID?`&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${enc(CONFIG.EBAY_CAMPID)}&toolid=10001&mkevt=1`:"";
-  return [
-    {primary:true,label:"See the exact part for your model",sub:"PartSelect diagram",url:wrapPS(`https://www.partselect.com/Models/${enc(a.model)}/`)},
-    {label:"Compare price on Amazon",sub:"amazon.com",url:`https://www.amazon.com/s?k=${enc(q)}${CONFIG.AMAZON_TAG?`&tag=${enc(CONFIG.AMAZON_TAG)}`:""}`},
-    {label:"Compare price on eBay",sub:"ebay.com",url:`https://www.ebay.com/sch/i.html?_nkw=${enc(q)}${ebay}`},
-    {label:"Watch how to replace it",sub:"YouTube",url:`https://www.youtube.com/results?search_query=${enc(`how to replace ${part} ${a.brand} ${a.model}`)}`,video:true},
-  ];
+  const plumb=["toilet","faucet"].includes(a.type);
+  const q=`${a.brand||""} ${plumb?"":a.model} ${part}`.replace(/\s+/g," ").trim();
+  const primary=plumb||!a.model
+    ?{label:`Get the ${part.toLowerCase()}`,sub:"Amazon",url:amazon(q),partner:"amazon"}
+    :{label:`Get this part for ${a.model}`,sub:"Exact-fit diagram",url:wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(a.model)}/`),partner:"partselect"};
+  const compare=[{label:"Amazon",url:amazon(q),partner:"amazon"},{label:"eBay",url:ebay(q),partner:"ebay"}].filter(c=>c.url!==primary.url);
+  return {primary,compare,video:youtube(`how to replace ${part} ${a.brand||""} ${plumb?"":a.model}`)};
 }
-
-function renderParts(){
-  S.step=2;const a=S.app,r=S.result;const f=show();
-  if(!r){f.innerHTML=`${stepsBar()}<div class="notice info"><b>Describe the problem to get suggestions</b><span>Pick one of the listed symptoms, or try again when you're online.</span></div><button class="btn" type="button" id="backSym">Back</button>`;$("#backSym").addEventListener("click",renderSymptom);return}
+function viewParts(focus){
+  const a=S.app,r=S.result;if(!r){return go("symptom",false)}
   const sev={diy:["ok","Safe to try yourself"],caution:["warn","Take care"],pro_only:["stop","Call a licensed technician"]}[r.safety_level]||["ok","Safe to try yourself"];
-  const saved=(store.get("ps-home",[])).some(x=>x.model===a.model);
-  f.innerHTML=`${stepsBar()}
-   <h2>Likely parts for your ${esc(TYPES[a.type].toLowerCase())}</h2>
-   <p class="muted mono" style="font-size:14px">${esc(a.brand)} ${esc(a.model)}${r.source==="guide"?" · from our repair guide":""}</p>
+  const pro=r.safety_level==="pro_only";const plumb=["toilet","faucet"].includes(a.type);
+  const saved=store.get("ps-home",[]).some(x=>x.model===a.model);
+  const lk={high:[92,"Most likely"],medium:[58,"Possible"],low:[28,"Less likely"]};
+  track("results",{type:a.type,src:r.source});
+  openFlow(`${plumb?"":rail(2)}
+   <div class="flow-head"><h2>${pro?"This one's for a pro":"Free fixes first"}</h2></div>
+   <p class="mono ${plumb?"muted":"ai"}" style="font-size:14px">${esc(a.brand)} ${esc(plumb?TYPES[a.type]||a.type:a.model)}${r.source==="guide"?' <span class="muted">· from our repair guide</span>':""}</p>
    <div class="notice ${sev[0]}"><b>${sev[1]}</b><span>${esc(r.safety_note)}</span></div>
-   ${r.free_checks&&r.free_checks.length?`<div style="display:grid;gap:8px"><h3>Check these first. They're free.</h3><ul class="checks">${r.free_checks.map(c=>`<li><span>${esc(c)}</span></li>`).join("")}</ul></div>`:""}
-   ${r.candidates.map((c,i)=>`<article class="part">
-      <div class="part-head"><h3>${i+1}. ${esc(c.part_name)}</h3><span class="pill ${c.likelihood}">${c.likelihood==="high"?"Most likely":c.likelihood==="medium"?"Possible":"Less likely"}</span></div>
-      <p>${esc(c.why)}</p>
-      <p class="muted"><b style="color:var(--ink)">Confirm before you buy:</b> ${esc(c.how_to_confirm)}</p>
-      <div class="meta"><span>Difficulty: ${esc(c.difficulty)}</span><span>Search: <span class="mono">${esc(a.model)}</span></span></div>
-      ${r.safety_level==="pro_only"?"":`<div class="buy">${partLinks(a,c.part_name).map(l=>`<a class="btn ${l.primary?"primary":""}" href="${esc(l.url)}" target="_blank" rel="${l.video?"noopener":"sponsored noopener"}"><span>${esc(l.label)}</span><small>${esc(l.sub)}</small></a>`).join("")}</div>`}
-    </article>`).join("")}
-   ${r.follow_up_question?`<div class="notice info"><b>One question that would narrow it down</b><span>${esc(r.follow_up_question)} Add the answer to your description and search again.</span></div>`:""}
-   <p class="disclose">On PartSelect, open your model's diagram and pick the part by name. The diagram lists the exact part number that fits ${esc(a.model)}. We may earn a commission from these links at no cost to you.</p>
-   <div class="ctas"><div class="row">
-     <button class="btn ${saved?"":"primary"}" type="button" id="saveApp">${saved?"Saved to My appliances":"Save this appliance"}</button>
+   ${r.free_checks&&r.free_checks.length?`<div style="display:grid;gap:6px"><h3>Check these first. They're free.</h3><ul class="checks">${r.free_checks.map((c,i)=>`<li><label><input type="checkbox" id="fc${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul></div>`:""}
+   ${pro?proBlock(a):""}
+   ${r.candidates.length?`<h3>${pro?"For reference: parts a technician will check":"Still broken? The likely parts"}</h3>`:""}
+   ${!pro&&r.candidates.length?`<p class="disclose">Affiliate links: we earn a commission if you buy, at no cost to you. Electrical parts are often non-returnable, so do the test first.</p>`:""}
+   ${r.candidates.map((c,i)=>{const L=partLinks(a,c.part_name);const l=lk[c.likelihood]||lk.medium;return `<article class="ticket ${i===0&&!pro?"first":""}">
+      <div class="ic"><b>${i+1}</b>${iconFor(c.part_name)}</div>
+      <div class="body">
+        <h3>${esc(c.part_name)}</h3>
+        <div class="lk"><span>${l[1]}</span><span class="bar"><i style="width:${l[0]}%"></i></span></div>
+        <p>${esc(c.why)}</p>
+        <p class="muted"><b style="color:var(--ink)">Test before you buy:</b> ${esc(c.how_to_confirm)}</p>
+        <div class="meta"><span>Difficulty: ${esc(c.difficulty)}</span></div>
+        ${pro?"":`<a class="btn ${i===0?"signal":""} wide" style="justify-content:space-between;text-align:left" href="${esc(L.primary.url)}" target="_blank" rel="sponsored noopener" data-partner="${L.primary.partner}">${esc(L.primary.label)} <span class="mono" style="font-size:12px;opacity:.75">${esc(L.primary.sub)}</span></a>
+        <div class="compare"><span class="muted" style="font-size:14px;align-self:center">Compare:</span>${L.compare.map(x=>`<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="sponsored noopener" data-partner="${x.partner}">${x.label}</a>`).join("")}<a class="btn sm ghost" href="${esc(L.video)}" target="_blank" rel="noopener" data-partner="youtube">▶ How-to video</a></div>`}
+      </div></article>`}).join("")}
+   ${!plumb&&!pro&&a.model?`<p class="disclose">On the diagram page, pick the part by name. It lists the exact part number that fits ${esc(a.model)}.</p>`:""}
+   ${r.follow_up_question?`<div class="notice info"><b>One question would narrow it down</b><span>${esc(r.follow_up_question)} Add the answer to your description and search again.</span></div>`:""}
+   ${IN_APP?`<div class="notice info"><b>Tip</b><span>You're in an in-app browser. Open this page in Safari or Chrome to keep your saved appliances.</span></div>`:""}
+   <div class="grid2">
+     ${plumb?"":`<button class="btn ${saved?"":"signal"}" type="button" id="saveApp">${saved?"Saved to My home":`Save my ${esc((TYPES[a.type]||"").toLowerCase())} for next time`}</button>`}
      <button class="btn" type="button" id="backSym">Different symptom</button>
-   </div></div>`;
-  $("#saveApp").addEventListener("click",()=>{saveAppliance(a);$("#saveApp").textContent="Saved to My appliances";$("#saveApp").classList.remove("primary")});
-  $("#backSym").addEventListener("click",()=>{renderSymptom();scrollFlow()});
+     ${plumb?"":`<button class="btn" type="button" data-go="calc">Repair or replace?</button><button class="btn" type="button" data-go="recall">Check for recalls</button>`}
+     ${pro?"":`<button class="btn" type="button" data-go="pro">Rather hire a pro?</button>`}
+   </div>`,focus);
+  $("#saveApp")&&$("#saveApp").addEventListener("click",e=>{saveAppliance(a);e.target.textContent="Saved to My home";e.target.classList.remove("signal")});
+  $("#backSym").addEventListener("click",()=>go("symptom"));
+}
+function proBlock(a){return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Compare quotes from local, rated appliance technicians. Free to ask.</p>
+  <div class="grid3">${[["Sears Home Services",CONFIG.PRO.sears,"sears"],["Angi",CONFIG.PRO.angi,"angi"],["Thumbtack",CONFIG.PRO.thumbtack,"thumbtack"]].map(([n,u,p],i)=>`<a class="btn ${i===0?"signal":""}" href="${esc(u)}" target="_blank" rel="sponsored noopener" data-partner="${p}">${n}</a>`).join("")}</div>
+  <p class="disclose">We may earn a fee when you book through these links. We never share your details with anyone.</p></div>`}
+
+/* ---------- HVAC filter ---------- */
+function viewFilter(focus,msg){
+  const f=S.filter||store.get("ps-filter",null);
+  openFlow(`<div class="flow-head"><h2>Your AC &amp; furnace filter</h2></div>
+   <p class="muted">The size is printed on the edge of the filter frame, like 16x25x1. Snap it and we'll read it.</p>
+   ${msg?`<div class="notice ${msg.kind}"><b>${esc(msg.title)}</b><span>${esc(msg.text)}</span></div>`:""}
+   <button class="btn signal wide" type="button" id="snapFilter">${ICON.camera} Snap the filter edge</button>
+   <div class="grid2">
+     <label class="f" for="fSize">Size (W x H x D, inches)<select id="fSize">${FILTER_SIZES.map(s=>`<option ${f&&f.size===s?"selected":""}>${s}</option>`).join("")}${f&&!FILTER_SIZES.includes(f.size)?`<option selected>${esc(f.size)}</option>`:""}</select></label>
+     <label class="f" for="fMerv">Rating<select id="fMerv">${["MERV 8 (most homes)","MERV 11 (pets, allergies)","MERV 13 (best filtration)"].map(m=>`<option ${f&&f.merv===m?"selected":""}>${m}</option>`).join("")}</select></label>
+   </div>
+   <button class="btn wide" type="button" id="filterGo">Show filters for this size</button>
+   <div id="filterOut"></div>`,focus);
+  $("#snapFilter").addEventListener("click",()=>$("#filterFile").click());
+  $("#filterGo").addEventListener("click",()=>{const size=$("#fSize").value,merv=$("#fMerv").value;S.filter={size,merv};store.set("ps-filter",S.filter);track("filter");filterResult()});
+  if(f) filterResult();
+}
+function filterResult(){
+  const {size,merv}=S.filter||store.get("ps-filter",{});if(!size)return;
+  const m=merv.split(" (")[0];const q=`${size} ${m} air filter`;
+  $("#filterOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)">
+    <p class="stamp">Your filter</p><p class="mono ai" style="font-size:28px;font-weight:700">${esc(size)} · ${esc(m)}</p>
+    <p class="disclose">Affiliate links: we earn a commission if you buy.</p>
+    <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.FILTERBUY_WRAP,"https://filterbuy.com/"))}" target="_blank" rel="sponsored noopener" data-partner="filterbuy">Filterbuy (auto-delivery)</a><a class="btn" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
+    <div class="acts"><span class="muted" style="flex:1 1 200px">Change it every 90 days (every 60 with pets).</span>${reminderButtons("Change the AC filter ("+size+")",3)}</div></div>`;
+}
+$("#filterFile").addEventListener("change",async e=>{const file=e.target.files[0];e.target.value="";if(!file)return;flash();
+  try{const img=await shrink(file,1400);$("#filterOut").innerHTML=`<div class="loading"><span class="scanbar"></span>Reading the filter size…</div>`;
+    const r=await api("/filter",{image:{media_type:img.media_type,data:img.data}});
+    if(!r.filter_found||!r.nominal_size){viewFilter(false,{kind:"warn",title:"We couldn't read a size",text:r.message||"Try a closer photo of the printed edge, or pick the size below."});return}
+    const merv=r.rating_type==="MERV"&&+r.rating_value>=13?"MERV 13 (best filtration)":r.rating_type==="MERV"&&+r.rating_value>=11?"MERV 11 (pets, allergies)":"MERV 8 (most homes)";
+    S.filter={size:r.nominal_size,merv};store.set("ps-filter",S.filter);track("filter",{src:"ai"});
+    viewFilter(false,{kind:r.confidence==="high"?"ok":"warn",title:`Read: ${r.nominal_size}${r.rating_type!=="none"?` · ${r.rating_type} ${r.rating_value}`:""}`,text:r.confidence==="high"?"Matches the printed edge? Your filters are below.":"Part of the print was unclear. Compare it with your filter."});
+  }catch(x){viewFilter(false,{kind:"info",title:"Pick your size below",text:x.offline?"Photo reading isn't available right now.":x.message})}
+});
+
+/* ---------- recalls ---------- */
+function viewRecall(focus){
+  const a=S.app||blankApp();
+  openFlow(`<div class="flow-head"><h2>Recall check</h2></div>
+   <p class="muted">We search the U.S. Consumer Product Safety Commission's recall database for your model.</p>
+   <div class="grid3">
+     <label class="f" for="rBrand">Brand<input type="text" id="rBrand" value="${esc(a.brand)}" placeholder="GE"></label>
+     <label class="f" for="rModel">Model<input class="mono" type="text" id="rModel" value="${esc(a.model)}" placeholder="GDT665SSN0SS"></label>
+     <label class="f" for="rType">Appliance<select id="rType">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${a.type===k?"selected":""}>${v}</option>`).join("")}</select></label>
+   </div>
+   <p class="err" id="rErr" hidden></p>
+   <button class="btn signal wide" type="button" id="rGo">Check recalls</button>
+   <div id="rOut" style="display:grid;gap:10px"></div>`,focus);
+  $("#rGo").addEventListener("click",runRecall);
+  if(a.model) runRecall();
+}
+async function runRecall(){
+  const model=$("#rModel").value.toUpperCase().replace(/\s+/g,""),brand=$("#rBrand").value.trim(),type=$("#rType").value;const out=$("#rOut");
+  if(model.length<4){const e=$("#rErr");e.hidden=false;e.textContent="Enter the model number from the label.";return}
+  $("#rErr").hidden=true;out.innerHTML=`<div class="loading"><span class="scanbar"></span>Searching government recall records…</div>`;track("recall",{type});
+  const cpsc=`https://www.cpsc.gov/Recalls`;
+  try{
+    const r=await api(`/recalls?model=${enc(model)}&brand=${enc(brand)}&type=${enc(type)}`,null,"GET");
+    const card=x=>`<div class="app-row"><b>${esc(x.title)}</b><span class="muted" style="font-size:14px">${esc(x.date)}${x.hazard?" · "+esc(x.hazard):""}</span>${x.remedy?`<span style="font-size:14px">Remedy: ${esc(x.remedy)}</span>`:""}${x.url?`<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="noopener">Read the recall notice</a>`:""}</div>`;
+    out.innerHTML=(r.exact.length?`<div class="notice stop"><b>${r.exact.length} recall${r.exact.length>1?"s":""} list your model</b><span>Stop using it and follow the remedy in the notice. Recall repairs are free.</span></div>${r.exact.map(card).join("")}`
+      :`<div class="notice ok"><b>No recalls found for ${esc(model)}</b><span>Checked today against CPSC records. We'll recheck when you open My home.</span></div>`)
+      +(r.related.length?`<h3>Recent ${esc(brand)} recalls (check the model list)</h3>${r.related.map(card).join("")}`:"")
+      +`<p class="disclose">Source: U.S. Consumer Product Safety Commission. Always confirm on <a href="${cpsc}" target="_blank" rel="noopener">cpsc.gov</a>.</p>`;
+    const home=store.get("ps-home",[]);const i=home.findIndex(x=>x.model===model);if(i>=0){home[i].recall={date:Date.now(),n:r.exact.length};store.set("ps-home",home);renderHome()}
+  }catch(x){out.innerHTML=`<div class="notice info"><b>Search CPSC directly</b><span>${x.offline?"Our recall search isn't available right now.":esc(x.message)} You can search for ${esc(model)} on the official site.</span></div><a class="btn" href="${cpsc}" target="_blank" rel="noopener">Open cpsc.gov recalls</a>`}
 }
 
-/* ===== label photo ===== */
+/* ---------- repair or replace ---------- */
+function viewCalc(focus){
+  const a=S.app||blankApp();const type=a.type&&LIFESPAN[a.type]?a.type:"washer";
+  openFlow(`<div class="flow-head"><h2>Repair or replace?</h2></div>
+   <p class="muted">A rule technicians use: if the appliance's age times the repair cost is more than the price of a new one, replacing usually makes more sense.</p>
+   <div class="grid2">
+     <label class="f" for="cType">Appliance<select id="cType">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${type===k?"selected":""}>${v}</option>`).join("")}</select></label>
+     <label class="f" for="cAge">Age (years)<input type="number" id="cAge" min="0" max="40" inputmode="numeric" value="${esc(a.age||6)}"></label>
+     <label class="f" for="cCost">Repair cost ($)<input type="number" id="cCost" min="0" inputmode="numeric" value="120"></label>
+     <label class="f" for="cNew">Price of a new one ($)<input type="number" id="cNew" min="1" inputmode="numeric" value="${NEWPRICE[type]}"></label>
+   </div>
+   <p class="muted" style="font-size:13px">DIY repair? Enter just the part price. A technician visit usually adds $100–$200 for labor (estimate).</p>
+   <div id="cOut" aria-live="polite"></div>`,focus);
+  const run=()=>{
+    const t=$("#cType").value,age=+$("#cAge").value||0,cost=+$("#cCost").value||0,np=+$("#cNew").value||1,life=LIFESPAN[t];
+    const score=age*cost,rep=score<np,left=Math.max(0,life-age);
+    const verdict=age>=life?"Replace":rep?(cost/np>.5?"Close call":"Repair it"):"Replace";
+    const tone=verdict==="Repair it"?"ok":verdict==="Close call"?"warn":"stop";
+    $("#cOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)">
+      <p class="verdict" style="color:var(--${tone})">${verdict}</p>
+      <div class="grid3"><div class="stat"><b>${(score).toLocaleString()}</b><span>Age × repair cost</span></div><div class="stat"><b>$${np.toLocaleString()}</b><span>New price</span></div><div class="stat"><b>~${left} yr</b><span>Typical life left (of ~${life})</span></div></div>
+      <p class="muted">${verdict==="Repair it"?"The repair costs little compared with what a new one would. Fix it.":verdict==="Close call"?"The repair is a big share of a new one. Fix it only if the rest of the machine is in good shape.":"At this age and cost, the money is usually better spent on a new, more efficient one."} Lifespans are typical US averages, not guarantees.</p>
+      ${verdict==="Repair it"?"":`<p class="disclose">Affiliate link: we earn a commission if you buy.</p><a class="btn" href="${esc(amazon("new "+TYPES[t]))}" target="_blank" rel="sponsored noopener" data-partner="amazon">See new ${esc(TYPES[t].toLowerCase())}s</a>`}
+    </div>`;track("calc",{type:t});
+  };
+  $$("#cType,#cAge,#cCost,#cNew").forEach(el=>el.addEventListener("input",()=>{if(el.id==="cType")$("#cNew").value=NEWPRICE[el.value];run()}));run();
+}
+
+/* ---------- fridge water filter ---------- */
+function viewWater(focus){
+  const a=S.app&&S.app.type==="refrigerator"?S.app:{...blankApp(),type:"refrigerator"};
+  openFlow(`<div class="flow-head"><h2>Fridge water filter</h2></div>
+   <p class="muted">Filters are matched to your fridge model. Change it about every 6 months, or when water slows or tastes off.</p>
+   <div class="grid2"><label class="f" for="wBrand">Brand<input type="text" id="wBrand" value="${esc(a.brand)}" placeholder="Samsung"></label><label class="f" for="wModel">Fridge model<input class="mono" type="text" id="wModel" value="${esc(a.model)}" placeholder="RF28R7351SR/AA"></label></div>
+   <p class="err" id="wErr" hidden></p>
+   <button class="btn signal wide" type="button" id="wGo">Find my filter</button><div id="wOut"></div>`,focus);
+  const go2=()=>{const b=$("#wBrand").value.trim(),m=$("#wModel").value.toUpperCase().replace(/\s+/g,"");if(m.length<4){const e=$("#wErr");e.hidden=false;e.textContent="Enter your fridge's model number.";return}$("#wErr").hidden=true;
+    $("#wOut").innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)"><p class="disclose">Affiliate links: we earn a commission if you buy.</p>
+     <div class="grid2"><a class="btn signal" href="${esc(wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(m)}/`))}" target="_blank" rel="sponsored noopener" data-partner="partselect">Exact filter for ${esc(m)}</a><a class="btn" href="${esc(amazon(`${b} ${m} water filter`))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Compare on Amazon</a></div>
+     <div class="acts"><span class="muted" style="flex:1 1 200px">Every 6 months</span>${reminderButtons(`Replace fridge water filter (${b} ${m})`,6)}</div></div>`};
+  $("#wGo").addEventListener("click",go2);if(a.model)go2();
+}
+
+/* ---------- book a pro ---------- */
+function viewPro(focus){track("pro");openFlow(`<div class="flow-head"><h2>Book a technician</h2></div><p class="muted">For gas, refrigerant, microwave internals, or when you'd rather not do it yourself.</p>${proBlock(S.app||{})}`,focus)}
+
+/* ---------- upkeep ---------- */
+function reminderButtons(title,months){return `<a class="btn sm" target="_blank" rel="noopener" href="${esc(gcal(title,months))}">Google Calendar</a><button class="btn sm" type="button" data-ics="${esc(title)}" data-m="${months}">Apple / Outlook</button>`}
+function viewUpkeep(focus){
+  const home=store.get("ps-home",[]);const f=store.get("ps-filter",null);
+  const rows=[...HOME_UPKEEP.map(u=>({...u,who:"Whole home",t:f&&u.t.startsWith("Change the AC")?`${u.t} (${f.size})`:u.t})),...home.flatMap(a=>(UPKEEP[a.type]||[]).map(u=>({...u,who:`${a.brand} ${a.model}`,a})))];
+  openFlow(`<div class="flow-head"><h2>Home upkeep calendar</h2></div><p class="muted">Add any reminder to your own calendar. It repeats on its own. We never email or text you.</p>
+   <div style="display:grid;gap:10px">${rows.map(u=>`<div class="app-row"><div class="flow-head"><div><p class="stamp">${esc(u.who)}</p><b>${esc(u.t)}</b></div><span class="muted mono" style="font-size:13px">every ${u.m===1?"month":u.m+" months"}</span></div>
+     <div class="acts">${reminderButtons(u.t+(u.a?` (${u.a.brand} ${u.a.model})`:""),u.m)}${u.buy?`<a class="btn sm" href="${esc(u.partselect&&u.a?wrap(CONFIG.PARTSELECT_WRAP,`https://www.partselect.com/Models/${enc(u.a.model)}/`):amazon((u.a?u.a.brand+" "+u.a.model+" ":"")+u.buy))}" target="_blank" rel="sponsored noopener">Shop supplies</a>`:""}</div></div>`).join("")}</div>
+   <p class="disclose">"Shop supplies" are affiliate links. Save appliances to add their reminders here.</p>`,focus);
+}
+
+/* ---------- plumbing ---------- */
+function viewPlumb(focus){
+  openFlow(`<div class="flow-head"><h2>Toilet &amp; faucet fixes</h2></div><p class="muted">No label needed. Pick what's leaking.</p>
+   <div class="grid2"><button class="svc" type="button" data-pl="toilet">${ICON.drop}<b>Toilet</b><span>Running, weak flush, leaking at the base</span></button><button class="svc" type="button" data-pl="faucet">${ICON.faucet}<b>Faucet</b><span>Dripping spout, leaking handle</span></button></div>`,focus);
+  $$("[data-pl]").forEach(b=>b.addEventListener("click",()=>{S.app={brand:"",model:"",type:b.dataset.pl,fuel:"unknown"};S.symptom=null;go("symptom")}));
+}
+
+/* ================= label photo ================= */
 async function onLabel(file){
-  closeHome();
-  try{const img=await shrink(file);S.labelImg=img.preview;setPlate({brand:"",model:"",serial:"",type:"",fuel:""},true);renderReading();scrollFlow();
-    if(API_OK===false) throw Object.assign(new Error("unreachable"),{unreachable:true});
-    const r=await api("/label",{image:{media_type:img.media_type,data:img.data}});API_OK=true;
-    S.app={brand:r.brand,model:r.model_number,serial:r.serial_number,type:TYPES[r.appliance_type]||r.appliance_type==="other"?r.appliance_type:"",fuel:r.fuel,unclear:r.unclear_characters};
-    setPlate(S.app,false);
-    let msg=null;
+  closeHome();flash();track("label_start");
+  try{const img=await shrink(file);S.labelImg=img.preview;S.view="reading";syncURL(true);viewReading();
+    const r=await api("/label",{image:{media_type:img.media_type,data:img.data}});
+    const type=(TYPES[r.appliance_type]?r.appliance_type:"");
+    S.app={brand:r.brand,model:r.model_number,serial:r.serial_number,type,fuel:r.fuel,unclear:r.unclear_characters,alts:r.alternate_readings||[]};
+    track("label_read",{type,src:r.confidence});
+    let msg;
     if(!r.label_found||!r.model_number) msg={kind:"warn",title:"We couldn't read a model number",text:r.message||"Retake the photo closer, without glare, or type the model number."};
-    else if(r.confidence!=="high") msg={kind:"warn",title:"Please double-check",text:"Part of the label was hard to read. Compare each character with your label."};
+    else if(r.confidence!=="high") msg={kind:"warn",title:"Please double-check",text:"Part of the label was hard to read. Compare each character with your sticker."};
     else msg={kind:"ok",title:"Label read",text:"Compare it with your sticker once. One wrong character means the wrong part."};
-    renderConfirm(msg);
+    S.view="confirm";syncURL(false);viewConfirm(true,msg);
+    if(r.model_number){setPlate(S.app);heroSequence(S.app);heroParts(defaultHeroParts(type||"washer"))}
   }catch(err){
-    setPlate(null,false);
-    if(err.unreachable){API_OK=false;S.app={brand:"",model:"",serial:"",type:"",fuel:"unknown"};renderConfirm({kind:"info",title:"Type the model number from your photo",text:"Automatic label reading works on the live site. Here you can type it in, or tap Try the example."})}
-    else{S.app=S.app||{brand:"",model:"",serial:"",type:"",fuel:"unknown"};renderConfirm({kind:"warn",title:"We couldn't read the label",text:err.message})}
+    S.app=S.app&&S.app.model?S.app:blankApp();S.view="confirm";syncURL(false);
+    viewConfirm(true,err.offline?{kind:"info",title:"Type the model number from your label",text:"Automatic label reading is unavailable right now. Typing it works just as well."}:{kind:"warn",title:"We couldn't read the label",text:err.message});
   }
 }
 $("#labelFile").addEventListener("change",e=>{const file=e.target.files[0];e.target.value="";if(file)onLabel(file)});
-$("#typeModel").addEventListener("click",()=>{S.app={brand:"",model:"",serial:"",type:"",fuel:"unknown"};renderConfirm();scrollFlow();setTimeout(()=>$("#inBrand").focus(),300)});
-$("#trySample").addEventListener("click",()=>{S.app={...SAMPLE};S.labelImg=null;setPlate(S.app,true);setTimeout(()=>setPlate(S.app,false),1600);renderConfirm({kind:"ok",title:"Example label read",text:"Whirlpool top-load washer. Tap next and pick a symptom."});scrollFlow()});
+function actSnapOrType(){$("#labelFile").click()}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-act]");
+  if(a){const act=a.dataset.act;
+    if(act==="snap"){closeHome();$("#labelFile").click()}
+    if(act==="type"){S.app=blankApp();go("confirm");setTimeout(()=>$("#inBrand")&&$("#inBrand").focus(),350)}
+    if(act==="sample"){S.app={...SAMPLE};setPlate(S.app);heroSequence(S.app);heroParts(HERO_PARTS);S.view="confirm";syncURL(true);viewConfirm(true,{kind:"ok",title:"Example label read",text:"A Whirlpool top-load washer. Tap Next and pick a symptom."})}
+    if(act==="upkeep"){closeHome();go("upkeep")}
+  }
+  const g=e.target.closest("[data-go]");if(g) go(g.dataset.go);
+  const p=e.target.closest("a[data-partner]");if(p) track("click",{partner:p.dataset.partner,type:S.app&&S.app.type});
+  const ic=e.target.closest("[data-ics]");if(ic) downloadICS(ic.dataset.ics,+ic.dataset.m);
+});
 
-/* ===== My appliances ===== */
-function gcal(title,details,months){
-  const d=new Date();d.setMonth(d.getMonth()+months);const ymd=x=>x.toISOString().slice(0,10).replace(/-/g,"");const e=new Date(d);e.setDate(e.getDate()+1);
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&details=${enc(details)}&dates=${ymd(d)}/${ymd(e)}&recur=${enc(`RRULE:FREQ=MONTHLY;INTERVAL=${months}`)}`;
+/* ================= reminders ================= */
+function nextDate(months){const d=new Date();d.setHours(12,0,0,0);const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+months);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d}
+const ymd=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
+function gcal(title,months){const d=nextDate(months),e=new Date(d);e.setDate(e.getDate()+1);return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&details=${enc("Reminder from PartSnap")}&dates=${ymd(d)}/${ymd(e)}&recur=${enc(`RRULE:FREQ=MONTHLY;INTERVAL=${months}`)}`}
+function downloadICS(title,months){
+  const d=nextDate(months),e=new Date(d);e.setDate(e.getDate()+1);
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PartSnap//Upkeep//EN","BEGIN:VEVENT",`UID:${Date.now()}@partsnap`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,`DTSTART;VALUE=DATE:${ymd(d)}`,`DTEND;VALUE=DATE:${ymd(e)}`,`RRULE:FREQ=MONTHLY;INTERVAL=${months}`,`SUMMARY:${title.replace(/[,;]/g," ")}`,"DESCRIPTION:Reminder from PartSnap","BEGIN:VALARM","TRIGGER:PT9H","ACTION:DISPLAY","DESCRIPTION:Reminder","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));const l=document.createElement("a");l.href=url;l.download="partsnap-reminder.ics";document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  toast("Reminder file created. Open it to add it to your calendar.");
 }
-function saveAppliance(a){const list=store.get("ps-home",[]).filter(x=>x.model!==a.model);list.unshift({brand:a.brand,model:a.model,type:a.type,fuel:a.fuel,added:Date.now()});store.set("ps-home",list);renderHome();toast("Saved. Find it under My appliances.")}
+
+/* ================= My home ================= */
+function saveAppliance(a){const list=store.get("ps-home",[]).filter(x=>x.model!==a.model);list.unshift({brand:a.brand,model:a.model,type:a.type,fuel:a.fuel,added:Date.now()});store.set("ps-home",list);renderHome();track("save",{type:a.type});toast("Saved to My home.");
+  if(window.gsap&&!RM){const b=$("#openHome");gsap.fromTo(b,{scale:1},{scale:1.12,duration:.18,yoyo:true,repeat:1})}}
 function renderHome(){
   const list=store.get("ps-home",[]);const c=$("#homeCount");c.hidden=!list.length;c.textContent=list.length;
   $("#homeList").innerHTML=list.length?list.map((a,i)=>`<div class="app-row">
-     <div class="part-head"><div><div class="eyebrow">${esc(TYPES[a.type]||"Appliance")}</div><div class="mono">${esc(a.brand)} ${esc(a.model)}</div></div><button class="btn small" type="button" data-fix="${i}">Something's wrong</button></div>
-     ${(UPKEEP[a.type]||[]).map(u=>`<div class="acts"><span style="flex:1 1 200px">${esc(u.t)} · every ${u.m===1?"month":u.m+" months"}</span><a class="btn small" target="_blank" rel="noopener" href="${esc(gcal(u.t+" ("+a.brand+" "+a.model+")","Reminder from PartSnap",u.m))}">Remind me</a>${u.buy?`<a class="btn small" target="_blank" rel="sponsored noopener" href="${esc(`https://www.amazon.com/s?k=${enc(a.brand+" "+a.model+" "+u.buy)}${CONFIG.AMAZON_TAG?"&tag="+enc(CONFIG.AMAZON_TAG):""}`)}">Find my filter</a>`:""}</div>`).join("")}
-     <div class="acts"><button class="btn small" type="button" data-del="${i}">Remove</button></div>
-   </div>`).join(""):`<div class="notice info"><b>No appliances saved yet</b><span>Scan a label, then tap Save this appliance on the results.</span></div>`;
-  $("#homeList").querySelectorAll("[data-fix]").forEach(b=>b.addEventListener("click",()=>{const a=list[+b.dataset.fix];S.app={...a,serial:""};setPlate(S.app);closeHome();renderSymptom();scrollFlow()}));
-  $("#homeList").querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{list.splice(+b.dataset.del,1);store.set("ps-home",list);renderHome()}));
+     <div class="flow-head"><div><p class="stamp">${esc(TYPES[a.type]||"Appliance")}</p><p class="mono ai" style="font-weight:700">${esc(a.brand)} ${esc(a.model)}</p></div><button class="btn sm signal" type="button" data-fix="${i}">Something's wrong</button></div>
+     <p class="muted" style="font-size:14px">${a.recall?(a.recall.n?`<b style="color:var(--stop)">${a.recall.n} recall(s) found</b>`:`No recalls as of ${new Date(a.recall.date).toLocaleDateString()}`):"Recalls not checked yet"}</p>
+     <div class="acts"><button class="btn sm" type="button" data-rc="${i}">Check recalls</button><button class="btn sm" type="button" data-up="${i}">Upkeep</button><button class="btn sm ghost" type="button" data-del="${i}">Remove</button></div>
+   </div>`).join(""):`<div class="notice info"><b>Nothing saved yet</b><span>Scan a label, then tap Save on the results.</span></div>`;
+  $$("[data-fix]").forEach(b=>b.addEventListener("click",()=>{S.app={...list[+b.dataset.fix],serial:""};setPlate(S.app);closeHome();S.symptom=null;go("symptom")}));
+  $$("[data-rc]").forEach(b=>b.addEventListener("click",()=>{S.app={...list[+b.dataset.rc]};closeHome();go("recall")}));
+  $$("[data-up]").forEach(b=>b.addEventListener("click",()=>{closeHome();go("upkeep")}));
+  $$("[data-del]").forEach(b=>b.addEventListener("click",()=>{list.splice(+b.dataset.del,1);store.set("ps-home",list);renderHome()}));
 }
 let lastFocus=null;
-function openHome(){lastFocus=document.activeElement;renderHome();$("#homeSheet").classList.add("open");$("#main").inert=true;$("#closeHome").focus()}
-function closeHome(){if(!$("#homeSheet").classList.contains("open"))return;$("#homeSheet").classList.remove("open");$("#main").inert=false;lastFocus&&lastFocus.focus&&lastFocus.focus()}
+function openHome(){lastFocus=document.activeElement;renderHome();$("#homeSheet").classList.add("open");["#main","#top","#foot","#dock"].forEach(s=>$(s).inert=true);$("#closeHome").focus()}
+function closeHome(){if(!$("#homeSheet").classList.contains("open"))return;$("#homeSheet").classList.remove("open");["#main","#top","#foot","#dock"].forEach(s=>$(s).inert=false);lastFocus&&lastFocus.focus&&lastFocus.focus()}
 $("#openHome").addEventListener("click",openHome);
 $("#closeHome").addEventListener("click",closeHome);
 $("#homeSheet").addEventListener("click",e=>{if(e.target.id==="homeSheet")closeHome()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHome()});
-$("#clearData").addEventListener("click",e=>{e.preventDefault();try{localStorage.removeItem("ps-home")}catch(x){}renderHome();toast("Deleted. Nothing from PartSnap is stored on this device now.")});
-renderHome();
+$("#clearData").addEventListener("click",()=>{store.del("ps-home");store.del("ps-filter");renderHome();toast("Deleted. Nothing from PartSnap is stored on this device now.")});
+
+/* ================= boot ================= */
+renderHome();heroParts(HERO_PARTS);
+(function restore(){
+  const q=new URLSearchParams(location.search);const m=q.get("m"),t=q.get("t"),v=q.get("v");
+  if(m||v){S.app=m?{brand:q.get("b")||"",model:m,type:TYPES[t]?t:"",fuel:q.get("f")==="gas"?"gas":"electric",alts:[]}:null;S.symptom=q.get("s");
+    if(S.app&&S.app.model)setPlate(S.app);
+    if(v==="parts"&&S.app&&S.symptom){const local=(SYMPTOMS[S.app.type]||[]).find(s=>s.id===S.symptom);if(local){S.result=localResult(S.app,local);S.view="parts"}else S.view="symptom"}
+    else S.view=v||"confirm";
+    syncURL(false);render(false);
+  } else syncURL(false);
+})();
+track("view",{src:IN_APP?"inapp":"web"});
+if("IntersectionObserver" in window){new IntersectionObserver((en,o)=>{if(en[0].isIntersecting){o.disconnect();heroSequence(S.app&&S.app.model?S.app:null)}},{threshold:.35}).observe($("#stage"))} else heroSequence(null);
 </script>

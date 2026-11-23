@@ -1,36 +1,66 @@
 // Shared helpers for the PartSnap API (Cloudflare Pages Functions).
-// The API key lives only on the server, in the ANTHROPIC_API_KEY secret.
+// Secrets: ANTHROPIC_API_KEY, TURNSTILE_SECRET. Bindings (optional): PS_KV (KV), EVENTS (Analytics Engine).
 import Anthropic from "@anthropic-ai/sdk";
 
 export const MODEL = "claude-opus-5-5";
-const MAX_IMAGE_B64 = 5_500_000; // about 4 MB of image data
+const MAX_BODY = 7_000_000;
+const MAX_IMAGE_B64 = 5_500_000;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+export const TYPES = ["washer", "dryer", "dishwasher", "refrigerator", "range", "microwave", "disposal"];
 
 export class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
 
-export function json(data, status = 200) {
+export function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...extra },
   });
 }
 
-// Reject cross-site calls when ALLOWED_ORIGIN is set, and apply the optional
-// Workers rate-limit binding (LIMITER) so nobody can run up the API bill.
-export async function guard(request, env) {
+const today = () => new Date().toISOString().slice(0, 10);
+
+// Approximate counters in KV (eventually consistent; good enough as a brake).
+async function bump(env, key, ttl) {
+  if (!env.PS_KV) return 0;
+  const n = Number((await env.PS_KV.get(key)) || 0) + 1;
+  await env.PS_KV.put(key, String(n), { expirationTtl: ttl });
+  return n;
+}
+
+async function verifyTurnstile(env, token, ip) {
+  if (!env.TURNSTILE_SECRET) return; // not configured yet
+  if (!token) throw new HttpError(403, "Please confirm you're not a robot and try again.");
+  const form = new FormData();
+  form.append("secret", env.TURNSTILE_SECRET);
+  form.append("response", token);
+  if (ip) form.append("remoteip", ip);
+  const r = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
+  const out = await r.json().catch(() => ({}));
+  if (!out.success) throw new HttpError(403, "We couldn't verify this request. Refresh the page and try again.");
+}
+
+// Every paid (AI) call goes through here: origin check, bot check, per-IP limit, daily cap.
+export async function guard(request, env, { ai = true } = {}) {
   const origin = request.headers.get("origin");
-  if (env.ALLOWED_ORIGIN && origin && origin !== env.ALLOWED_ORIGIN) throw new HttpError(403, "Requests from this site are not allowed.");
-  if (!env.ANTHROPIC_API_KEY) throw new HttpError(503, "The parts finder is not configured yet.");
-  if (env.LIMITER) {
-    const key = request.headers.get("cf-connecting-ip") || "anon";
-    const { success } = await env.LIMITER.limit({ key });
-    if (!success) throw new HttpError(429, "Too many scans in a short time. Wait a minute and try again.");
+  if (env.ALLOWED_ORIGIN && origin !== env.ALLOWED_ORIGIN) throw new HttpError(403, "Requests from this site are not allowed.");
+  const ip = request.headers.get("cf-connecting-ip") || "anon";
+  const minute = Math.floor(Date.now() / 60000);
+  const perMin = Number(env.PER_IP_PER_MINUTE || 8);
+  if ((await bump(env, `ip:${ip}:${minute}`, 120)) > perMin) throw new HttpError(429, "Too many requests in a short time. Wait a minute and try again.");
+  if (request.method !== "POST") return null;
+  const text = await request.text();
+  if (text.length > MAX_BODY) throw new HttpError(413, "That photo is too large. Try again with a smaller photo.");
+  let body;
+  try { body = JSON.parse(text); } catch { throw new HttpError(400, "The request was not valid JSON."); }
+  if (ai) {
+    if (!env.ANTHROPIC_API_KEY) throw new HttpError(503, "This feature is not switched on yet.");
+    await verifyTurnstile(env, request.headers.get("x-turnstile"), ip);
+    const cap = Number(env.DAILY_AI_LIMIT || 3000);
+    if ((await bump(env, `ai:${today()}`, 172800)) > cap) throw new HttpError(503, "We've hit today's limit. Please try again tomorrow, or type your model number.");
   }
-  const len = Number(request.headers.get("content-length") || 0);
-  if (len > 7_000_000) throw new HttpError(413, "That photo is too large. Try again with a smaller photo.");
-  try { return await request.json(); } catch { throw new HttpError(400, "The request was not valid JSON."); }
+  return body;
 }
 
 export function imageBlock(img) {
@@ -39,15 +69,25 @@ export function imageBlock(img) {
   return { type: "image", source: { type: "base64", media_type: img.media_type, data: img.data } };
 }
 
-// One structured call: the answer must match `schema`. Refusals fall back to
-// Anthropic's recommended model on the server side ("default" routing).
-export async function askJSON(env, { system, content, schema, effort }) {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 2, timeout: 60_000 });
+export async function sha256(s) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+export async function cached(env, key, ttl, fn) {
+  if (env.PS_KV) { const hit = await env.PS_KV.get(key, "json"); if (hit) return hit; }
+  const val = await fn();
+  if (env.PS_KV) await env.PS_KV.put(key, JSON.stringify(val), { expirationTtl: ttl });
+  return val;
+}
+
+// One structured call; the answer must match `schema`. Refusals fall back server-side ("default" routing).
+export async function askJSON(env, { system, content, schema, effort, route }) {
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
   let res;
   try {
     res = await client.beta.messages.create({
       model: MODEL,
-      max_tokens: 8000,
+      max_tokens: 3000,
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: { effort, format: { type: "json_schema", schema } },
@@ -55,15 +95,19 @@ export async function askJSON(env, { system, content, schema, effort }) {
       messages: [{ role: "user", content }],
     });
   } catch (err) {
+    console.error("anthropic", route, err && err.status, err && err.name);
     if (err instanceof Anthropic.RateLimitError) throw new HttpError(429, "We're busy right now. Try again in a minute.");
     if (err instanceof Anthropic.BadRequestError) throw new HttpError(400, "We couldn't read that photo. Try a clearer one.");
-    if (err instanceof Anthropic.APIError) throw new HttpError(502, "The parts finder is unavailable right now. Try again shortly.");
-    throw err;
+    if (err instanceof Anthropic.APIError) throw new HttpError(502, "This feature is unavailable right now. Try again shortly.");
+    throw new HttpError(504, "That took too long. Try again.");
   }
-  if (res.stop_reason === "refusal") throw new HttpError(422, "We can't help with that photo. Try a photo of the appliance's model label.");
+  // Usage only, never request content.
+  console.log(JSON.stringify({ route, model: res.model, in: res.usage?.input_tokens, out: res.usage?.output_tokens, stop: res.stop_reason }));
+  env.EVENTS?.writeDataPoint({ blobs: ["ai", route, res.model], doubles: [res.usage?.input_tokens || 0, res.usage?.output_tokens || 0] });
+  if (res.stop_reason === "refusal") throw new HttpError(422, "We can't help with that photo. Try a photo of the appliance's label.");
   if (res.stop_reason === "max_tokens") throw new HttpError(502, "The answer was cut off. Try again.");
   const text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("");
-  try { return JSON.parse(text); } catch { throw new HttpError(502, "The parts finder returned an unreadable answer. Try again."); }
+  try { return JSON.parse(text); } catch { throw new HttpError(502, "We got an unreadable answer. Try again."); }
 }
 
 export function handle(fn) {
@@ -71,13 +115,25 @@ export function handle(fn) {
     try { return json(await fn(ctx)); }
     catch (err) {
       if (err instanceof HttpError) return json({ error: err.message }, err.status);
-      console.error(err);
+      console.error("unhandled", err && err.name, err && err.message);
       return json({ error: "Something went wrong on our side. Try again." }, 500);
     }
   };
 }
 
-// Part numbers must come from the retailer's catalog for the exact model,
-// never from the model. Strip anything that looks like one.
-const PART_NO = /\b(?=[A-Z0-9-]*\d)[A-Z]{0,4}-?\d{4,}[A-Z0-9-]*\b/gi;
-export const noPartNumbers = (s) => String(s || "").replace(PART_NO, "").replace(/\s{2,}/g, " ").trim();
+// Part numbers must come from the retailer's diagram for the exact model, never from the AI.
+// Strips long letter+digit codes (W10276397, DC97-16151A, WPW10276397) but keeps the
+// user's own model number, years, voltages and short tokens.
+const CODE = /\b[A-Z0-9]+(?:[-/][A-Z0-9]+)*\b/gi;
+export function noPartNumbers(s, keep = "") {
+  const k = String(keep || "").toUpperCase();
+  return String(s || "").replace(CODE, (t) => {
+    if (t.toUpperCase() === k) return t;
+    const digits = (t.match(/\d/g) || []).length;
+    const letters = (t.match(/[A-Z]/gi) || []).length;
+    const looksLikeCode = t.length >= 6 && digits >= 4 && (letters >= 1 || t.includes("-")) ;
+    return looksLikeCode ? "" : t;
+  }).replace(/\s{2,}/g, " ").replace(/\s+([.,;:])/g, "$1").trim();
+}
+
+export const pick = (v, allowed, dflt) => (allowed.includes(v) ? v : dflt);
