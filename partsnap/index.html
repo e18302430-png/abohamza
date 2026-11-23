@@ -83,6 +83,7 @@ a{color:inherit}
 .steps input{position:absolute;opacity:0}
 .steps li:has(input:checked){opacity:.6}
 .btn[disabled]{opacity:.55;cursor:not-allowed}
+.svc-filter{margin-bottom:4px}
 .svc-cat{grid-column:1/-1;font:600 12px/1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;color:var(--scan);margin-top:10px}
 .svc.main svg{color:var(--signal)}
 
@@ -233,6 +234,41 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
   .chap-copy::before,.hero .hero-copy::before{display:none}
   .rest>section{padding:18px;border-radius:16px}
 }
+
+/* ===== wow layer: hero scale, kinetic type, Read-Lens HUD, scan HUD, magnetic + ripple buttons, dark moment ===== */
+.hero h1{font-size:clamp(52px,8.4vw,124px);line-height:.86;letter-spacing:-.01em}
+.kw{display:inline-block;transform:translateY(.25em);opacity:0;font-stretch:125%;transition:transform .7s cubic-bezier(.2,.8,.2,1) calc(var(--i)*60ms),opacity .5s ease calc(var(--i)*60ms),font-stretch .9s cubic-bezier(.2,.8,.2,1) calc(var(--i)*60ms)}
+.in .kw{transform:none;opacity:1;font-stretch:62%}
+.trustline{font-size:14px;color:var(--muted);margin:0}
+.lenshint{display:inline-flex;align-items:center;gap:10px;font:600 12px/1 var(--display);font-stretch:125%;letter-spacing:.12em;text-transform:uppercase;color:var(--scan)}
+.lenshint .dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--scan);animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(8,112,138,.45)}100%{box-shadow:0 0 0 14px rgba(8,112,138,0)}}
+#tiltBtn{justify-self:start}
+#lensHud{position:fixed;left:0;top:0;z-index:1;pointer-events:none;opacity:0;background:rgba(11,20,24,.88);color:#E7EBEE;border:1px solid rgba(63,216,242,.5);border-radius:10px;padding:8px 12px;font:600 11px/1.6 var(--mono);letter-spacing:.06em;min-width:150px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#lensHud b{color:#3FD8F2}
+#lensHud ul{margin:4px 0 0;padding:0;list-style:none}
+#lensHud li.hot{color:#FF8A57}
+#scanHud{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));justify-items:end;z-index:20;display:grid;gap:6px;font:600 11px/1 var(--mono);letter-spacing:.1em;color:var(--muted);transition:opacity .3s}
+#scanHud b{color:var(--ink)}
+#scanHud i{display:block;width:180px;height:2px;background:var(--scan);transform-origin:left;transform:scaleX(0)}
+#scanHud.off{opacity:0}
+.railnav{display:none!important}
+.btn{position:relative;overflow:hidden}
+.btn.signal{transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .15s}
+.btn.rip::after{content:"";position:absolute;left:var(--rx);top:var(--ry);width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:rgba(255,255,255,.55);animation:rip .55s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(40);opacity:0}}
+.where-d{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px}
+.where-d summary{cursor:pointer;font-weight:600;min-height:28px}
+.wherelist{margin:8px 0 0;padding-left:18px;display:grid;gap:4px;font-size:14px;color:var(--muted)}
+.chap-copy::before{display:none}
+html.dark-moment .chap h2,html.dark-moment .chap .num{color:#E7EBEE}
+html.dark-moment .chap .num{color:#3FD8F2}
+html.dark-moment .chap p.body{color:#9FB0BA}
+html.dark-moment #scanHud,html.dark-moment #scanHud b{color:#C7D3DA}
+html.dark-moment .top .brand{color:#E7EBEE}
+.chap h2,.chap p.body,.chap .num,.top .brand{transition:color .4s}
+@media (max-width:900px){#scanHud{display:none}#lensHud{display:none}html.dark-moment .chap-copy{background:linear-gradient(to top,rgba(11,20,24,.96) 58%,rgba(11,20,24,.75) 86%,rgba(11,20,24,0))}}
+@media (prefers-reduced-motion:reduce){.kw{opacity:1;transform:none;font-stretch:62%}}
 @media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:8px}.services{grid-template-columns:repeat(2,minmax(0,1fr))}.where{grid-template-columns:repeat(2,minmax(0,1fr))}.how,.honest{grid-template-columns:minmax(0,1fr)}.dock{display:flex}.dock[hidden]{display:none}.hero .cta-row{display:none}}
 @media (max-width:480px){.sheet{padding-inline:0;padding-bottom:0}.sheet .card{position:absolute;left:0;right:0;bottom:0;margin:0;border-radius:18px 18px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}.grid2,.grid3{grid-template-columns:minmax(0,1fr)}.card{padding:16px}.shell{gap:44px}.ticket{grid-template-columns:minmax(0,1fr)}.ticket .ic{width:48px;height:48px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -240,6 +276,8 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
 
 <canvas id="world" aria-hidden="true"></canvas>
 <div id="tags" aria-hidden="true"></div>
+<div id="lensHud" aria-hidden="true"><b>X-RAY</b><ul></ul></div>
+<div id="scanHud" aria-hidden="true"><span>SCAN <b id="hudNum">01</b>/06 · <b id="hudName">APPLIANCE</b></span><i></i></div>
 <nav class="railnav" id="railnav" aria-label="Story progress"><a href="#" data-to="0" aria-label="Step 0"></a><a href="#" data-to="1" aria-label="Step 1"></a><a href="#" data-to="2" aria-label="Step 2"></a><a href="#" data-to="3" aria-label="Step 3"></a><a href="#" data-to="4" aria-label="Step 4"></a><a href="#" data-to="5" aria-label="Step 5"></a></nav>
 <div class="shell">
   <header class="top" id="top">
@@ -260,12 +298,8 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
           <button class="btn signal" type="button" data-act="snap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Snap my model label</button>
           <button class="btn ghost" type="button" data-act="type">Type the model number</button>
         </div>
-        <div class="trust">
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Free, no sign-up</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Photo only used to read the label, never stored</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Free checks before you buy anything</span>
-        </div>
-        <span class="scrollcue" aria-hidden="true"><i></i>Scroll: watch how it works</span>
+        <p class="trustline">Free · No sign-up · Your photo is never stored · Free checks before you buy anything</p>
+        <div class="lenshint"><span class="dot"></span>Move over the washer to see inside it</div><button class="btn sm" type="button" id="tiltBtn">Tilt to look inside</button>
       </div>
     </section>
 
@@ -301,22 +335,8 @@ input[type=text],input[type=number],select,textarea{border-color:var(--line-stro
     <section class="card" id="flow" tabindex="-1" hidden></section>
 
     <section class="block" aria-labelledby="svcH">
-      <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">What Fixwise does for your home</h2></div>
+      <div class="block-head"><p class="stamp">Everything in one place</p><h2 id="svcH">Everything your home and car need</h2></div>
       <div class="services" id="services"></div>
-    </section>
-
-    <section class="block" aria-labelledby="whereH">
-      <div class="block-head"><p class="stamp">Before you snap</p><h2 id="whereH">Where's my label?</h2></div>
-      <div class="where">
-        <div><b>Washer</b><span>Top-load: under the lid or back of the console. Front-load: around the door frame.</span></div>
-        <div><b>Dryer</b><span>Inside the door frame, or on the back panel.</span></div>
-        <div><b>Dishwasher</b><span>Edge of the inner door, or the side of the tub opening.</span></div>
-        <div><b>Fridge</b><span>Inside the fresh-food section on a side wall or ceiling, or behind the crisper.</span></div>
-        <div><b>Range</b><span>Open the oven door or the storage drawer and look at the frame.</span></div>
-        <div><b>Microwave</b><span>Inside the door frame, or on the back or bottom.</span></div>
-        <div><b>Disposal</b><span>Sticker on the bottom or side of the unit under the sink.</span></div>
-        <div><b>Tip</b><span>Fill the frame with the sticker and tilt the phone a little to kill glare.</span></div>
-      </div>
     </section>
 
     <section class="block" aria-labelledby="howH">
@@ -382,10 +402,9 @@ const CONFIG = {
     pack: "",                // $12.99, 5 plans
     year: "",                // $29, unlimited plans for 365 days
   },
-  PRO: {                     // lead-gen links for jobs that need a technician (replace with affiliate links)
-    sears: "https://www.searshomeservices.com/",
-    angi: "https://www.angi.com/",
-    thumbtack: "https://www.thumbtack.com/k/appliance-repair/near-me/",
+  PRO: {                     // "book a pro": only links that pay (Cloudflare vars PRO_LINK_SEARS / PRO_CALL_NUMBER override these)
+    sears: "",               // Sears Home Services tracking link (FlexOffers/Impact), pays ~$48 per completed repair
+    call: "",                // pay-per-call tracking number, e.g. "+1-888-555-0100" (weekly-paying networks)
   },
 };
 
@@ -399,7 +418,7 @@ function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show")
 const CLICKID=(()=>{try{const q=new URLSearchParams(location.search);const k=["gclid","ttclid","fbclid","epik"].find(x=>q.get(x));if(k){const v=k+":"+q.get(k).slice(0,80);sessionStorage.setItem("ps-cid",v);return v}return sessionStorage.getItem("ps-cid")||""}catch(e){return ""}})();
 function track(e,p={}){p={src:CLICKID.split(":")[0]||"organic",...p};try{navigator.sendBeacon&&navigator.sendBeacon(CONFIG.API_BASE+"/event",new Blob([JSON.stringify({e,p})],{type:"application/json"}))}catch(x){}}
 const amazon=q=>`https://www.amazon.com/s?k=${enc(q)}${CONFIG.AMAZON_TAG?`&tag=${enc(CONFIG.AMAZON_TAG)}`:""}`;
-const ebay=q=>`https://www.ebay.com/sch/i.html?_nkw=${enc(q)}${CONFIG.EBAY_CAMPID?`&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${enc(CONFIG.EBAY_CAMPID)}&toolid=10001&mkevt=1`:""}`;
+const ebay=q=>`https://www.ebay.com/sch/i.html?_nkw=${enc(q)}${CONFIG.EBAY_CAMPID?`&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=${enc(CONFIG.EBAY_CAMPID)}&customid=${enc(CLICKID||"organic")}&toolid=10001&mkevt=1`:""}`;
 // Affiliate deep-link template: {url} = destination, {subid} = ad click id (for attribution) or "organic"
 const wrap=(tpl,url)=>tpl?tpl.replace("{url}",enc(url)).replace("{subid}",enc(CLICKID||"organic")):url;
 const youtube=q=>`https://www.youtube.com/results?search_query=${enc(q)}`;
@@ -598,7 +617,8 @@ function go(view,push=true){if(push)syncURL(false);S.view=view;syncURL(push);ren
 addEventListener("popstate",e=>{closeHome();const st=e.state;if(st){Object.assign(S,st,{partImg:null,labelImg:null});if(S.view==="reading")S.view="confirm"}else{S.view="home"}render(true)});
 
 /* ================= API: timeout, bot check, friendly errors ================= */
-const CFG_READY=fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).catch(()=>({}));
+let PLANS_ON=false;
+const CFG_READY=fetch(CONFIG.API_BASE+"/config").then(r=>r.ok?r.json():{}).catch(()=>({})).then(c=>{for(const k of ["AMAZON_TAG","EBAY_CAMPID","PARTSELECT_WRAP","FILTERBUY_WRAP"])if(c[k])CONFIG[k]=c[k];if(c.PAYHIP)for(const k in c.PAYHIP)if(c.PAYHIP[k])CONFIG.PAYHIP[k]=c.PAYHIP[k];if(c.PRO)for(const k in c.PRO)if(c.PRO[k])CONFIG.PRO[k]=c.PRO[k];PLANS_ON=!!c.plans;return c});
 let tsReady=null,tsWidget=null,tsWaiter=null;
 async function turnstileToken(){
   const cfg=await CFG_READY;const key=cfg.turnstile||"";if(!key) return "";
@@ -668,9 +688,27 @@ const SERVICES=[
   {cat:"Shop smart",tool:"fit",icon:"filter",t:"Replacement that fits",d:"Standard sizes so a new appliance fits the first time."},
   {cat:"Shop smart",tool:"sizing",icon:"air",t:"Room sizing: AC & dehumidifier",d:"The right BTU or pint size for your room."},
   {cat:"Shop smart",tool:"newhome",icon:"pro",t:"New home: first 30 days",d:"Shutoffs, locks, alarms, serials: the full checklist."},
+  {cat:"Car",tool:"vin",icon:"shield",t:"VIN check & recalls",d:"Decode your VIN and see open NHTSA safety recalls."},
+  {cat:"Car",tool:"car_maint",icon:"calendar",t:"Maintenance schedule",d:"What your car needs at its mileage."},
+  {cat:"Car",tool:"car_parts",icon:"wrench",t:"Car parts that fit",d:"Battery, wipers, bulbs and tires for your car."},
+  {cat:"Car",tool:"tire_age",icon:"roller",t:"How old are my tires?",d:"Decode the DOT date on the sidewall."},
+  {cat:"Safety",tool:"weather",icon:"air",t:"Weather alerts & prep",d:"Live National Weather Service alerts for your ZIP."},
+  {cat:"Safety",tool:"leak",icon:"drop",t:"Leak emergency",d:"The 60-second steps that limit water damage."},
+  {cat:"Safety",tool:"generator",icon:"element",t:"Generator sizing",d:"Watts you need in an outage, and how to run it safely."},
+  {cat:"Safety",tool:"radon",icon:"shield",t:"Radon check",d:"The #2 cause of lung cancer. A $15 test tells you."},
+  {cat:"Money & moving",tool:"bills",icon:"element",t:"Lower my utility bills",d:"The changes that save the most, ranked in $/yr."},
+  {cat:"Money & moving",tool:"internet",icon:"air",t:"Internet at my address",d:"Every provider and speed where you live (FCC)."},
+  {cat:"Money & moving",tool:"moving",icon:"pro",t:"Moving planner",d:"8-week checklist, including appliance prep."},
+  {cat:"Yard & projects",tool:"garden",icon:"drop",t:"Garden & lawn calendar",d:"Your hardiness zone and this month's yard jobs."},
+  {cat:"Yard & projects",tool:"paint",icon:"filter",t:"Paint calculator",d:"Gallons to buy for any room."},
+  {cat:"Fix it",id:"quick",icon:"air",t:"Wi-Fi, TV, printer & phone",d:"No internet, no signal, offline printer, battery and screen."},
 ];
 const CATS=[...new Set(SERVICES.map(x=>x.cat))];
-$("#services").innerHTML=CATS.map(c=>`<h3 class="svc-cat">${esc(c)}</h3>`+SERVICES.filter(x=>x.cat===c).map(x=>`<button class="svc ${x.main?"main":""}" type="button" ${x.tool?`data-tool="${x.tool}"`:`data-svc="${x.id}"`}>${ICON[x.icon]}<b>${esc(x.t)}</b><span>${esc(x.d)}</span></button>`).join("")).join("");
+$("#services").insertAdjacentHTML("beforebegin",`<div class="chips svc-filter" role="group" aria-label="Filter services"><button class="chip" type="button" data-cat="" aria-pressed="true">All ${SERVICES.length}</button>${CATS.map(c=>`<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="false">${esc(c)}</button>`).join("")}</div>`);
+document.addEventListener("click",e=>{const b=e.target.closest(".svc-filter .chip");if(!b)return;const c=b.dataset.cat;$$(".svc-filter .chip").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  $$("#services > *").forEach(el=>{const cat=el.classList.contains("svc-cat")?el.textContent:el.dataset.cat;el.hidden=!!c&&cat!==c})});
+SERVICES.sort((a,b)=>CATS.indexOf(a.cat)-CATS.indexOf(b.cat));
+$("#services").innerHTML=CATS.map(c=>`<h3 class="svc-cat">${esc(c)}</h3>`+SERVICES.filter(x=>x.cat===c).map(x=>`<button class="svc ${x.main?"main":""}" data-cat="${esc(x.cat)}" type="button" ${x.tool?`data-tool="${x.tool}"`:`data-svc="${x.id}"`}>${ICON[x.icon]}<b>${esc(x.t)}</b><span>${esc(x.d)}</span></button>`).join("")).join("");
 $("#services").addEventListener("click",e=>{const b=e.target.closest("[data-svc]");if(!b)return;const id=b.dataset.svc;
   if(id==="fix"){S.app=blankApp();return go("confirm")}
   if(id==="water"){const fr=store.get("ps-home",[]).find(a=>a.type==="refrigerator");if(fr){S.app={...fr};}else S.app=null;return go("water")}
@@ -710,6 +748,7 @@ function viewConfirm(focus,msg){
    ${a.unclear?`<p class="muted" style="font-size:14px">Double-check: ${esc(a.unclear)}</p>`:""}
    <label class="f" id="fuelWrap" for="inFuel" ${["dryer","range"].includes(a.type)?"":"hidden"}>Power<select id="inFuel"><option value="electric" ${a.fuel!=="gas"?"selected":""}>Electric</option><option value="gas" ${a.fuel==="gas"?"selected":""}>Gas</option></select></label>
    <button class="btn signal wide" type="button" id="toSymptom">This is right. Next</button>
+   <details class="where-d"><summary>Where's my label?</summary><ul class="wherelist"><li><b>Washer:</b> top-load under the lid or back of the console; front-load around the door frame.</li><li><b>Dryer:</b> inside the door frame, or the back panel.</li><li><b>Dishwasher:</b> edge of the inner door or side of the tub opening.</li><li><b>Fridge:</b> fresh-food section side wall or ceiling, or behind the crisper.</li><li><b>Range:</b> open the oven door or storage drawer and look at the frame.</li><li><b>Microwave:</b> inside the door frame, or on the back or bottom.</li><li><b>Disposal:</b> sticker on the bottom or side under the sink.</li></ul></details>
    <div class="acts"><button class="btn sm" type="button" data-act="snap">${S.labelImg?"Retake the photo":"Snap the label instead"}</button><button class="link" type="button" id="noLabel">I can't find the label</button></div>`,focus);
   const t=$("#inType");t.addEventListener("change",()=>{$("#fuelWrap").hidden=!["dryer","range"].includes(t.value)});
   $("#inModel").addEventListener("input",e=>{e.target.classList.remove("ai");e.target.removeAttribute("aria-invalid");$("#modelErr").hidden=true});
@@ -825,9 +864,11 @@ function viewParts(focus){
   $("#backSym").addEventListener("click",()=>go("symptom"));
   bindPlanCard(a);
 }
-function proBlock(a){return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Compare quotes from local, rated appliance technicians. Free to ask.</p>
-  <p class="disclose">We may earn a fee if you book through these links, at no cost to you. We don't sell your information.</p>
-  <div class="grid3">${[["Sears Home Services",CONFIG.PRO.sears,"sears"],["Angi",CONFIG.PRO.angi,"angi"],["Thumbtack",CONFIG.PRO.thumbtack,"thumbtack"]].map(([n,u,p],i)=>`<a class="btn ${i===0?"signal":""}" href="${esc(u)}" target="_blank" rel="sponsored noopener" data-partner="${p}">${n}</a>`).join("")}</div></div>`}
+function proBlock(a){
+  const links=[];if(CONFIG.PRO.sears)links.push(`<a class="btn signal" href="${esc(wrap("",CONFIG.PRO.sears))}" target="_blank" rel="sponsored noopener" data-partner="sears" data-lead="1">Book Sears Home Services</a>`);
+  if(CONFIG.PRO.call)links.push(`<a class="btn ${links.length?"":"signal"}" href="tel:${esc(CONFIG.PRO.call.replace(/[^+0-9]/g,""))}" data-partner="call" data-lead="1">Call a local pro: ${esc(CONFIG.PRO.call)}</a>`);
+  links.push(`<a class="btn ${links.length?"":"signal"}" href="https://www.google.com/maps/search/${enc(((TYPES[a.type]||PLUMB_TYPES[a.type]||"appliance")+" repair near me").toLowerCase())}" target="_blank" rel="noopener" data-partner="maps">Find rated technicians near you</a>`);
+  return `<div class="card" style="box-shadow:none;background:var(--bg)"><h3>Get a licensed technician</h3><p class="muted">Free to ask. Compare reviews and licenses before you book.</p>${links.length>1?`<p class="disclose">We may earn a fee if you book through some of these links, at no cost to you. We don't sell your information.</p>`:""}<div class="grid3">${links.join("")}</div></div>`}
 
 /* ---------- HVAC filter ---------- */
 function viewFilter(focus,msg){
@@ -1094,7 +1135,7 @@ const TOOLS={
    <label class="f" for="lfAge">Age (years)<input type="number" id="lfAge" min="0" max="60" value="8" inputmode="numeric"></label></div><div id="lfOut" aria-live="polite"></div>`},
   bind(){const run=()=>{const k=$("#lfSys").value,a=+$("#lfAge").value||0,[lo,hi]=LIFE[k];const left=Math.max(0,hi-a);const tone=a>=hi?"stop":a>=lo?"warn":"ok";
     $("#lfOut").innerHTML=`<div class="notice ${tone}"><b>${a>=hi?"Past typical lifespan":a>=lo?"In its last years":"Plenty of life left"}</b><span>Typical life: ${lo===hi?lo:lo+"–"+hi} years. About ${left} year${left===1?"":"s"} left on average. US averages, not a guarantee.</span></div>
-     ${a>=lo?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm signal" href="${esc(amazon("new "+k.toLowerCase()))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Start comparing replacements</a><a class="btn sm" href="${esc(CONFIG.PRO.angi)}" target="_blank" rel="sponsored noopener" data-partner="angi">Get an install quote</a></div>`:""}`};
+     ${a>=lo?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm signal" href="${esc(amazon("new "+k.toLowerCase()))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Start comparing replacements</a><a class="btn sm" href="https://www.google.com/maps/search/${enc(k.toLowerCase()+" installation near me")}" target="_blank" rel="noopener" data-partner="maps">Find an installer near you</a></div>`:""}`};
    $$("#lfSys,#lfAge").forEach(e=>e.addEventListener("input",run));run()}},
  alarms:{icon:"shield",t:"Smoke & CO alarm expiry",d:"Enter the date on the back of each alarm. We tell you when to replace it.",render(){return `
    <div class="grid2"><label class="f" for="alType">Alarm<select id="alType"><option value="10">Smoke alarm (10 years)</option><option value="7">Carbon monoxide alarm (5–7 years)</option><option value="7">Combination smoke + CO (7 years, check yours)</option></select></label>
@@ -1139,6 +1180,8 @@ function viewTool(focus){
   if(T.render) body=T.render();
   else if(T.seasons) body=`<div class="chips" role="tablist">${Object.keys(T.seasons).map((s,i)=>`<button type="button" class="chip" role="tab" data-season="${s}" aria-pressed="${i===0}">${s}</button>`).join("")}</div><div id="seasonOut"></div>`;
   else body=`<ul class="checks">${T.list.map((c,i)=>`<li><label><input type="checkbox" id="tl${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul>${T.buy?`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts">${T.buy.map(([n,q])=>`<a class="btn sm" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${esc(n)}</a>`).join("")}</div>`:""}${k==="freeze"?proBlock({}):""}`;
+  if(T.seasons&&T.buy) body+=`<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts">${T.buy.map(([n,q])=>`<a class="btn sm" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${esc(n)}</a>`).join("")}</div>`;
+  if(T.links) body+=`<div class="acts">${T.links.map(([n,u])=>`<a class="btn sm" href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("")}</div>`;
   openFlow(`<div class="flow-head"><h2>${esc(T.t)}</h2></div><p class="muted">${esc(T.d)}</p>${body}`,focus);
   if(T.bind) T.bind();
   if(T.seasons){const show=s=>{$("#seasonOut").innerHTML=`<ul class="checks">${T.seasons[s].map((c,i)=>`<li><label><input type="checkbox" id="ss${i}"><span>${esc(c)}</span></label></li>`).join("")}</ul><div class="acts">${reminderButtons(s+" home checklist (Fixwise)",12)}</div>`;$$("[data-season]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.season===s))};$$("[data-season]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.season)));show(Object.keys(T.seasons)[0])}
@@ -1152,10 +1195,117 @@ function viewQuick(focus){
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(b){closeHome();S.tool=b.dataset.tool;go("tool")}});
 
 
+/* ================= more services: car, weather, garden, bills, moving, electronics ================= */
+Object.assign(QUICK_TYPES,{router:"Wi-Fi & router",tv:"TV & streaming",printer:"Printer",phone:"Phone or laptop battery/screen"});
+Object.assign(PLUMB_TYPES,{router:"Wi-Fi & router",tv:"TV & streaming",printer:"Printer",phone:"Phone or laptop"});
+Object.assign(SYMPTOMS,{
+ router:[
+  {id:"no_internet",label:"No internet",free:["Unplug the modem AND the router. Wait 60 seconds. Plug in the modem first, wait until its lights are steady (2–3 min), then the router.","Check your provider's outage map or app.","Plug a laptop straight into the modem with a cable: if that works, the router is the problem."],
+   parts:[P("Wi-Fi router","medium","Routers older than about 5 years drop connections and can't keep up with faster plans.","Internet works wired to the modem but not over the router's Wi-Fi.","easy")]},
+  {id:"slow",label:"Slow or dead zones",free:["Move the router to a high, central, open spot (not in a cabinet).","Restart it, and update its firmware in the admin app."],
+   parts:[P("Mesh Wi-Fi system","high","Mesh units cover large or multi-floor homes far better than one router.","Speed is fine next to the router but poor two rooms away.","easy")]},
+ ],
+ tv:[
+  {id:"no_signal",label:"\"No signal\"",free:["Press Input/Source on the remote and pick the HDMI port the box is plugged into.","Unplug the TV and the streaming box for 60 seconds.","Swap the HDMI cable or try another HDMI port."],
+   parts:[P("High speed HDMI cable","medium","Damaged or old HDMI cables cause no-signal and flicker, especially with 4K.","The picture returns with a different cable.","easy")]},
+  {id:"remote",label:"Remote doesn't work",free:["Replace the batteries.","Point a phone camera at the remote's tip and press a button: if you don't see a light, the remote is dead."],
+   parts:[P("Universal TV remote","medium","Remotes get lost or fail.","No light on the camera test with new batteries.","easy")]},
+ ],
+ printer:[
+  {id:"offline",label:"Printer offline",free:["Restart the printer, then the computer.","Reconnect it to Wi-Fi from the printer's menu.","Remove it and add it again in your computer's printer settings."],parts:[]},
+  {id:"streaks",label:"Streaks or faded prints",free:["Run the printer's cleaning or head-alignment utility twice."],
+   parts:[P("Printer ink or toner (matching cartridge number)","high","Low or dried cartridges cause streaks and faded prints.","Read the cartridge number printed on the old cartridge.","easy")]},
+ ],
+ phone:[
+  {id:"battery",label:"Battery drains fast",free:["Check battery health in Settings (iPhone: Battery → Battery Health; many Androids: Battery → Battery health).","Update the system software and close apps that use lots of battery."],
+   parts:[P("Replacement battery kit for your exact model","medium","Batteries wear out after about 2–3 years. Many repair guides on iFixit show the steps for your model.","Battery health is under about 80%.","moderate")],
+   safety:{level:"caution",note:"Swollen batteries are a fire risk: stop charging and take it to a repair shop. Never puncture a battery."}},
+  {id:"screen",label:"Cracked screen",free:["Back up your phone now.","Check whether your phone has insurance or a carrier protection plan."],
+   parts:[P("Replacement screen for your exact model","medium","Screens are replaceable on most phones; difficulty varies a lot by model.","Look up your model's repair guide and difficulty on iFixit before buying.","hard")]},
+ ],
+});
+Object.assign(TOOLS,{
+ vin:{icon:"shield",t:"Car VIN check & recalls",d:"Decode your VIN and see open safety recalls from NHTSA.",render(){const car=store.get("ps-car",null);return `
+   <label class="f" for="vinIn">VIN (17 characters, on the dashboard or door sticker)<input class="mono" type="text" id="vinIn" maxlength="17" value="${esc(car&&car.vin||"")}" placeholder="1HGCM82633A004352" autocapitalize="characters" spellcheck="false"></label>
+   <p class="err" role="alert" id="vinErr" hidden></p><button class="btn signal wide" type="button" id="vinGo">Check my car</button><div id="vinOut" aria-live="polite" style="display:grid;gap:10px"></div>`},
+  bind(){const run=async()=>{const vin=$("#vinIn").value.toUpperCase().replace(/\s/g,"");const e=$("#vinErr"),o=$("#vinOut");if(vin.length!==17){e.hidden=false;e.textContent="A VIN has exactly 17 characters.";return}e.hidden=true;
+    o.innerHTML=`<div class="loading"><span class="scanbar"></span>Checking NHTSA records…</div>`;
+    try{const r=await api(`/vehicle?vin=${enc(vin)}`,null,"GET");const c=r.car;store.set("ps-car",c);track("recall",{type:"car"});
+      const park=r.recalls.some(x=>x.parkIt||x.parkOutside);
+      o.innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)"><p class="stamp">Your vehicle</p><p class="verdict" style="font-size:32px">${esc(c.year)} ${esc(c.make)} ${esc(c.model)}</p><p class="muted">${esc([c.trim,c.engine,c.fuel,c.drive].filter(Boolean).join(" · "))}</p></div>
+       ${park?`<div class="notice stop"><b>Park-it warning</b><span>At least one recall says not to drive or to park outside. Call a dealer today; recall repairs are free.</span></div>`:""}
+       ${r.recalls.length?`<div class="notice warn"><b>${r.recalls.length} recall${r.recalls.length>1?"s":""} for ${esc(c.year)} ${esc(c.make)} ${esc(c.model)}</b><span>Not every recall applies to every VIN. Confirm yours on nhtsa.gov/recalls; dealers fix recalls for free.</span></div>${r.recalls.map(x=>`<div class="app-row"><b>${esc(x.component)}</b><span class="muted" style="font-size:13px">${esc(x.id)} · ${esc(x.date||"")}</span><span style="font-size:14px">${esc(x.summary).slice(0,320)}</span>${x.remedy?`<span style="font-size:14px"><b>Remedy:</b> ${esc(x.remedy).slice(0,200)}</span>`:""}</div>`).join("")}`:`<div class="notice ok"><b>No recalls listed for this model year</b><span>Checked against NHTSA today.</span></div>`}
+       <a class="btn" href="https://www.nhtsa.gov/recalls" target="_blank" rel="noopener">Confirm with your VIN on nhtsa.gov</a>
+       <div class="acts"><button class="btn sm" type="button" data-tool="car_maint">Maintenance schedule</button><button class="btn sm" type="button" data-tool="car_parts">Find parts that fit</button></div>`;
+    }catch(x){o.innerHTML=`<div class="notice info"><b>Check on nhtsa.gov</b><span>${x.offline?"Our VIN check isn't available right now.":esc(x.message)}</span></div><a class="btn" href="https://www.nhtsa.gov/recalls" target="_blank" rel="noopener">Open nhtsa.gov/recalls</a>`}};
+   $("#vinGo").addEventListener("click",run)}},
+ car_maint:{icon:"calendar",t:"Car maintenance schedule",d:"What your car needs at its mileage, with reminders.",render(){const c=store.get("ps-car",null);return `
+   ${c?`<p class="mono ai">${esc(c.year)} ${esc(c.make)} ${esc(c.model)}</p>`:`<p class="muted" style="font-size:14px">Tip: run the VIN check first to save your car.</p>`}
+   <div class="grid2"><label class="f" for="cmMiles">Odometer (miles)<input type="number" id="cmMiles" value="45000" inputmode="numeric"></label><label class="f" for="cmUse">Driving<select id="cmUse"><option value="1">Normal</option><option value="0.7">Severe (towing, short trips, extreme heat or cold)</option></select></label></div><div id="cmOut"></div>`},
+  bind(){const ITEMS=[["Oil and filter change",7500,"synthetic motor oil"],["Tire rotation",7500,"tire pressure gauge"],["Engine air filter",15000,"engine air filter"],["Cabin air filter",15000,"cabin air filter"],["Brake fluid",30000,"brake fluid"],["Coolant",60000,"engine coolant"],["Spark plugs",100000,"spark plugs"],["Wiper blades",12000,"wiper blades"]];
+   const c=store.get("ps-car",null),car=c?`${c.year} ${c.make} ${c.model} `:"";
+   const run=()=>{const mi=+$("#cmMiles").value||0,k=+$("#cmUse").value;
+    $("#cmOut").innerHTML=`<p class="muted" style="font-size:13px">Typical intervals; your owner's manual is the final word.</p><p class="disclose">Affiliate links: we may earn a commission.</p>`+ITEMS.map(([n,iv,q])=>{const I=Math.round(iv*k),next=Math.ceil((mi+1)/I)*I,left=next-mi,due=left<=I*.1;
+     return `<div class="app-row"><div class="flow-head"><b>${n}</b><span class="mono" style="font-size:13px;color:var(--${due?"stop":"muted"})">${due?"Due now":"in "+left.toLocaleString()+" mi"}</span></div><div class="acts"><a class="btn sm" href="${esc(amazon(car+q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Shop ${esc(q)}</a></div></div>`}).join("")};
+   $$("#cmMiles,#cmUse").forEach(e=>e.addEventListener("input",run));run()}},
+ car_parts:{icon:"wrench",t:"Car parts that fit",d:"Battery, wipers, bulbs and tires for your exact car.",render(){const c=store.get("ps-car",null);return `
+   <div class="grid3"><label class="f" for="cpY">Year<input type="number" id="cpY" value="${esc(c&&c.year||"2018")}"></label><label class="f" for="cpMk">Make<input type="text" id="cpMk" value="${esc(c&&c.make||"")}" placeholder="Toyota"></label><label class="f" for="cpMd">Model<input type="text" id="cpMd" value="${esc(c&&c.model||"")}" placeholder="Camry"></label></div>
+   <label class="f" for="cpTire">Tire size (on the tire sidewall, optional)<input class="mono" type="text" id="cpTire" placeholder="225/65R17"></label><div id="cpOut"></div>`},
+  bind(){const run=()=>{const car=`${$("#cpY").value} ${$("#cpMk").value} ${$("#cpMd").value}`.trim(),t=$("#cpTire").value.trim();
+    const L=[["Car battery","battery"],["Wiper blades","wiper blades"],["Headlight bulbs","headlight bulb"],["Engine air filter","engine air filter"],["Cabin air filter","cabin air filter"]];if(t)L.unshift([`Tires ${t}`,`${t} tires`]);
+    $("#cpOut").innerHTML=`<p class="muted" style="font-size:13px">On each store, use its "fits my vehicle" filter to confirm the exact part.</p><p class="disclose">Affiliate links: we may earn a commission.</p><div class="grid2">${L.map(([n,q])=>`<a class="btn" href="${esc(amazon(car+" "+q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">${esc(n)}</a>`).join("")}</div>`};
+   $$("#cpY,#cpMk,#cpMd,#cpTire").forEach(e=>e.addEventListener("input",run));run()}},
+ tire_age:{icon:"roller",t:"How old are my tires?",d:"Read the 4-digit DOT date code on the sidewall.",render(){return `<label class="f" for="taIn">Last 4 digits of the DOT code (week + year, e.g. 2319)<input class="mono" type="text" id="taIn" maxlength="4" value="2319" inputmode="numeric"></label><div id="taOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const v=$("#taIn").value.replace(/\D/g,"");if(v.length!==4){$("#taOut").innerHTML="";return}const wk=+v.slice(0,2),yr=2000+ +v.slice(2);const age=(Date.now()-new Date(yr,0,1+7*(wk-1)))/31557600000;const old=age>=6;
+    $("#taOut").innerHTML=`<div class="notice ${age>=10?"stop":old?"warn":"ok"}"><b>Made in week ${wk} of ${yr}: about ${age.toFixed(1)} years old</b><span>${age>=10?"Replace now: rubber this old can fail even with good tread.":old?"Many tire makers recommend an inspection every year after 5–6 years, and replacement by 10.":"Fine by age. Check tread depth with a penny too."}</span></div>`};$("#taIn").addEventListener("input",run);run()}},
+ weather:{icon:"air",t:"Weather alerts & prep",d:"Active National Weather Service alerts for your ZIP, and what to do.",render(){return `<label class="f" for="wxZip">ZIP code<input type="text" id="wxZip" inputmode="numeric" maxlength="5" value="${esc(store.get("ps-zip",""))}" placeholder="10001"></label><button class="btn signal wide" type="button" id="wxGo">Check alerts</button><div id="wxOut" aria-live="polite" style="display:grid;gap:10px"></div>`},
+  bind(){const PREP={Freeze:"freeze",Winter:"Insulate pipes, keep heat at 55°F+, charge phones, stock water and batteries.",Heat:"Close blinds, check AC filter, never leave kids or pets in cars, check on neighbors.",Hurricane:"Bring in outdoor items, fill the car with gas, stock 3 days of water and food, know your evacuation zone.",Flood:"Move valuables up, turn off power at the panel if water is coming in and it's safe, never drive through flood water.",Tornado:"Pick your safest room (lowest floor, no windows), keep shoes and a flashlight there.",Wind:"Secure outdoor furniture and trash cans, park away from trees.",Fire:"Pack a go-bag, keep the car fueled, close windows and vents if smoke is near."};
+   const run=async()=>{const z=$("#wxZip").value.replace(/\D/g,"");const o=$("#wxOut");if(z.length!==5){o.innerHTML=`<p class="err">Enter a 5-digit ZIP.</p>`;return}store.set("ps-zip",z);o.innerHTML=`<div class="loading"><span class="scanbar"></span>Checking the National Weather Service…</div>`;
+    try{const r=await api(`/weather?zip=${z}`,null,"GET");
+     o.innerHTML=(r.alerts.length?r.alerts.map(a=>{const k=Object.keys(PREP).find(x=>a.event.includes(x));return `<div class="notice ${/Extreme|Severe/.test(a.severity)?"stop":"warn"}"><b>${esc(a.event)}</b><span>${esc(a.headline||"")}</span>${k&&PREP[k]!=="freeze"?`<span><b>Do now:</b> ${esc(PREP[k])}</span>`:k?`<button class="btn sm" type="button" data-tool="freeze" style="justify-self:start">Freeze checklist</button>`:""}</div>`}).join(""):`<div class="notice ok"><b>No active alerts for ${esc(r.place)}</b><span>Checked with the National Weather Service just now.</span></div>`)+
+     `<p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm" href="${esc(amazon("emergency preparedness kit"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Emergency kits</a><a class="btn sm" href="${esc(amazon("weather radio noaa"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">NOAA weather radios</a><button class="btn sm" type="button" data-tool="generator">Generator sizing</button></div>`;
+    }catch(x){o.innerHTML=`<div class="notice info"><b>Check weather.gov</b><span>${x.offline?"Our alert check isn't available right now.":esc(x.message)}</span></div><a class="btn" href="https://www.weather.gov/" target="_blank" rel="noopener">Open weather.gov</a>`}};
+   $("#wxGo").addEventListener("click",run);if($("#wxZip").value.length===5)run()}},
+ generator:{icon:"element",t:"Generator sizing",d:"How many watts you need to keep the essentials running in an outage.",render(){const L=[["Refrigerator",700,2200],["Sump pump (1/2 hp)",1050,2150],["Furnace fan",800,2350],["Window AC",1200,3600],["Microwave",1000,0],["Lights (10 LED)",100,0],["Wi-Fi + phone chargers",50,0],["TV",150,0],["Well pump",1000,2100]];
+   return `<ul class="checks">${L.map(([n,r,s2],i)=>`<li><label><input type="checkbox" class="gen" data-r="${r}" data-s="${s2}" id="gn${i}" ${i<3?"checked":""}><span>${n} <span class="muted mono" style="font-size:12px">${r}W${s2?" · start "+s2+"W":""}</span></span></label></li>`).join("")}</ul><div id="genOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{let run_=0,surge=0;$$(".gen").forEach(c=>{if(c.checked){run_+=+c.dataset.r;surge=Math.max(surge,+c.dataset.s-+c.dataset.r)}});const need=Math.ceil((run_+surge)*1.1/500)*500;
+    $("#genOut").innerHTML=`<div class="grid2"><div class="stat"><b>${run_.toLocaleString()} W</b><span>Running</span></div><div class="stat"><b>${need.toLocaleString()} W</b><span>Generator size to look for</span></div></div>
+     <div class="notice stop"><b>Never plug a generator into a wall outlet</b><span>Backfeeding can kill utility workers. Use extension cords or a transfer switch installed by an electrician. Run it outdoors, 20+ feet from windows.</span></div>
+     <p class="disclose">Affiliate link: we may earn a commission.</p><a class="btn" href="${esc(amazon(need+" watt portable generator"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">See ${need.toLocaleString()}W generators</a>`};$$(".gen").forEach(c=>c.addEventListener("change",run));run()}},
+ bills:{icon:"element",t:"Lower my utility bills",d:"The changes that save the most money in your home, ranked.",render(){return `<div class="grid2"><label class="f" for="blBill">Average monthly electric bill ($)<input type="number" id="blBill" value="160" inputmode="numeric"></label><label class="f" for="blHeat">Heating<select id="blHeat"><option value="elec">Electric</option><option value="gas">Gas</option><option value="oil">Oil/propane</option></select></label>
+   <label class="f" for="blThermo">Thermostat<select id="blThermo"><option value="0">Basic / manual</option><option value="1">Smart or programmable</option></select></label><label class="f" for="blLed">Lighting<select id="blLed"><option value="0">Mostly old bulbs</option><option value="1">Mostly LED</option></select></label></div><div id="blOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const b=+$("#blBill").value||0,yr=b*12,A=[];
+    if($("#blThermo").value==="0")A.push(["Smart thermostat with setbacks",yr*.08,"smart thermostat"]);
+    if($("#blLed").value==="0")A.push(["Switch to LED bulbs",Math.min(150,yr*.06),"led light bulbs"]);
+    A.push(["Seal drafts: weatherstrip doors, caulk windows",yr*.05,"door weatherstrip"]);A.push(["Smart power strips for TVs and computers",Math.min(100,yr*.04),"smart power strip"]);
+    A.push(["Water heater at 120°F + insulate first 6 ft of pipe",$("#blHeat").value==="elec"?yr*.04:40,"pipe insulation"]);A.push(["Clean or replace HVAC filter every 90 days",yr*.03,"air filter"]);
+    A.sort((x,y)=>y[1]-x[1]);
+    $("#blOut").innerHTML=`<p class="muted" style="font-size:13px">Estimates based on typical U.S. savings; your results depend on your home and habits.</p><p class="disclose">Affiliate links: we may earn a commission.</p>`+A.map(([n,v,q],i)=>`<div class="app-row"><div class="flow-head"><b>${i+1}. ${n}</b><span class="mono ai">~$${Math.round(v)}/yr</span></div><a class="btn sm" style="justify-self:start" href="${esc(amazon(q))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Shop</a></div>`).join("")+`<a class="btn sm" href="https://www.energystar.gov/rebate-finder" target="_blank" rel="noopener">Find ENERGY STAR rebates</a>`};
+   $$("#blBill,#blHeat,#blThermo,#blLed").forEach(e=>e.addEventListener("input",run));run()}},
+ moving:{icon:"pro",t:"Moving planner",d:"An 8-week checklist, from change of address to the appliance prep movers forget.",seasons:{"8 weeks out":["Get 3 quotes from FMCSA-registered movers (check them on fmcsa.dot.gov).","Start using up frozen food and pantry items.","Make an inventory and photos of valuables."],"4 weeks out":["File your change of address at usps.com/move.","Schedule utility shut-off and set-up (power, gas, water, internet).","Order boxes and packing supplies."],"1 week out":["Defrost the freezer and dry the fridge 24–48 hours before.","Install washer shipping bolts; disconnect and drain hoses.","Have a pro disconnect gas appliances.","Pack a first-night box: chargers, toiletries, tools, sheets."],"Moving day":["Photograph meter readings at both homes.","Check every room and closet before the truck leaves."],"First week":["Find the main water shutoff and electrical panel.","Test smoke and CO alarms; change the HVAC filter.","Save your appliances in My home and check recalls."]}},
+ paint:{icon:"filter",t:"Paint calculator",d:"How many gallons to buy for a room, the first time.",render(){return `<div class="grid3"><label class="f" for="ptL">Room length (ft)<input type="number" id="ptL" value="12"></label><label class="f" for="ptW">Width (ft)<input type="number" id="ptW" value="12"></label><label class="f" for="ptH">Ceiling height (ft)<input type="number" id="ptH" value="8"></label><label class="f" for="ptD">Doors<input type="number" id="ptD" value="1"></label><label class="f" for="ptWin">Windows<input type="number" id="ptWin" value="2"></label><label class="f" for="ptC">Coats<input type="number" id="ptC" value="2"></label></div><div id="ptOut" aria-live="polite"></div>`},
+  bind(){const run=()=>{const L=+$("#ptL").value||0,W=+$("#ptW").value||0,H=+$("#ptH").value||0;const area=Math.max(0,2*(L+W)*H-(+$("#ptD").value||0)*20-(+$("#ptWin").value||0)*15);const gal=Math.ceil(area*(+$("#ptC").value||1)/350*10)/10;
+    $("#ptOut").innerHTML=`<div class="grid2"><div class="stat"><b>${Math.round(area)} sq ft</b><span>Wall area</span></div><div class="stat"><b>${gal} gal</b><span>Paint (about 350 sq ft per gallon per coat)</span></div></div><p class="disclose">Affiliate link: we may earn a commission.</p><a class="btn sm" href="${esc(amazon("interior paint roller kit"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Rollers, tape & supplies</a>`};
+   $$("#ptL,#ptW,#ptH,#ptD,#ptWin,#ptC").forEach(e=>e.addEventListener("input",run));run()}},
+ garden:{icon:"drop",t:"Garden & lawn calendar",d:"Your hardiness zone from your ZIP, and what to do in the yard this month.",render(){return `<label class="f" for="gzZip">ZIP code<input type="text" id="gzZip" inputmode="numeric" maxlength="5" value="${esc(store.get("ps-zip",""))}" placeholder="10001"></label><button class="btn signal wide" type="button" id="gzGo">Show my calendar</button><div id="gzOut" aria-live="polite"></div>`},
+  bind(){const M=new Date().getMonth();const TASK=(z)=>{const n=parseInt(z,10)||6;const warm=n>=8,cold=n<=5;const S=[["Dec","Jan","Feb"],["Mar","Apr","May"],["Jun","Jul","Aug"],["Sep","Oct","Nov"]];const season=[0,0,1,1,1,2,2,2,3,3,3,0][M];
+    const T={0:[cold?"Plan your garden and order seeds.":"Prune dormant shrubs and fruit trees.",warm?"Plant cool-season greens and onions.":"Start peppers and tomatoes indoors late in the season.","Service the mower: blade, plug, oil."],1:[cold?"Plant peas and lettuce once soil can be worked.":"Plant tomatoes and peppers after the last frost.","Apply pre-emergent before soil hits 55°F.","Start mowing at the highest setting."],2:["Water deeply early in the morning, 1 inch a week.",warm?"Plant heat-lovers: okra, sweet potato.":"Mulch beds to hold moisture.","Raise the mower height in heat."],3:[cold?"Plant garlic and spring bulbs.":"Overseed cool-season lawns now.","Rake and mulch leaves; aerate the lawn.","Winterize irrigation before the first freeze."]};return T[season]};
+   const run=async()=>{const z=$("#gzZip").value.replace(/\D/g,"");const o=$("#gzOut");if(z.length!==5){o.innerHTML=`<p class="err">Enter a 5-digit ZIP.</p>`;return}store.set("ps-zip",z);o.innerHTML=`<div class="loading"><span class="scanbar"></span>Finding your zone…</div>`;
+    let zone="";try{zone=(await api(`/zone?zip=${z}`,null,"GET")).zone}catch(x){}
+    o.innerHTML=`<div class="card" style="box-shadow:none;background:var(--bg)"><p class="stamp">Your hardiness zone</p><p class="verdict">${zone?esc(zone):"Unknown"}</p>${zone?"":`<p class="muted" style="font-size:13px">Look up your zone at planthardiness.ars.usda.gov.</p>`}<h3>This month</h3><ul class="checks">${TASK(zone).map((t,i)=>`<li><label><input type="checkbox" id="gz${i}"><span>${esc(t)}</span></label></li>`).join("")}</ul><p class="disclose">Affiliate links: we may earn a commission.</p><div class="acts"><a class="btn sm" href="${esc(amazon("vegetable seeds zone "+(zone||"")))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Seeds for your zone</a><a class="btn sm" href="${esc(amazon("lawn fertilizer spreader"))}" target="_blank" rel="sponsored noopener" data-partner="amazon">Lawn care</a></div></div>`};
+   $("#gzGo").addEventListener("click",run);if($("#gzZip").value.length===5)run()}},
+ radon:{icon:"shield",t:"Radon check",d:"Radon is the #2 cause of lung cancer in the U.S. Testing costs about $15.",list:["The EPA recommends testing every home's lowest lived-in level, whatever the region.","Use a short-term test kit for 2–7 days with windows closed.","If the result is 4 pCi/L or higher, the EPA recommends fixing it with a certified radon mitigation pro.","Retest every 2 years and after big renovations."],buy:[["Radon test kits","radon test kit"],["Digital radon detectors","digital radon detector"]]},
+ leak:{icon:"drop",t:"Leak emergency card",d:"Water where it shouldn't be? The 60-second steps that limit the damage.",list:["Turn off the main water shutoff (usually where the water line enters: basement, garage, or near the water heater).","If water is near outlets or the panel, don't touch it: switch off power at the panel only if you can reach it standing on a dry floor.","Open a faucet on the lowest floor to drain the pipes.","Photograph everything for insurance before you clean up.","Call a plumber; dry the area within 24–48 hours to prevent mold."],buy:[["Smart water leak sensors","water leak detector"],["Automatic water shutoff valve","smart water shutoff valve"]]},
+ internet:{icon:"air",t:"Internet providers at my address",d:"See every provider and speed available where you live, from the FCC.",list:["Open the FCC National Broadband Map and type your address.","Compare advertised speeds: 100 Mbps download is plenty for most households of 3–4.","Ask your current provider for a retention deal before switching: mention a competitor's price.","Return rented modems and use your own to save $10–15 a month."],buy:[["Buy-your-own cable modems","docsis 3.1 cable modem"],["Mesh Wi-Fi","mesh wifi system"]]},
+});
+Object.assign(LIFE,{"Car battery":[3,5],"Tires":[6,10],"Wi-Fi router":[4,5]});
+
+Object.assign(TOOLS.internet,{links:[["Open the FCC broadband map","https://broadbandmap.fcc.gov/"]]});Object.assign(TOOLS.moving,{links:[["USPS change of address","https://moversguide.usps.com/"],["Check a mover on FMCSA","https://www.fmcsa.dot.gov/protect-your-move"]],buy:[["Moving boxes kit","moving boxes kit"],["Packing tape & bubble wrap","packing supplies kit"]]});Object.assign(TOOLS.radon,{links:[["EPA radon guide","https://www.epa.gov/radon"]]});
+
 /* ================= paid repair plans (Payhip license keys; verified on the server) ================= */
 const PRICES={single:"$3.99",pack:"$12.99",year:"$29"};
 const savedKey=()=>store.get("ps-key","");
-function payLink(kind,label,primary){const u=CONFIG.PAYHIP[kind];return u?`<a class="btn ${primary?"signal":""}" href="${esc(u)}" target="_blank" rel="noopener" data-partner="payhip-${kind}">${label}</a>`:`<button class="btn" type="button" disabled title="Payments open at launch">${label}</button>`}
+function payLink(kind,label,primary){const u=PLANS_ON&&CONFIG.PAYHIP[kind];return u?`<a class="btn ${primary?"signal":""}" href="${esc(u)}" target="_blank" rel="noopener" data-partner="payhip-${kind}">${label}</a>`:`<button class="btn" type="button" disabled title="Payments open at launch">${label}</button>`}
 function planCard(a){
   const k=savedKey();
   return `<div class="plancard" id="planCard">
@@ -1174,7 +1324,7 @@ function bindPlanCard(a){
     e.hidden=true;go.disabled=true;go.textContent="Writing your plan…";
     try{const r=await api("/plan",{key,appliance:a,symptom:((SYMPTOMS[a.type]||[]).find(x=>x.id===S.symptom)||{}).label||"",details:S.details,image:S.partImg?{media_type:S.partImg.media_type,data:S.partImg.data}:undefined});
       if(r.product!=="single") store.set("ps-key",key);
-      S.plan=r;track("pro",{type:a.type,src:r.product});go_("plan");
+      S.plan=r;track("plan_ok",{type:a.type,src:r.product});go_("plan");
     }catch(x){e.hidden=false;e.textContent=x.offline?"Plans open at launch. Your key is safe; try again then.":x.message}
     finally{go.disabled=false;go.textContent="Get my plan"}});
 }
@@ -1209,6 +1359,15 @@ function viewProPlans(focus){
    <button class="btn signal wide" type="button" data-act="type">Start with my appliance</button>`,focus);
 }
 
+
+/* ================= motion helpers: scramble text, kinetic headlines, magnetic buttons ================= */
+const SCR="ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
+function scramble(el,text,dur=520){if(!el)return;if(RM){el.textContent=text;return}const t0=performance.now();const tick=now=>{const k=Math.min(1,(now-t0)/dur);const n=Math.floor(k*text.length);el.textContent=text.slice(0,n)+[...text.slice(n)].map(ch=>ch===" "?" ":SCR[Math.random()*SCR.length|0]).join("");if(k<1)requestAnimationFrame(tick);else el.textContent=text};requestAnimationFrame(tick)}
+$$(".chap h2, .hero h1").forEach(h=>{const words=h.innerHTML.split(/(<br\s*\/?>|\s+)/);let i=0;h.innerHTML=words.map(w=>/^<br/.test(w)?w:/^\s+$/.test(w)?" ":w?`<span class="kw" style="--i:${i++}">${w}</span>`:"").join("")});
+if("IntersectionObserver" in window){const io=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");if(x.target.id==="c2"&&!x.target.dataset.done){x.target.dataset.done=1;x.target.querySelectorAll(".kw").forEach((w,j)=>setTimeout(()=>scramble(w,w.textContent,420),j*120))}}else x.target.classList.remove("in")}),{threshold:.35});$$(".chap h2, .hero h1").forEach(h=>io.observe(h))}else $$(".chap h2, .hero h1").forEach(h=>h.classList.add("in"));
+if(!RM&&matchMedia("(hover:hover)").matches){document.addEventListener("pointermove",e=>{const b=e.target.closest&&e.target.closest(".btn.signal");$$(".btn.signal.mag").forEach(x=>{if(x!==b){x.style.transform="";x.classList.remove("mag")}});if(!b)return;const r=b.getBoundingClientRect();const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);b.classList.add("mag");b.style.transform=`translate(${(dx*.18).toFixed(1)}px,${(dy*.25).toFixed(1)}px)`},{passive:true})}
+document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest(".btn");if(!b||RM)return;const r=b.getBoundingClientRect();b.style.setProperty("--rx",(e.clientX-r.left)+"px");b.style.setProperty("--ry",(e.clientY-r.top)+"px");b.classList.remove("rip");void b.offsetWidth;b.classList.add("rip")});
+
 /* ================= label photo ================= */
 async function onLabel(file){
   closeHome();flash();track("label_start");
@@ -1241,7 +1400,7 @@ document.addEventListener("click",e=>{
     if(act==="upkeep"){closeHome();go("upkeep")}
   }
   const g=e.target.closest("[data-go]");if(g) go(g.dataset.go);
-  const p=e.target.closest("a[data-partner]");if(p) track("click",{partner:p.dataset.partner,type:S.app&&S.app.type});
+  const p=e.target.closest("a[data-partner]");if(p){track(p.dataset.lead?"lead":"click",{partner:p.dataset.partner,type:S.app&&S.app.type})}
   const ic=e.target.closest("[data-ics]");if(ic) downloadICS(ic.dataset.ics,+ic.dataset.m);
 });
 
@@ -1306,10 +1465,10 @@ window.PS3D=(function(){
   let renderer;
   try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"})}catch(e){document.documentElement.classList.add("no3d");return null}
   const PHONE=Math.min(innerWidth,innerHeight)<700;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,PHONE?1.5:1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,PHONE?1.25:1.75));
   renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  const BG=0xEEF0EE;
+  renderer.shadowMap.enabled=!PHONE;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  const BG=0xEEF0EE;let blobMesh=null,floorMesh=null;
   const scene=new THREE.Scene();scene.background=new THREE.Color(BG);scene.fog=new THREE.Fog(BG,16,34);
   const camera=new THREE.PerspectiveCamera(30,1,.05,100);
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
@@ -1329,8 +1488,8 @@ window.PS3D=(function(){
 
   // floor: soft contact shadow + receiving plane
   {const c=document.createElement("canvas");c.width=c.height=256;const g=c.getContext("2d");const r=g.createRadialGradient(128,128,10,128,128,128);r.addColorStop(0,"rgba(20,28,34,.38)");r.addColorStop(1,"rgba(20,28,34,0)");g.fillStyle=r;g.fillRect(0,0,256,256);
-   const blob=new THREE.Mesh(new THREE.PlaneGeometry(4.6,4.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.002;scene.add(blob);
-   const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.ShadowMaterial({opacity:.14}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor)}
+   const blob=blobMesh=new THREE.Mesh(new THREE.PlaneGeometry(4.6,4.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.002;scene.add(blob);
+   const floor=floorMesh=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.ShadowMaterial({opacity:.14}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor)}
 
   // materials
   const P=o=>new THREE.MeshPhysicalMaterial(o);
@@ -1453,6 +1612,32 @@ window.PS3D=(function(){
   const PUMP_FRONT=V(.9,1.75,3.1);
   const fadeables=parts.filter(p=>p!==pump&&p!==deck);
 
+
+  // ===== Read-Lens: an X-ray circle that follows the pointer/finger in the hero =====
+  const xrayMat=new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Color(0x3FD8F2)},hot:{value:new THREE.Color(0xFF6B2C)}},
+    vertexShader:`varying vec3 vN;varying vec3 vV;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform vec3 c;varying vec3 vN;varying vec3 vV;void main(){float r=pow(1.-abs(dot(vN,vV)),1.6);gl_FragColor=vec4(vec3(.03,.07,.09)+c*clamp(.22+r*1.15,0.,1.2),1.);}`});
+  const rt=new THREE.WebGLRenderTarget(2,2,{depthBuffer:true});
+  const quadCam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const lensMat=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,uniforms:{t:{value:rt.texture},lens:{value:new THREE.Vector2(-999,-999)},R:{value:120},res:{value:new THREE.Vector2(1,1)},a:{value:0}},
+    vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`,
+    fragmentShader:`uniform sampler2D t;uniform vec2 lens;uniform float R;uniform vec2 res;uniform float a;varying vec2 vUv;
+      void main(){vec2 px=vUv*res;float d=distance(px,lens);if(d>R+3.)discard;vec3 x=texture2D(t,vUv).rgb;
+      float ring=smoothstep(R+3.,R,d)*smoothstep(R-3.,R,d);float inside=smoothstep(R,R-1.5,d);
+      vec3 col=mix(vec3(.24,.85,.95),x,inside*(1.-ring));
+      float scan=.06*step(.5,fract(px.y/3.));col+=vec3(.25,.85,.95)*scan*inside;
+      gl_FragColor=vec4(col,a*max(inside,ring));}`});
+  const quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),lensMat);const quadScene=new THREE.Scene();quadScene.add(quad);
+  const lensHud=$("#lensHud"),LENS_PARTS=[["Drum",drum],["Drain pump",pump],["Motor",motor],["Drive belt",belt],["Water valve",valve],["Control panel",con],["Lid",lidPivot]];
+  const ptr={x:-1,y:-1,last:-1e9,has:false},lensPos=new THREE.Vector2(-999,-999),gyro={x:0,y:0,on:false};
+  addEventListener("pointermove",e=>{ptr.x=e.clientX;ptr.y=e.clientY;ptr.last=performance.now();ptr.has=true},{passive:true});
+  addEventListener("pointerdown",e=>{ptr.x=e.clientX;ptr.y=e.clientY;ptr.last=performance.now();ptr.has=true},{passive:true});
+  function enableGyro(){const on=()=>{gyro.on=true;addEventListener("deviceorientation",ev=>{gyro.x=Math.max(-1,Math.min(1,(ev.gamma||0)/20));gyro.y=Math.max(-1,Math.min(1,((ev.beta||45)-45)/20))},{passive:true})};
+    if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==="function"){DeviceOrientationEvent.requestPermission().then(r=>{if(r==="granted")on()}).catch(()=>{})}else on()}
+  const tiltBtn=$("#tiltBtn");if(tiltBtn){if(!("DeviceOrientationEvent" in window)||!matchMedia("(hover:none)").matches)tiltBtn.hidden=true;tiltBtn.addEventListener("click",()=>{enableGyro();tiltBtn.hidden=true})}
+  const center=V(0,1.6,0),BGc=new THREE.Color(BG),DARKc=new THREE.Color(0x0B1418),bgNow=new THREE.Color();
+  let parX=0,parY=0,lastHud="";
+
   // HTML leader tags for the exploded view
   const tagsEl=$("#tags");const TAGS=[["Drum",drum,V(0,.9,0)],["Motor",motor,V(0,.35,0)],["Drive belt",belt,V(-.9,.1,0)],["Drain pump",pump,V(0,.4,0)]];
   if(tagsEl) tagsEl.innerHTML=TAGS.map(([t],i)=>`<span class="tag${i===3?" hot":""}"><i></i>${t}</span>`).join("");
@@ -1488,8 +1673,35 @@ window.PS3D=(function(){
     const fly=seg(t,4.4,5.0)*(1-back);pump.position.lerp(PUMP_FRONT,fly);pump.scale.setScalar(1+fly*.6);pump.rotation.y=fly*((now/1600)%(Math.PI*2));
     pumpLight.position.copy(pump.position).add(tmp.set(.3,.5,.8));washer.localToWorld(pumpLight.position);
     // shadows only re-render while things move
-    renderer.shadowMap.autoUpdate=t<6;lastE=e;
+    // pointer / gyro parallax, strongest in the hero
+    const hero=1-seg(t,.6,1.2);let tx=0,ty=0;
+    if(gyro.on){tx=gyro.x;ty=gyro.y}else if(ptr.has){tx=ptr.x/innerWidth*2-1;ty=ptr.y/innerHeight*2-1}
+    parX+=(tx-parX)*.06;parY+=(ty-parY)*.06;washer.rotation.y=RM?0:parX*.32*hero;washer.rotation.x=RM?0:parY*.05*hero;
+    key.position.set(4+parX*3,7,5-parY*2);
+    // dark contrast moment while the washer is open (chapters 3–4)
+    const dk=seg(t,2.55,3.05)*(1-seg(t,4.55,5.05));
+    bgNow.copy(BGc).lerp(DARKc,dk);scene.background=bgNow;scene.fog.color.copy(bgNow);
+    document.documentElement.classList.toggle("dark-moment",dk>.5);
+    renderer.shadowMap.autoUpdate=t<6&&!PHONE;lastE=e;
     renderer.render(scene,camera);
+    // Read-Lens pass (hero only)
+    const la=(1-seg(t,.5,.9));lensMat.uniforms.a.value=la;
+    if(la>.01){const w=innerWidth,h=innerHeight,now2=performance.now();
+      center.set(0,1.7,0);washer.localToWorld(center);center.project(camera);const cx=(center.x*.5+.5)*w,cy=(-center.y*.5+.5)*h;
+      let gx,gy;if(ptr.has&&now2-ptr.last<1400){gx=ptr.x;gy=ptr.y}else{const k=now2/1000;gx=cx+Math.sin(k*.9)*w*(MOBILE?.18:.09);gy=cy+Math.sin(k*1.3)*h*.12}
+      if(RM){gx=cx;gy=cy}
+      if(lensPos.x<-900)lensPos.set(gx,gy);else lensPos.set(lensPos.x+(gx-lensPos.x)*.18,lensPos.y+(gy-lensPos.y)*.18);
+      const pr=renderer.getPixelRatio();const bw=Math.max(2,Math.floor(w*pr*.5)),bh=Math.max(2,Math.floor(h*pr*.5));if(rt.width!==bw||rt.height!==bh)rt.setSize(bw,bh);
+      const hid=[cab,toe,cabEdge,label,blobMesh,floorMesh];const vis0=hid.map(o=>o.visible);hid.forEach(o=>o.visible=false);
+      scene.overrideMaterial=xrayMat;const bg0=scene.background;scene.background=DARKc;renderer.setRenderTarget(rt);renderer.clear();renderer.render(scene,camera);
+      renderer.setRenderTarget(null);scene.overrideMaterial=null;scene.background=bg0;hid.forEach((o,i)=>o.visible=vis0[i]);
+      const R=MOBILE?92:124;lensMat.uniforms.R.value=R;lensMat.uniforms.res.value.set(w,h);lensMat.uniforms.lens.value.set(lensPos.x,h-lensPos.y);
+      const ac=renderer.autoClear;renderer.autoClear=false;renderer.render(quadScene,quadCam);renderer.autoClear=ac;
+      if(lensHud){const found=[];LENS_PARTS.forEach(([n,o])=>{o.getWorldPosition(tmp2);tmp2.project(camera);const x=(tmp2.x*.5+.5)*w,y=(-tmp2.y*.5+.5)*h;if(Math.hypot(x-lensPos.x,y-lensPos.y)<R)found.push(n)});
+        const txt=found.length?found.map(n=>`<li${n==="Drain pump"?' class="hot"':""}>✓ ${n}</li>`).join(""):"<li>Move over the washer</li>";
+        if(txt!==lastHud){lensHud.querySelector("ul").innerHTML=txt;lastHud=txt}
+        lensHud.style.opacity=la.toFixed(2);lensHud.style.transform=`translate(${Math.min(w-200,lensPos.x+R+14).toFixed(0)}px,${(lensPos.y-R*.6).toFixed(0)}px)`}
+    } else if(lensHud) lensHud.style.opacity="0";
     // leader tags
     const tv=seg(t,3.0,3.4)*(1-seg(t,4.8,5.2));
     if(tagNodes.length){const w=innerWidth,h=innerHeight;TAGS.forEach(([n,o,off],i)=>{const el=tagNodes[i];const op=i===3?Math.max(tv,0):tv*(1-f*.7);el.style.opacity=op.toFixed(3);if(op<.01)return;
@@ -1505,12 +1717,15 @@ window.PS3D=(function(){
   let tCur=target(),tGoal=tCur,dirty=true,lbl={brand:"Northgate",model:"NGT5000DW1",serial:"C91234567",type:"Washer"};
   addEventListener("scroll",()=>{tGoal=target()},{passive:true});
   let slow=0,lastNow=0;
+  const hud=$("#scanHud"),hudBar=$("#scanHud i"),hudNum=$("#hudNum"),hudName=$("#hudName");let hudIdx=-1;
+  const HUD_NAMES=["APPLIANCE","LABEL","READING","INSIDE","LIKELY PART","EXACT PART"];
   function loop(now){
     const d=tGoal-tCur;tCur=RM?tGoal:tCur+d*.1;if(Math.abs(d)<.0005)tCur=tGoal;
     if((tCur<6||Math.abs(d)>.0005||dirty)&&!document.hidden){frame(tCur,RM?0:now);dirty=false;
       const dt=now-lastNow;lastNow=now;if(dt>24){slow++;if(slow>60&&renderer.getPixelRatio()>1){renderer.setPixelRatio(1);size();slow=0}}else slow=Math.max(0,slow-1)}
     cv.style.opacity=String(1-.55*seg(tCur,5.2,6));
     const idx=Math.min(5,Math.round(tCur));dots.forEach((x,i)=>x.classList.toggle("on",i===idx));rail.classList.toggle("off",tCur>5.6);
+    if(hud){hud.classList.toggle("off",tCur>5.6);hudBar.style.transform=`scaleX(${(tCur/6).toFixed(3)})`;if(idx!==hudIdx){hudIdx=idx;hudNum.textContent=String(idx+1).padStart(2,"0");scramble(hudName,HUD_NAMES[idx])}}
     requestAnimationFrame(loop);
   }
   function setLabel(a){if(a)lbl={brand:a.brand||"",model:(a.model||"").slice(0,16)||"—",serial:a.serial||"",type:(TYPES[a.type]||"Appliance")};drawLabel(lbl.brand||"Your brand",lbl.model,lbl.serial,lbl.type);buildGlyphs(lbl.model);dirty=true}

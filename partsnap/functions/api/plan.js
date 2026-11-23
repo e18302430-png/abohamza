@@ -31,8 +31,9 @@ async function checkKey(env, key) {
     if (!d) continue;
     if (!d.enabled) throw new HttpError(402, "This key has been disabled (for example after a refund).");
     if (p.days) {
-      const age = (Date.now() - Date.parse(d.date)) / 86400000;
-      if (!(age <= p.days)) throw new HttpError(402, "Your Fixwise Pro year has ended. Renew to keep getting plans.");
+      const t = Date.parse(d.date || d.created_at || "");
+      if (Number.isFinite(t) && (Date.now() - t) / 86400000 > p.days) throw new HttpError(402, "Your Fixwise Pro year has ended. Renew to keep getting plans.");
+      if (!Number.isFinite(t)) console.log(JSON.stringify({ route: "plan", warn: "payhip date missing" }));
     }
     return { product: p, secret, uses: Number(d.uses || 0) };
   }
@@ -79,11 +80,22 @@ export const onRequestPost = handle(async ({ request, env }) => {
   const facts = `Appliance: ${a.type} (${a.fuel})\nBrand: ${clean(a.brand, 40) || "unknown"}\nModel: ${model || "unknown"}\nSymptom: ${symptom || "not given"}\n<owner_description>${details || "none"}</owner_description>`;
   const planKey = "plan:" + (await sha256(key + "|" + facts));
 
+  // Every request re-checks the key with Payhip, so a refunded (disabled) key stops working everywhere.
+  const k = await checkKey(env, key);
   // Re-opening a plan you already paid for never uses up the key.
   if (env.PS_KV) { try { const hit = await env.PS_KV.get(planKey, "json"); if (hit) return { ...hit, reopened: true }; } catch {} }
-
-  const k = await checkKey(env, key);
   if (k.uses >= k.product.maxUses) throw new HttpError(402, k.product.maxUses === 1 ? "This key was already used for a plan. Buy another plan or upgrade to Fixwise Pro." : "All plans on this key are used. Buy more or upgrade to Fixwise Pro.");
+  // Pro year keys: fair-use cap so one key can't be shared widely (10 new plans a day).
+  if (!Number.isFinite(k.product.maxUses) && env.PS_KV) {
+    const dayKey = `pro:${(await sha256(key)).slice(0, 16)}:${new Date().toISOString().slice(0, 10)}`;
+    let n = 0; try { n = Number((await env.PS_KV.get(dayKey)) || 0); } catch {}
+    if (n >= 10) throw new HttpError(429, "That's 10 plans today on this Pro key. Try again tomorrow.");
+    try { await env.PS_KV.put(dayKey, String(n + 1), { expirationTtl: 172800 }); } catch {}
+  }
+  // Reserve the use BEFORE generating (no double spend from parallel requests); give it back if generation fails.
+  const counted = Number.isFinite(k.product.maxUses);
+  if (counted) { const u = await payhip("usage", "PUT", k.secret, key); if (!u) throw new HttpError(502, "Payhip didn't respond. Your key wasn't used; try again."); if (Number(u.uses) > k.product.maxUses) { await payhip("decrease", "PUT", k.secret, key); throw new HttpError(402, "All plans on this key are used."); } }
+  try {
 
   const content = [];
   if (body.image) content.push(imageBlock(body.image));
@@ -109,9 +121,12 @@ export const onRequestPost = handle(async ({ request, env }) => {
     plan.steps = plan.steps.slice(0, 2); // keep only the safe opening checks
   }
 
-  // Count the use only after the plan was produced, so a failure never costs the buyer.
-  if (Number.isFinite(k.product.maxUses)) await payhip("usage", "PUT", k.secret, key);
   const result = { ...plan, product: k.product.name, uses_left: Number.isFinite(k.product.maxUses) ? Math.max(0, k.product.maxUses - k.uses - 1) : null };
   if (env.PS_KV) { try { await env.PS_KV.put(planKey, JSON.stringify(result), { expirationTtl: 60 * 60 * 24 * 365 }); } catch {} }
+  env.EVENTS?.writeDataPoint({ blobs: ["plan_ok", k.product.name], indexes: ["plan_ok"] });
   return result;
+  } catch (err) {
+    if (counted) await payhip("decrease", "PUT", k.secret, key); // never charge a use for a failed plan
+    throw err;
+  }
 });

@@ -74,7 +74,7 @@ export async function guard(request, env, { ai = true } = {}) {
   if (ai) {
     if (!env.ANTHROPIC_API_KEY) throw new HttpError(503, "This feature is not switched on yet.");
     await verifyTurnstile(env, request.headers.get("x-turnstile"), ip);
-    const cap = Number(env.DAILY_AI_LIMIT || 3000);
+    const cap = Number(env.DAILY_AI_LIMIT || 200);
     if ((await bump(env, `ai:${today()}`, 172800)) > cap) throw new HttpError(503, "We've hit today's limit. Please try again tomorrow, or type your model number.");
   }
   return body;

@@ -1,5 +1,5 @@
 // POST /api/event { e, p } — anonymous funnel events (no cookies, no IDs) into Workers Analytics Engine.
-const OK = new Set(["view", "label_start", "label_read", "label_confirm", "symptom", "results", "click", "save", "filter", "recall", "calc", "pro"]);
+const OK = new Set(["view", "label_start", "label_read", "label_confirm", "symptom", "results", "click", "save", "filter", "recall", "calc", "pro", "lead", "plan_ok", "buy"]);
 export async function onRequestPost({ request, env }) {
   const site = request.headers.get("sec-fetch-site");
   if (site && site !== "same-origin") return new Response(null, { status: 204 });

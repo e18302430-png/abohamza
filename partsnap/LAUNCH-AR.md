@@ -44,6 +44,25 @@
 
 الزبون يشتري ← يجيه مفتاح في الإيميل ← يلصقه في الموقع ← السيرفر يتأكد من المفتاح عند Payhip ويكتب ليه الخطة. ولو الزبون رجّع فلوسه، Payhip بتوقف المفتاح تلقائياً.
 
+
+## 🔗 روابط العمولة: بتتحط من Cloudflare، ومحتاجة إعادة نشر
+في **Cloudflare Pages ← Settings ← Variables**، كل ما يجيك قبول من برنامج حطّ القيمة المقابلة ليه:
+
+| المتغير | القيمة |
+|---|---|
+| `AMAZON_TAG` | رقم أمازون (مثلاً `fixwise-20`) |
+| `EBAY_CAMPID` | رقم حملة eBay |
+| `PARTSELECT_WRAP` و`FILTERBUY_WRAP` | رابط التتبع من Impact، وفيه `{url}` و`{subid}` |
+| `PAYHIP_LINK_SINGLE` و`PAYHIP_LINK_PACK` و`PAYHIP_LINK_YEAR` | روابط الشراء من Payhip |
+| `PRO_LINK_SEARS` | رابط Sears Home Services من FlexOffers |
+| `PRO_CALL_NUMBER` | رقم تتبع من شبكة «ادفع على المكالمة»، وبعضها بيدفع أسبوعياً |
+| `DAILY_AI_LIMIT=200` | سقف استخدام الذكاء الاصطناعي في اليوم. خلّيه كده لحد ما يجي دخل |
+
+**مهم:** المتغيرات دي بتتقري في الموقع وقت ما يكون شغّال. في Cloudflare Pages أي متغير جديد بيشتغل بس بعد **إعادة النشر**، يعني بعد ما تحطّها شغّل `npx wrangler pages deploy dist` مرة كمان.
+
+- **أزرار شراء خطط الإصلاح** ما بتظهر إلا لما يكون مفتاح Anthropic ومفاتيح Payhip كلها موجودة، عشان ما يدفع زبون في خدمة ما بتشتغل.
+- **Angi وThumbtack:** ما لقينا ليهم برنامج عمولة عام، فشلتهم. البديل Sears Home Services، وشبكات «ادفع على المكالمة».
+
 ## بعد ما تفتح الحسابات
 1. **في Cloudflare Pages ← Settings ← Variables حطّ القيم دي:**
    - **أسرار:** `ANTHROPIC_API_KEY` و`TURNSTILE_SECRET`
